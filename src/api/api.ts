@@ -10,16 +10,14 @@ export default class API {
   }
 
   public static async getWords(group = 0, page = 0): Promise<Word[]> {
-    const rawResponse = await (
-      await fetch(this.buildLink(['words'], [`group=${group}`, `page=${page}`]))
-    ).json();
-    const content = await rawResponse.json();
+    const rawResponse = await fetch(this.buildLink(['words'], [`group=${group}`, `page=${page}`]));
+    const content: Word[] = await rawResponse.json();
     return content;
   }
 
   public static async getWord(id: string): Promise<Word> {
-    const rawResponse = await (await fetch(this.buildLink(['words', id]))).json();
-    const content = await rawResponse.json();
+    const rawResponse = await fetch(this.buildLink(['words', id]));
+    const content: Word = await rawResponse.json();
     return content;
   }
 }
