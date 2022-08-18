@@ -2,12 +2,14 @@
     "parser": "@typescript-eslint/parser",
     "plugins": [
         "import",
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "prettier"
     ],
     "extends": [
         "eslint:recommended",
         "airbnb-base",
-        "airbnb-typescript/base"
+        "airbnb-typescript/base",
+        "prettier"
     ],
     "parserOptions": {
         "ecmaVersion": 2020,
