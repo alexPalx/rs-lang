@@ -5,6 +5,7 @@
         "@typescript-eslint"
     ],
     "extends": [
+        "eslint:recommended",
         "airbnb-base",
         "airbnb-typescript/base"
     ],
@@ -18,6 +19,10 @@
         "browser": true,
         "node": true
     },
+    "ignorePatterns": [
+        "dist",
+        "*.config.js"
+    ],
     "rules": {
         "no-debugger": "off",
         "no-console": 0,
