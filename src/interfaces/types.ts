@@ -1,4 +1,4 @@
-interface Word {
+export interface Word {
   id: string;
   group: number;
   page: number;
@@ -15,4 +15,13 @@ interface Word {
   textExampleTranslate: string;
 }
 
-export { Word };
+export interface NewUser {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface ExistingUser {
+  email: string;
+  password: string;
+}
