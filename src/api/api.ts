@@ -1,4 +1,4 @@
-import { Word } from '../interfaces/types';
+import { Word, ExistingUser, NewUser } from '../interfaces/types';
 
 export default class API {
   private static url = 'https://my-learnwords.herokuapp.com';
@@ -31,5 +31,33 @@ export default class API {
       console.error((<Error>err).message);
       return undefined;
     }
+  }
+
+  public static async loginUser(user: ExistingUser): Promise<void> {
+    const rawResponse = await fetch(this.buildLink(['signin']), {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    });
+    const content = await rawResponse.json();
+
+    return content
+  }
+
+  public static async createUser(user: NewUser): Promise<void> {
+    const rawResponse = await fetch(this.buildLink(['users']), {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    });
+    const content = await rawResponse.json();
+    
+    return content
   }
 }
