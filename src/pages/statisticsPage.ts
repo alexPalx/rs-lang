@@ -1,14 +1,14 @@
 import { QueryParam } from '../interfaces/types';
-import Control from '../utils/control';
+import Component from '../common/component';
 
-export default class StatisticsPage extends Control {
-  public wrapper: Control;
+export default class StatisticsPage extends Component {
+  public wrapper: Component;
 
-  public content: Control;
+  public content: Component;
 
   constructor(parentElement: HTMLElement, params: QueryParam[] | null) {
     super(parentElement);
-    this.wrapper = new Control(this.node);
-    this.content = new Control(this.wrapper.node, 'p', '', `StatisticsPage ${JSON.stringify(params)}`);
+    this.wrapper = new Component(this.node);
+    this.content = new Component(this.wrapper.node, 'p', '', `StatisticsPage ${JSON.stringify(params)}`);
   }
 }

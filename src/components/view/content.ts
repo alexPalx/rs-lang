@@ -7,10 +7,10 @@ import GamesPage from '../../pages/gamesPage';
 import MainPage from '../../pages/mainPage';
 import NotFoundPage from '../../pages/notFoundPage';
 import StatisticsPage from '../../pages/statisticsPage';
-import Control from '../../utils/control';
+import Component from '../../common/component';
 
-export default class Content extends Control {
-  public content: Control | undefined;
+export default class Content extends Component {
+  public content: Component | undefined;
 
   constructor() {
     const contentWrapper = document.getElementById('main');

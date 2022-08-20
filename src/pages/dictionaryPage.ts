@@ -1,14 +1,14 @@
 import { QueryParam } from '../interfaces/types';
-import Control from '../utils/control';
+import Component from '../common/component';
 
-export default class DictionaryPage extends Control {
-  public wrapper: Control;
+export default class DictionaryPage extends Component {
+  public wrapper: Component;
 
-  public content: Control;
+  public content: Component;
 
   constructor(parentElement: HTMLElement, params: QueryParam[] | null) {
     super(parentElement);
-    this.wrapper = new Control(this.node);
-    this.content = new Control(this.wrapper.node, 'p', '', `DictionaryPage ${JSON.stringify(params)}`);
+    this.wrapper = new Component(this.node);
+    this.content = new Component(this.wrapper.node, 'p', '', `DictionaryPage ${JSON.stringify(params)}`);
   }
 }
