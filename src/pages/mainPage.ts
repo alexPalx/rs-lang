@@ -1,3 +1,4 @@
+import { QueryParam } from '../interfaces/types';
 import Control from '../utils/control';
 
 export default class MainPage extends Control {
@@ -5,9 +6,9 @@ export default class MainPage extends Control {
 
   public content: Control;
 
-  constructor(parentElement: HTMLElement, data: { message: string } = { message: 'Main content' }) {
+  constructor(parentElement: HTMLElement, params: QueryParam[] | null) {
     super(parentElement);
     this.wrapper = new Control(this.node);
-    this.content = new Control(this.wrapper.node, 'p', '', data.message);
+    this.content = new Control(this.wrapper.node, 'p', '', `MainPage ${JSON.stringify(params)}`);
   }
 }

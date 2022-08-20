@@ -1,4 +1,5 @@
 import Constants from '../../common/constants';
+import { QueryParam } from '../../interfaces/types';
 import AboutPage from '../../pages/aboutPage';
 import DictionaryPage from '../../pages/dictionaryPage';
 import EbookPage from '../../pages/ebookPage';
@@ -16,33 +17,30 @@ export default class Content extends Control {
     super(contentWrapper, 'div', 'content');
   }
 
-  public setContent(path: string) {
+  public setContent(page: string, params: QueryParam[] | null): void {
     if (this.content) this.content.destroy();
 
-    switch (path) {
-      case '':
-        this.content = new NotFoundPage(this.node);
-        break;
+    switch (page) {
       case Constants.routes.main:
-        this.content = new MainPage(this.node);
+        this.content = new MainPage(this.node, params);
         break;
       case Constants.routes.ebook:
-        this.content = new EbookPage(this.node);
+        this.content = new EbookPage(this.node, params);
         break;
       case Constants.routes.dictionary:
-        this.content = new DictionaryPage(this.node);
+        this.content = new DictionaryPage(this.node, params);
         break;
       case Constants.routes.games:
-        this.content = new GamesPage(this.node);
+        this.content = new GamesPage(this.node, params);
         break;
       case Constants.routes.statistics:
-        this.content = new StatisticsPage(this.node);
+        this.content = new StatisticsPage(this.node, params);
         break;
       case Constants.routes.about:
-        this.content = new AboutPage(this.node);
+        this.content = new AboutPage(this.node, params);
         break;
-
       default:
+        this.content = new NotFoundPage(this.node, params);
         break;
     }
   }

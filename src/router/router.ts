@@ -1,18 +1,8 @@
-import Route from 'route-parser';
-import Constants from '../common/constants';
 import View from '../components/view/view';
+import { QueryParam } from '../interfaces/types';
 
 export default class Router {
   private view: View;
-
-  private routes = {
-    main: new Route(Constants.routes.main),
-    ebook: new Route(Constants.routes.ebook),
-    dictionary: new Route(Constants.routes.dictionary),
-    games: new Route(Constants.routes.games),
-    statistics: new Route(Constants.routes.statistics),
-    about: new Route(Constants.routes.about),
-  };
 
   constructor(view: View) {
     this.view = view;
@@ -20,8 +10,10 @@ export default class Router {
   }
 
   private init() {
+    let url = `${new URL(window.location.href).pathname}${new URL(window.location.href).search}`;
     window.addEventListener('popstate', () => {
-      this.render(new URL(window.location.href).pathname);
+      url = `${new URL(window.location.href).pathname}${new URL(window.location.href).search}`;
+      this.render(url);
     });
     document.querySelectorAll('[href^="/"]').forEach((item) => {
       item.addEventListener('click', (e) => {
@@ -30,30 +22,29 @@ export default class Router {
         if (!(target instanceof HTMLAnchorElement)) {
           target = <Node>target.parentNode;
         }
-        const path = new URL((<HTMLAnchorElement>target).href).pathname;
+        const path = new URL((<HTMLAnchorElement>target).href);
         this.goTo(path);
       });
     });
-    this.render(new URL(window.location.href).pathname);
+    this.render(url);
   }
 
   public render(path: string): void {
-    let result = '';
+    const page = path.match(/\w+/);
+    const queryString = path.split('?')[1];
+    const queryParams: QueryParam[] | null = !queryString
+      ? null
+      : queryString.split('&').map((el) => ({
+          param: el.split('=')[0],
+          value: el.split('=')[1],
+        }));
 
-    const routes = Object.entries(this.routes);
-
-    for (let i = 0; i < routes.length; i += 1) {
-      if (routes[i][1].match(path)) {
-        result = path;
-        break;
-      }
-    }
-
-    this.view.content.setContent(result);
+    this.view.content.setContent(page ? page[0] : '', queryParams);
   }
 
-  public goTo(path: string): void {
-    window.history.pushState({ path }, path, path);
-    this.render(path);
+  public goTo(path: URL): void {
+    const pathString = String(path);
+    window.history.pushState({ pathString }, pathString, pathString);
+    this.render(`${path.pathname}${path.search}`);
   }
 }
