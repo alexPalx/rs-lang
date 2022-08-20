@@ -25,3 +25,5 @@ export interface ExistingUser {
   email: string;
   password: string;
 }
+
+export type QueryParam = { param: string; value: string };

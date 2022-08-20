@@ -1,4 +1,4 @@
-export default class Control<T extends HTMLElement = HTMLElement> {
+export default class Component<T extends HTMLElement = HTMLElement> {
     public node: T;
 
     constructor(parentNode: HTMLElement | null, tagName = 'div', className = '', content = '') {
