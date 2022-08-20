@@ -1,8 +1,7 @@
 import './sass/main.scss';
-import Controller from './components/controller/controller';
+import App from './components/app/app';
 import { closeNav, openNav } from './components/sidenav';
 
-const controller = new Controller();
 const hamburger = document.getElementById('hamburger');
 
 hamburger?.addEventListener('click', () => {
@@ -14,3 +13,7 @@ hamburger?.addEventListener('click', () => {
   hamburger.classList.toggle('is-active');
 });
 
+window.addEventListener('DOMContentLoaded', () => {
+  const app = new App();
+  app.init();
+});
