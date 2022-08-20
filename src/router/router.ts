@@ -27,7 +27,11 @@ export default class Router {
     document.querySelectorAll('[href^="/"]').forEach((item) => {
       item.addEventListener('click', (e) => {
         e.preventDefault();
-        const path = new URL((<HTMLAnchorElement>e.target).href).pathname;
+        let target = <Node>e.target;
+        if (!(target instanceof HTMLAnchorElement)) {
+          target = <Node>target.parentNode;
+        }
+        const path = new URL((<HTMLAnchorElement>target).href).pathname;
         this.goTo(path);
       });
     });

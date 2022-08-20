@@ -1,16 +1,7 @@
 import './sass/main.scss';
-import Controller from './components/controller/controller';
-import { closeNav, openNav } from './components/sidenav';
+import App from './components/app/app';
 
-const controller = new Controller();
-const hamburger = document.getElementById('hamburger');
-
-hamburger?.addEventListener('click', () => {
-  if (hamburger.classList.contains('is-active')) {
-    closeNav();
-  } else {
-    openNav();
-  }
-  hamburger.classList.toggle('is-active');
+window.addEventListener('DOMContentLoaded', () => {
+  const app = new App();
+  app.init();
 });
-

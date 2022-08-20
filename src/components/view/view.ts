@@ -1,13 +1,22 @@
 import Content from './content';
-import UI from './UI';
+import { closeNav, openNav } from '../sidenav';
 
 export default class View {
-  public ui: UI;
-  
   public content: Content;
 
-  constructor(parentNode: HTMLElement) {
-    this.ui = new UI(parentNode);
-    this.content = new Content(parentNode);
+  public hamburger: HTMLElement;
+
+  constructor() {
+    this.content = new Content();
+    this.hamburger = <HTMLElement>document.getElementById('hamburger');
+
+    this.hamburger.addEventListener('click', () => {
+      if (this.hamburger.classList.contains('is-active')) {
+        closeNav();
+      } else {
+        openNav();
+      }
+      this.hamburger.classList.toggle('is-active');
+    });
   }
 }

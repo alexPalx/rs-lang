@@ -7,7 +7,7 @@ export default class Controller {
   private router: Router;
 
   constructor() {
-    this.view = new View(document.body);
+    this.view = new View();
     this.router = new Router(this.view);
   }
 }
