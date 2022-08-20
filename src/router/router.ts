@@ -1,7 +1,6 @@
 import Route from 'route-parser';
 import Constants from '../common/constants';
 import View from '../components/view/view';
-import pages from '../pages/pages';
 
 export default class Router {
   private view: View;
@@ -39,20 +38,15 @@ export default class Router {
   }
 
   public render(path: string): void {
-    let result = pages.notFound;
+    let result = '';
 
-    if (this.routes.main.match(path)) {
-      result = pages.main;
-    } else if (this.routes.ebook.match(path)) {
-      result = pages.ebook;
-    } else if (this.routes.dictionary.match(path)) {
-      result = pages.dictionary;
-    } else if (this.routes.games.match(path)) {
-      result = pages.games;
-    } else if (this.routes.statistics.match(path)) {
-      result = pages.statistics;
-    } else if (this.routes.about.match(path)) {
-      result = pages.about;
+    const routes = Object.entries(this.routes);
+
+    for (let i = 0; i < routes.length; i += 1) {
+      if (routes[i][1].match(path)) {
+        result = path;
+        break;
+      }
     }
 
     this.view.content.setContent(result);
