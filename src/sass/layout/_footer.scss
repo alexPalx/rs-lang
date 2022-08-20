@@ -1,0 +1,27 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 64px;
+  padding: 0 25px;
+  background-color: #ebebeb;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  .rs-logo {
+    width: 80px;
+    height: 25px;
+    background-color: transparent;
+  }
+
+  .developers {
+    a {
+      color: rgb(128, 128, 128);
+      margin: 0 12px;
+      text-decoration: none;
+    }
+  }
+}
