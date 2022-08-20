@@ -1,6 +1,8 @@
 import './sass/main.scss';
+import Controller from './components/controller/controller';
 import { closeNav, openNav } from './components/sidenav';
 
+const controller = new Controller();
 const hamburger = document.getElementById('hamburger');
 
 hamburger?.addEventListener('click', () => {
