@@ -21,6 +21,7 @@
       text-decoration: none;
       line-height: 35px;
       text-align: center;
+      background-color: skyblue;
     }
 
     .page-now {
@@ -31,6 +32,8 @@
       text-align: center;
       background-color: rgb(224, 224, 224);
       border: 1px solid gray;
+      border-left: none;
+      border-right: none;
       line-height: 40px;
     }
 
@@ -45,6 +48,7 @@
       text-align: center;
       text-decoration: none;
       line-height: 35px;
+      background-color: skyblue;
     }
 
     .page-down:disabled,
