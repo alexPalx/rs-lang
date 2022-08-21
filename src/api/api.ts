@@ -52,7 +52,8 @@ export default class API {
         body: JSON.stringify(user),
       });
 
-      const content = await rawResponse.json();
+      const content: UserMetadata = await rawResponse.json();
+      Constants.UserMetadata = { token: content.token, userId: content.userId };
       return content;
     } catch {
       // TODO: Implement popup

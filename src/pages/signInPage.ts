@@ -33,8 +33,7 @@ export default class AuthPage extends Component {
         email: this.inputEmailField.node.value,
         password: this.inputPassField.node.value,
       };
-      const userMetadata = await API.loginUser(userInfo);
-      if (userMetadata) console.log(userMetadata);
+      API.loginUser(userInfo);
     };
   }
 }
