@@ -1,7 +1,8 @@
-import { Word, ExistingUser, NewUser } from '../interfaces/types';
+import { Word, ExistingUser, NewUser, WordsQuery } from '../interfaces/types';
 
 export default class API {
   private static url = 'https://my-learnwords.herokuapp.com';
+  // private static url = 'https://react-learnwords-example.herokuapp.com'
 
   private static buildLink(path: string[] = [], params: string[] = []): string {
     return `${this.url}${path.length ? `/${path.join('/')}` : ''}${
@@ -9,9 +10,9 @@ export default class API {
     }`;
   }
 
-  public static async getWords(group = 0, page = 0): Promise<Word[] | undefined> {
+  public static async getWords(query: WordsQuery): Promise<Word[] | undefined> {
     try {
-      const rawResponse = await fetch(this.buildLink(['word'], [`group=${group}`, `page=${page}`]));
+      const rawResponse = await fetch(this.buildLink(['words'], [`group=${query.group}`, `page=${query.page}`]));
       if (!rawResponse.ok) throw new Error('Server error');
       const content: Word[] = await rawResponse.json();
       return content;
