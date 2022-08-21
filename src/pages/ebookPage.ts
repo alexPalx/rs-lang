@@ -41,6 +41,12 @@ export default class EbookPage extends Component {
     this.group = new Component(this.controls.node, 'div', 'group-select');
     this.select = new Component(this.group.node, 'select', 'select-classic');
     this.select.node.innerHTML = groupSelect;
+
+    this.select.node.addEventListener('change', (e: Event) => {
+      console.log(e);
+      // Router.goTo("/ebook?page=...");
+    });
+
     (<HTMLSelectElement>this.select.node).value = queryObj.group;
     this.pageControlWrapper = new Component(this.controls.node, 'div', 'page-controls-wrapper');
     this.pageDown = new Component(this.pageControlWrapper.node, 'a', 'page-down', '←');

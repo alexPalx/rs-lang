@@ -2,14 +2,9 @@ import View from '../components/view/view';
 import { QueryParam } from '../interfaces/types';
 
 export default class Router {
-  private view: View;
+  public static view: View | undefined;
 
-  constructor(view: View) {
-    this.view = view;
-    this.init();
-  }
-
-  private init() {
+  public static init() {
     let url = `${new URL(window.location.href).pathname}${new URL(window.location.href).search}`;
     window.addEventListener('popstate', () => {
       url = `${new URL(window.location.href).pathname}${new URL(window.location.href).search}`;
@@ -19,7 +14,7 @@ export default class Router {
     this.render(url);
   }
 
-  private updateListeners(): void {
+  private static updateListeners(): void {
     document.querySelectorAll('[href^="/"]').forEach((item) => {
       const element = <HTMLElement>item;
       element.onclick = null;
@@ -35,7 +30,7 @@ export default class Router {
     });
   }
 
-  public render(path: string): void {
+  public static render(path: string): void {
     const page = path.match(/\w+/);
     const queryString = path.split('?')[1];
     const queryParams: QueryParam[] | null = !queryString
@@ -45,11 +40,11 @@ export default class Router {
           value: el.split('=')[1],
         }));
 
-    this.view.content.setContent(page ? page[0] : '', queryParams);
+    this.view?.content.setContent(page ? page[0] : '', queryParams);
     this.updateListeners();
   }
 
-  public goTo(path: URL): void {
+  public static goTo(path: URL): void {
     const pathString = String(path);
     window.history.pushState({ pathString }, pathString, pathString);
     this.render(`${path.pathname}${path.search}`);
