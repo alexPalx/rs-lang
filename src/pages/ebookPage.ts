@@ -1,7 +1,6 @@
 import { QueryParam, WordsQuery } from '../interfaces/types';
 import Component from '../common/component';
 import API from '../api/api';
-import { setDisable } from '../utils/setDisableProp';
 
 const groupSelect = `<option value="0">Раздел 1</option>
 <option value="1">Раздел 2</option>
@@ -10,6 +9,7 @@ const groupSelect = `<option value="0">Раздел 1</option>
 <option value="4">Раздел 5</option>
 <option value="5">Раздел 6</option>`;
 const MAX_PAGE = '29';
+const MIN_PAGE = '0';
 
 export default class EbookPage extends Component {
   public wrapper: Component;
@@ -43,7 +43,11 @@ export default class EbookPage extends Component {
     this.select.node.innerHTML = groupSelect;
     (<HTMLSelectElement>this.select.node).value = queryObj.group;
     this.pageControlWrapper = new Component(this.controls.node, 'div', 'page-controls-wrapper');
-    this.pageDown = new Component(this.pageControlWrapper.node, 'button', 'page-down', '←');
+    this.pageDown = new Component(this.pageControlWrapper.node, 'a', 'page-down', '←');
+
+    (<HTMLAnchorElement>this.pageDown.node).href = `/ebook?page=${
+      queryObj.page === MIN_PAGE ? queryObj.page : +queryObj.page - 1
+    }&group=${queryObj.group}`;
 
     this.pageNow = new Component(
       this.pageControlWrapper.node,
@@ -53,14 +57,10 @@ export default class EbookPage extends Component {
     );
 
     this.pageUp = new Component(this.pageControlWrapper.node, 'a', 'page-up', '→');
+
     (<HTMLAnchorElement>this.pageUp.node).href = `/ebook?page=${
-      +queryObj.page + 1
+      queryObj.page === MAX_PAGE ? queryObj.page : +queryObj.page + 1
     }&group=${queryObj.group}`;
-    if (queryObj.page === '0') {
-      setDisable(this.pageDown.node);
-    } else if (queryObj.page === MAX_PAGE) {
-      setDisable(this.pageUp.node);
-    }
 
     const cardsData = API.getWords();
     cardsData.then((data) => {

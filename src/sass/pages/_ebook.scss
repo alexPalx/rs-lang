@@ -18,6 +18,9 @@
       border-bottom-left-radius: 6px;
       border: 1px solid gray;
       padding-bottom: 5px;
+      text-decoration: none;
+      line-height: 35px;
+      text-align: center;
     }
 
     .page-now {
@@ -39,7 +42,9 @@
       border-top-right-radius: 6px;
       border-bottom-right-radius: 6px;
       border: 1px solid gray;
-      padding-bottom: 5px;
+      text-align: center;
+      text-decoration: none;
+      line-height: 35px;
     }
 
     .page-down:disabled,
