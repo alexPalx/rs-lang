@@ -1,6 +1,7 @@
 import { QueryParam, WordsQuery } from '../interfaces/types';
 import Component from '../common/component';
 import API from '../api/api';
+import Router from '../router/router';
 
 const groupSelect = `<option value="0">Раздел 1</option>
 <option value="1">Раздел 2</option>
@@ -42,9 +43,9 @@ export default class EbookPage extends Component {
     this.select = new Component(this.group.node, 'select', 'select-classic');
     this.select.node.innerHTML = groupSelect;
 
-    this.select.node.addEventListener('change', (e: Event) => {
-      console.log(e);
-      // Router.goTo("/ebook?page=...");
+    this.select.node.addEventListener('change', () => {
+      const group = (<HTMLSelectElement>this.select.node).value;
+      Router.goTo(new URL(`http://${window.location.host}/ebook?group=${group}&page=0`));
     });
 
     (<HTMLSelectElement>this.select.node).value = queryObj.group;
@@ -68,25 +69,9 @@ export default class EbookPage extends Component {
       queryObj.page === MAX_PAGE ? queryObj.page : +queryObj.page + 1
     }&group=${queryObj.group}`;
 
-    const cardsData = API.getWords();
+    const cardsData = API.getWords(queryObj);
     cardsData.then((data) => {
       console.log(data);
     });
-
-    // this.select.node.addEventListener('change', () => {
-    //   const group = (<HTMLSelectElement>this.select.node).value;
-    //   window.location.href = `http://${window.location.host}/ebook?page=${0}&group=${group}`;
-    // });
-
-    // this.pageDown.node.onclick = () => {
-    //   window.location.href = `http://${window.location.host}/ebook?page=${
-    //     Number(queryObj.page) - 1
-    //   }&group=${queryObj.group}`;
-    // };
-    // this.pageUp.node.onclick = () => {
-    //   window.location.href = `http://${window.location.host}/ebook?page=${
-    //     Number(queryObj.page) + 1
-    //   }&group=${queryObj.group}`;
-    // };
   }
 }
