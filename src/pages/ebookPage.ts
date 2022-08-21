@@ -51,8 +51,9 @@ export default class EbookPage extends Component {
       'page-now',
       `Страница ${Number(queryObj.page) + 1}`
     );
+
     this.pageUp = new Component(this.pageControlWrapper.node, 'a', 'page-up', '→');
-    (<HTMLAnchorElement>this.pageUp.node).href = `http://${window.location.host}/ebook?page=${
+    (<HTMLAnchorElement>this.pageUp.node).href = `/ebook?page=${
       +queryObj.page + 1
     }&group=${queryObj.group}`;
     if (queryObj.page === '0') {
@@ -60,23 +61,26 @@ export default class EbookPage extends Component {
     } else if (queryObj.page === MAX_PAGE) {
       setDisable(this.pageUp.node);
     }
+
     const cardsData = API.getWords();
     cardsData.then((data) => {
       console.log(data);
     });
-    this.select.node.addEventListener('change', () => {
-      const group = (<HTMLSelectElement>this.select.node).value;
-      window.location.href = `http://${window.location.host}/ebook?page=${0}&group=${group}`;
-    });
-    this.pageDown.node.onclick = () => {
-      window.location.href = `http://${window.location.host}/ebook?page=${
-        Number(queryObj.page) - 1
-      }&group=${queryObj.group}`;
-    };
-    this.pageUp.node.onclick = () => {
-      window.location.href = `http://${window.location.host}/ebook?page=${
-        Number(queryObj.page) + 1
-      }&group=${queryObj.group}`;
-    };
+
+    // this.select.node.addEventListener('change', () => {
+    //   const group = (<HTMLSelectElement>this.select.node).value;
+    //   window.location.href = `http://${window.location.host}/ebook?page=${0}&group=${group}`;
+    // });
+
+    // this.pageDown.node.onclick = () => {
+    //   window.location.href = `http://${window.location.host}/ebook?page=${
+    //     Number(queryObj.page) - 1
+    //   }&group=${queryObj.group}`;
+    // };
+    // this.pageUp.node.onclick = () => {
+    //   window.location.href = `http://${window.location.host}/ebook?page=${
+    //     Number(queryObj.page) + 1
+    //   }&group=${queryObj.group}`;
+    // };
   }
 }

@@ -15,8 +15,15 @@ export default class Router {
       url = `${new URL(window.location.href).pathname}${new URL(window.location.href).search}`;
       this.render(url);
     });
+    this.updateListeners();
+    this.render(url);
+  }
+
+  private updateListeners(): void {
     document.querySelectorAll('[href^="/"]').forEach((item) => {
-      item.addEventListener('click', (e) => {
+      const element = <HTMLElement>item;
+      element.onclick = null;
+      element.onclick = (e: Event) => {
         e.preventDefault();
         let target = <Node>e.target;
         if (!(target instanceof HTMLAnchorElement)) {
@@ -24,9 +31,8 @@ export default class Router {
         }
         const path = new URL((<HTMLAnchorElement>target).href);
         this.goTo(path);
-      });
+      };
     });
-    this.render(url);
   }
 
   public render(path: string): void {
@@ -40,6 +46,7 @@ export default class Router {
         }));
 
     this.view.content.setContent(page ? page[0] : '', queryParams);
+    this.updateListeners();
   }
 
   public goTo(path: URL): void {
