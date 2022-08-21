@@ -44,13 +44,17 @@ export default class EbookPage extends Component {
     (<HTMLSelectElement>this.select.node).value = queryObj.group;
     this.pageControlWrapper = new Component(this.controls.node, 'div', 'page-controls-wrapper');
     this.pageDown = new Component(this.pageControlWrapper.node, 'button', 'page-down', '←');
+
     this.pageNow = new Component(
       this.pageControlWrapper.node,
       'div',
       'page-now',
       `Страница ${Number(queryObj.page) + 1}`
     );
-    this.pageUp = new Component(this.pageControlWrapper.node, 'button', 'page-up', '→');
+    this.pageUp = new Component(this.pageControlWrapper.node, 'a', 'page-up', '→');
+    (<HTMLAnchorElement>this.pageUp.node).href = `http://${window.location.host}/ebook?page=${
+      +queryObj.page + 1
+    }&group=${queryObj.group}`;
     if (queryObj.page === '0') {
       setDisable(this.pageDown.node);
     } else if (queryObj.page === MAX_PAGE) {
