@@ -8,6 +8,8 @@ import MainPage from '../../pages/mainPage';
 import NotFoundPage from '../../pages/notFoundPage';
 import StatisticsPage from '../../pages/statisticsPage';
 import Component from '../../common/component';
+import SignInPage from '../../pages/signInPage';
+import SignUpPage from '../../pages/signUpPage';
 
 export default class Content extends Component {
   public content: Component | undefined;
@@ -39,8 +41,14 @@ export default class Content extends Component {
       case Constants.routes.about:
         this.content = new AboutPage(this.node, params);
         break;
+      case Constants.routes.signin:
+        this.content = new SignInPage(this.node);
+        break;
+      case Constants.routes.signup:
+        this.content = new SignUpPage(this.node);
+        break;
       default:
-        this.content = new NotFoundPage(this.node, params);
+        this.content = new NotFoundPage(this.node);
         break;
     }
   }
