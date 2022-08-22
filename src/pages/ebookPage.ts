@@ -72,6 +72,7 @@ export default class EbookPage extends Component {
       queryObj.page === MAX_PAGE ? queryObj.page : +queryObj.page + 1
     }&group=${queryObj.group}`;
 
+
     this.gameDropWrapper = new Component(this.controls.node, 'div', 'dropdown');
     this.gameDropBtn = new Component(this.gameDropWrapper.node, 'button', 'dropbtn', 'Мини-Игры');
     this.dropDownContent = new Component(this.gameDropWrapper.node, 'div', 'game-drop-content');
@@ -87,7 +88,7 @@ export default class EbookPage extends Component {
         this.dropDownContent.node.classList.remove('show');
       }
     });
-    const cardsData = API.getWords(queryObj);
+    const cardsData = API.words.getWords(queryObj);
     cardsData.then((data) => {
       if (data) {
         this.addItems(data, queryObj.group);
