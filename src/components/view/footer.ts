@@ -25,6 +25,6 @@ export default class Footer extends Component {
     this.dev2.node.href = 'https://github.com/atcherdsd';
     this.dev2.node.target = '_blank';
 
-    this.year = new Component(this.node, 'text', '', '2022');
+    this.year = new Component(this.node, 'p', '', '2022');
   }
 }
