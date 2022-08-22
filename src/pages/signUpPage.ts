@@ -1,7 +1,9 @@
 import API from '../api/api';
 import Component from '../common/component';
+import Constants from '../common/constants';
 import View from '../components/view/view';
 import { CreateUserRequestData } from '../interfaces/typesAPI';
+import Router from '../router/router';
 
 export default class AuthPage extends Component {
   private view: View;
@@ -46,6 +48,7 @@ export default class AuthPage extends Component {
       const responseData = await API.users.createUser(userInfo);
       if (responseData) {
         this.view.ui.generateAuthBlock();
+        Router.goTo(new URL(`http://${window.location.host}/${Constants.routes.signin}`));
       }
     };
   }
