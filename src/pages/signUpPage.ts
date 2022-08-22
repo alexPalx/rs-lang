@@ -1,16 +1,19 @@
 import API from '../api/api';
 import Component from '../common/component';
+import View from '../components/view/view';
 import { CreateUserRequestData } from '../interfaces/typesAPI';
 
 export default class AuthPage extends Component {
+  private view: View;
   public content: Component;
   public inputEmailField: Component<HTMLInputElement>;
   public signUpButton: Component<HTMLButtonElement>;
   public inputPassField: Component<HTMLInputElement>;
   public inputNameField: Component<HTMLInputElement>;
 
-  constructor(parentElement: HTMLElement) {
+  constructor(parentElement: HTMLElement, view: View) {
     super(parentElement);
+    this.view = view;
 
     this.content = new Component(this.node, 'div', '');
 
@@ -41,7 +44,9 @@ export default class AuthPage extends Component {
       };
 
       const responseData = await API.users.createUser(userInfo);
-      if (responseData) console.log(responseData);
+      if (responseData) {
+        this.view.ui.generateAuthBlock();
+      }
     };
   }
 }

@@ -1,15 +1,20 @@
 import API from '../api/api';
 import Component from '../common/component';
+import Constants from '../common/constants';
+import View from '../components/view/view';
 import { LoginUserRequestData } from '../interfaces/typesAPI';
+import Router from '../router/router';
 
 export default class AuthPage extends Component {
+  private view: View;
   public content: Component;
   public inputEmailField: Component<HTMLInputElement>;
   public signInButton: Component<HTMLButtonElement>;
   public inputPassField: Component<HTMLInputElement>;
 
-  constructor(parentElement: HTMLElement) {
+  constructor(parentElement: HTMLElement, view: View) {
     super(parentElement);
+    this.view = view;
 
     this.content = new Component(this.node, 'div', '');
 
@@ -33,7 +38,11 @@ export default class AuthPage extends Component {
         email: this.inputEmailField.node.value,
         password: this.inputPassField.node.value,
       };
-      API.users.loginUser(userInfo);
+      const response = await API.users.loginUser(userInfo);
+      if (response) {
+        this.view.ui.generateAuthBlock(true);
+        Router.goTo(new URL(`http://${window.location.host}/${Constants.routes.main}`));
+      }
     };
   }
 }

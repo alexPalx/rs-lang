@@ -14,7 +14,7 @@ export default class Router {
     this.render(url);
   }
 
-  private static updateListeners(): void {
+  public static updateListeners(): void {
     document.querySelectorAll('[href^="/"]').forEach((item) => {
       const element = <HTMLElement>item;
       element.onclick = null;
