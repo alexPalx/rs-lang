@@ -11,23 +11,21 @@ const groupSelect = `<option value="0">Раздел 1</option>
 <option value="5">Раздел 6</option>`;
 const MAX_PAGE = '29';
 const MIN_PAGE = '0';
+const gameLinks = `<a href="/games/audio">Аудиовызов</a>
+<a href="/games/sprint">Спринт</a>`;
 
 export default class EbookPage extends Component {
   public wrapper: Component;
-
   public controls: Component;
-
   public group: Component;
-
   public select: Component;
-
   public pageControlWrapper: Component;
-
   public pageDown: Component;
-
   public pageNow: Component;
-
   public pageUp: Component;
+  public gameDropWrapper: Component;
+  public gameDropBtn: Component;
+  public dropDownContent: Component;
 
   constructor(parentElement: HTMLElement, params: QueryParam[] | null) {
     super(parentElement, 'div', 'ebook-wrapper');
@@ -69,6 +67,20 @@ export default class EbookPage extends Component {
       queryObj.page === MAX_PAGE ? queryObj.page : +queryObj.page + 1
     }&group=${queryObj.group}`;
 
+    this.gameDropWrapper = new Component(this.controls.node, 'div', 'dropdown');
+    this.gameDropBtn = new Component(this.gameDropWrapper.node, 'button', 'dropbtn', 'Мини-Игры');
+    this.dropDownContent = new Component(this.gameDropWrapper.node, 'div', 'game-drop-content');
+    this.dropDownContent.node.innerHTML = gameLinks;
+
+    this.gameDropBtn.node.onclick = () => {
+      this.dropDownContent.node.classList.toggle("show");
+    }
+    window.onclick = (e) => {
+      if (!(<HTMLElement>e.target).classList.contains('dropbtn')) {
+        this.dropDownContent.node.classList.remove('show');
+      }
+        
+    }
     const cardsData = API.getWords(queryObj);
     cardsData.then((data) => {
       console.log(data);

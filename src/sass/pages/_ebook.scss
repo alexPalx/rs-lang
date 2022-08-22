@@ -21,7 +21,8 @@
       text-decoration: none;
       line-height: 35px;
       text-align: center;
-      background-color: skyblue;
+      background-color: #55c2da;
+      color: blue;
     }
 
     .page-now {
@@ -48,15 +49,48 @@
       text-align: center;
       text-decoration: none;
       line-height: 35px;
-      background-color: skyblue;
-    }
-
-    .page-down:disabled,
-    .page-up:disabled {
-      cursor: not-allowed;
-      border: 1px solid #999999;
-      background-color: #cccccc;
-      color: #666666;
-    }
+      background-color: #55c2da;
+      margin-right: 25px;
+      color: blue;
+    }    
   }
+  .dropbtn {
+    background-color: #55c2da;
+    color: black;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  
+  .dropbtn:hover, .dropbtn:focus {
+    background-color: #6ab7ea;
+  }
+  
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .game-drop-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  
+  .game-drop-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  .dropdown a:hover {background-color: #ddd;}
+  
+  .show {display: block;}
 }
