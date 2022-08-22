@@ -2,6 +2,8 @@ import { QueryParam, WordsQuery } from '../interfaces/types';
 import Component from '../common/component';
 import API from '../api/api';
 import Router from '../router/router';
+import EbookWord from '../components/view/ebookWord';
+import { Word } from '../interfaces/typesAPI';
 
 const groupSelect = `<option value="0">Раздел 1</option>
 <option value="1">Раздел 2</option>
@@ -26,9 +28,12 @@ export default class EbookPage extends Component {
   public gameDropWrapper: Component;
   public gameDropBtn: Component;
   public dropDownContent: Component;
+  public contentWrapper: Component;
+  cards: EbookWord[];
 
   constructor(parentElement: HTMLElement, params: QueryParam[] | null) {
     super(parentElement, 'div', 'ebook-wrapper');
+    this.cards = [];
     let queryObj: WordsQuery = { group: '0', page: '0' };
     if (params) {
       const query = params.map((el) => Object.values(el));
@@ -50,9 +55,9 @@ export default class EbookPage extends Component {
     this.pageControlWrapper = new Component(this.controls.node, 'div', 'page-controls-wrapper');
     this.pageDown = new Component(this.pageControlWrapper.node, 'a', 'page-down', '←');
 
-    (<HTMLAnchorElement>this.pageDown.node).href = `/ebook?page=${
+    (<HTMLAnchorElement>this.pageDown.node).href = `/ebook?group=${queryObj.group}&page=${
       queryObj.page === MIN_PAGE ? queryObj.page : +queryObj.page - 1
-    }&group=${queryObj.group}`;
+    }`;
 
     this.pageNow = new Component(
       this.pageControlWrapper.node,
@@ -71,19 +76,28 @@ export default class EbookPage extends Component {
     this.gameDropBtn = new Component(this.gameDropWrapper.node, 'button', 'dropbtn', 'Мини-Игры');
     this.dropDownContent = new Component(this.gameDropWrapper.node, 'div', 'game-drop-content');
     this.dropDownContent.node.innerHTML = gameLinks;
-
+    
+    this.contentWrapper = new Component(this.wrapper.node, 'div', 'content-wrapper');
+    
     this.gameDropBtn.node.onclick = () => {
-      this.dropDownContent.node.classList.toggle("show");
-    }
+      this.dropDownContent.node.classList.toggle('show');
+    };
     window.onclick = (e) => {
       if (!(<HTMLElement>e.target).classList.contains('dropbtn')) {
         this.dropDownContent.node.classList.remove('show');
       }
-        
-    }
+    };
     const cardsData = API.getWords(queryObj);
     cardsData.then((data) => {
-      console.log(data);
+      if (data) {
+        this.addItems(data, queryObj.group);
+      }
+    });
+  }
+  addItems(wordscards: Array<Word>, group: string): void {
+    this.cards = wordscards.map((card) => {
+      const item = new EbookWord(this.contentWrapper.node, card, group);
+      return item;
     });
   }
 }
