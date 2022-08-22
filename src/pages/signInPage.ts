@@ -33,7 +33,7 @@ export default class AuthPage extends Component {
         email: this.inputEmailField.node.value,
         password: this.inputPassField.node.value,
       };
-      API.loginUser(userInfo);
+      API.users.loginUser(userInfo);
     };
   }
 }
