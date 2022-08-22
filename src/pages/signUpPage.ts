@@ -40,7 +40,7 @@ export default class AuthPage extends Component {
         password: this.inputPassField.node.value,
       };
 
-      const responseData = await API.createUser(userInfo);
+      const responseData = await API.users.createUser(userInfo);
       if (responseData) console.log(responseData);
     };
   }

@@ -69,7 +69,7 @@ export default class EbookPage extends Component {
       queryObj.page === MAX_PAGE ? queryObj.page : +queryObj.page + 1
     }&group=${queryObj.group}`;
 
-    const cardsData = API.getWords(queryObj);
+    const cardsData = API.words.getWords(queryObj);
     cardsData.then((data) => {
       console.log(data);
     });
