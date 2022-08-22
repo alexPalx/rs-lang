@@ -7,9 +7,9 @@ export default class Controller {
 
   constructor() {
     this.view = new View();
-    if (Constants.UserMetadata) console.warn('logged in user');
-    // TODO: rewrite UI with Component
-    // this.view.UI...
+    if (Constants.UserMetadata) {
+      this.view.ui.generateAuthBlock(true);
+    }
     Router.view = this.view;
     Router.init();
   }

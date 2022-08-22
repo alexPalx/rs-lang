@@ -53,4 +53,6 @@ export default class Constants {
     signin: 'signin',
     signup: 'signup',
   };
+
+  public static appName = 'RS-Lang';
 }
