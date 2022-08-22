@@ -82,11 +82,11 @@ export default class EbookPage extends Component {
     this.gameDropBtn.node.onclick = () => {
       this.dropDownContent.node.classList.toggle('show');
     };
-    window.onclick = (e) => {
+    window.addEventListener('click', (e) => {
       if (!(<HTMLElement>e.target).classList.contains('dropbtn')) {
         this.dropDownContent.node.classList.remove('show');
       }
-    };
+    });
     const cardsData = API.getWords(queryObj);
     cardsData.then((data) => {
       if (data) {
