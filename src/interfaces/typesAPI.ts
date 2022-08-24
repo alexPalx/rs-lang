@@ -36,3 +36,25 @@ export interface UserMetadata {
   token: string;
   userId: string;
 }
+
+export interface UserWord {
+  userId: string;
+  difficulty: string;
+  optional?: {};
+  wordId: string;
+}
+
+export interface UserWordConfig {
+  difficulty: string;
+  optional?: {};
+}
+
+export interface StatisticsData {
+  learnedWords: number;
+  optional?: {};
+}
+
+export interface SettingsData {
+  wordsPerDay: number;
+  optional: {};
+}
