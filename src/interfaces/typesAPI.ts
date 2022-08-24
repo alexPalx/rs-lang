@@ -58,3 +58,10 @@ export interface SettingsData {
   wordsPerDay: number;
   optional: {};
 }
+
+export enum RequestMethod {
+  GET = 'GET',
+  POST = 'POST',
+  DELETE = 'DELETE',
+  PUT = 'PUT',
+}
