@@ -118,7 +118,7 @@ export default class Users {
   public static async getNewUserToken(userId: string): Promise<UserMetadata | undefined> {
     if (!Constants.UserMetadata) return undefined;
     try {
-      const rawResponse = await fetch(Utils.buildLink(['users', userId]), {
+      const rawResponse = await fetch(Utils.buildLink(['users', userId, 'tokens']), {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${Constants.UserMetadata?.token}`,
