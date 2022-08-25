@@ -1,3 +1,6 @@
+.ebook-wrapper {
+  height: calc(100% - 66px);
+}
 .controls {
   display: flex;
   align-items: center;
@@ -101,11 +104,18 @@
     display: block;
   }
 }
-
+.content-wrapper {
+  position: relative;
+  height: 100%;
+}
+.none {
+  display: none;
+}
 .word-card {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
+  padding-right: 20px;
   border: 1px solid gray;
   &:last-child {
     margin-bottom: 100px;
