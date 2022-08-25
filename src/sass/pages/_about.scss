@@ -1,0 +1,55 @@
+.about-wrapper {
+    padding: 0 30px;
+}
+
+.about-title {
+    text-align: center;
+    padding-bottom: 50px;
+    font-size: 30px;
+}
+
+.about-list {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    display: flex;
+}
+
+.dev-wrapper {
+    gap: 10px;
+    flex-direction: column;
+    display: flex;
+
+    width: 200px;
+    height: 300px
+}
+
+.dev-image {
+    width: 200px;
+    height: 150px;
+    border: 2px solid #ddd;
+}
+
+.dev-name {
+    font-size: 18px;
+}
+
+.dev-github-block {
+    gap: 10px;
+    display: flex;
+}
+
+.dev-github-image {
+    width: 18px;
+    height: 18px;
+}
+
+// .dev-github-link {}
+
+.dev-position {
+    color: #444;
+}
+
+.dev-task-list {
+    list-style-type: decimal;
+}
