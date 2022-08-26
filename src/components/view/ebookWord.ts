@@ -22,6 +22,12 @@ export default class EbookWord extends Component {
   public textMeaningTranslate: Component;
   public audio: HTMLAudioElement;
   public authBlock: Component | null;
+  public setHardWordWrapper: Component;
+  public setStudiedWordWrapper: Component;
+  public hardWordTitle: Component;
+  public studiedWordTitle: Component;
+  public setHardWord: Component<HTMLImageElement> | null;
+  public setStudiedWord: Component<HTMLImageElement> | null;
 
   constructor(parentElement: HTMLElement, card: Word, group: string, actions: TypeOfCallbacks) {
     super(parentElement, 'div', 'word-card');
@@ -68,8 +74,35 @@ export default class EbookWord extends Component {
       `${Constants.serverURL}/${card.audioExample}`,
     ];
     this.authBlock = null;
+    this.setHardWord = null;
+    this.setStudiedWord = null;
+
+    this.authBlock = new Component(this.wordCard.node, 'div', 'auth-block');
+    this.authBlock.node.classList.add('none');
+    this.setHardWordWrapper = new Component(this.authBlock.node, 'div', 'set-hard-word-wrapper');
+    this.setHardWord = new Component(this.setHardWordWrapper.node, 'img', 'set-hard-word');
+    this.setHardWord.node.src = './assets/svg/hardword.svg';
+    this.hardWordTitle = new Component(
+      this.setHardWordWrapper.node,
+      'div',
+      'title',
+      'Добавить в Сложные слова'
+    );
+    this.setStudiedWordWrapper = new Component(
+      this.authBlock.node,
+      'div',
+      'set-studied-word-wrapper'
+    );
+    this.setStudiedWord = new Component(this.setStudiedWordWrapper.node, 'img', 'set-studied-word');
+    this.setStudiedWord.node.src = './assets/svg/graduate.svg';
+    this.studiedWordTitle = new Component(
+      this.setStudiedWordWrapper.node,
+      'div',
+      'title',
+      'Пометить как изученное'
+    );
     if (cookie) {
-      this.authBlock = new Component(this.wordCard.node, 'div', 'auth-block', 'AUTH');
+      this.authBlock.node.classList.remove('none');
     }
 
     this.playBtn.node.onclick = () => {
