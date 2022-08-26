@@ -44,7 +44,12 @@ export default class AuthPage extends Component {
     this.inputPassField.node.type = 'password';
     this.inputPassField.node.placeholder = '********';
 
-    this.signInButton = new Component<HTMLButtonElement>(this.node, 'button', 'button singin-button', 'Войти');
+    this.signInButton = new Component<HTMLButtonElement>(
+      this.node,
+      'button',
+      'button singin-button',
+      'Войти'
+    );
 
     this.signInButton.node.onclick = async () => {
       const userInfo: LoginUserRequestData = {
@@ -54,7 +59,7 @@ export default class AuthPage extends Component {
       const response = await API.users.loginUser(userInfo);
       if (response) {
         this.view.ui.generateAuthBlock(true);
-        Router.goTo(new URL(`http://${window.location.host}/${Constants.routes.main}`));
+        Router.goTo(new URL(`http://${window.location.host}${Constants.LastPage}`));
       }
     };
   }

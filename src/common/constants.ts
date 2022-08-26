@@ -55,4 +55,20 @@ export default class Constants {
   };
 
   public static appName = 'RS-Lang';
+
+  private static lastPage = this.routes.main;
+
+  public static get LastPage(): string {
+    return this.lastPage;
+  }
+
+  public static set LastPage(value: string) {
+    if (!value || value === 'signin' || value === 'signup') return;
+
+    if (Object.values(this.routes).includes(value)) {
+      this.lastPage = `/${this.routes[<keyof typeof this.routes>value]}`;
+    } else {
+      this.lastPage = `/${this.routes.main}`;
+    }
+  }
 }

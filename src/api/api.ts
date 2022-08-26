@@ -34,6 +34,7 @@ export default class API {
       });
       const content: T =
         method === RequestMethod.DELETE ? rawResponse.ok : await rawResponse.json();
+      if (!content || 'error' in content) throw new Error('Server returned an error');
       return content;
     } catch (err) {
       // TODO: Implement popup

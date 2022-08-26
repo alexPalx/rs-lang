@@ -27,7 +27,7 @@ export default class Content extends Component {
 
     switch (page) {
       case Constants.routes.main:
-        this.content = new MainPage(this.node, params);
+        this.content = new MainPage(this.node);
         break;
       case Constants.routes.ebook:
         this.content = new EbookPage(this.node, params);
