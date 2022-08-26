@@ -25,13 +25,21 @@ export default class AuthPage extends Component {
 
     this.usernameBlock = new Component(this.node, 'div', 'signup-name');
     this.usernameLabel = new Component(this.usernameBlock.node, 'h3', 'signup-name-label', 'Имя:');
-    this.inputNameField = new Component<HTMLInputElement>(this.usernameBlock.node, 'input', 'signup-name-input');
+    this.inputNameField = new Component<HTMLInputElement>(
+      this.usernameBlock.node,
+      'input',
+      'signup-name-input'
+    );
     this.inputNameField.node.type = 'text';
     this.inputNameField.node.placeholder = 'Екатерина';
 
     this.emailBlock = new Component(this.node, 'div', 'signup-email');
     this.emailLabel = new Component(this.emailBlock.node, 'h3', 'signup-email-label', 'Почта:');
-    this.inputEmailField = new Component<HTMLInputElement>(this.emailBlock.node, 'input', 'signup-email-input');
+    this.inputEmailField = new Component<HTMLInputElement>(
+      this.emailBlock.node,
+      'input',
+      'signup-email-input'
+    );
     this.inputEmailField.node.type = 'email';
     this.inputEmailField.node.placeholder = 'email@example.com';
 
@@ -42,7 +50,11 @@ export default class AuthPage extends Component {
       'signup-password-label',
       'Пароль:'
     );
-    this.inputPassField = new Component<HTMLInputElement>(this.passwordBlock.node, 'input', 'signup-password-input');
+    this.inputPassField = new Component<HTMLInputElement>(
+      this.passwordBlock.node,
+      'input',
+      'signup-password-input'
+    );
     this.inputPassField.node.type = 'password';
     this.inputPassField.node.placeholder = '********';
 

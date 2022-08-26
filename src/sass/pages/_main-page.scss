@@ -1,0 +1,30 @@
+.main-wrapper {
+    margin: 30vh auto;
+}
+
+.main-title {
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.main-content {
+    gap: 10px;
+    flex-direction: column;
+    display: flex;
+}
+
+.main-description-p1,
+.main-description-p2 {
+    font-size: 18px;
+    text-align: center;
+}
+
+.main-buttons {
+    gap: 20px;
+    justify-content: center;
+    display: flex;
+}
+
+// .main-signup-button,
+// .main-signin-button {}
