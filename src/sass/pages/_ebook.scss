@@ -1,3 +1,7 @@
+.ebook-wrapper {
+  height: calc(100% - 66px);
+}
+
 .controls {
   display: flex;
   align-items: center;
@@ -102,14 +106,119 @@
   }
 }
 
+.content-wrapper {
+  position: relative;
+  height: 100%;
+}
+
+.none {
+  display: none;
+}
+
 .word-card {
   display: flex;
   justify-content: space-between;
   margin-bottom: 15px;
+  padding-right: 20px;
   border: 1px solid gray;
+
   &:last-child {
     margin-bottom: 100px;
   }
+
+  .auth-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .set-hard-word-wrapper {
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      border-radius: 50%;
+      margin: 20px 0;
+
+      .set-hard-word {
+        cursor: pointer;
+        width: 24px;
+        height: 24px;
+      }
+
+      .title {
+        display: none;
+      }
+
+      &:hover {
+        background-color: rgb(227, 219, 219);
+
+
+        .title {
+          position: absolute;
+          top: 0px;
+          left: -160px;
+          display: block;
+          width: 150px;
+          color: #000;
+          background-color: rgb(227, 219, 219);
+          padding: 6px 12px;
+          text-align: center;
+          border-radius: 5px;
+          font-size: 18px;
+        }
+      }
+    }
+
+    .set-studied-word-wrapper {
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      border-radius: 50%;
+      margin: 20px 0;
+
+      .set-studied-word {
+        cursor: pointer;
+        width: 24px;
+        height: 24px;
+
+      }
+
+      .title {
+        display: none;
+      }
+
+      &:hover {
+        background-color: rgb(227, 219, 219);
+
+
+        .title {
+          position: absolute;
+          top: 0;
+          left: -160px;
+          display: block;
+          width: 150px;
+          color: #000;
+          background-color: rgb(227, 219, 219);
+          padding: 6px 12px;
+          text-align: center;
+          border-radius: 5px;
+          font-size: 18px;
+        }
+      }
+    }
+
+  }
+
+  .none {
+    display: none;
+  }
+
   .left-wrapper {
     display: flex;
 
@@ -132,7 +241,7 @@
     }
 
     .word-main {
-      
+
       .word-header {
         margin-bottom: 12px;
 
@@ -141,6 +250,7 @@
           align-items: center;
           font-size: 34px;
           font-weight: 500;
+
           .play-btn {
             cursor: pointer;
             margin: 0 25px;
@@ -149,15 +259,18 @@
             height: 35px;
           }
         }
-        
+
       }
+
       .word-translate {
         margin-bottom: 15px;
-        font-size:  26px;
+        font-size: 26px;
       }
+
       .text-example {
         margin-top: 20px;
       }
+
       .text-example,
       .text-meaning,
       .text-meaning-translate,

@@ -20,25 +20,29 @@ export default class EbookPage extends Component {
   public wrapper: Component;
   public controls: Component;
   public group: Component;
-  public select: Component;
+  public select: Component<HTMLSelectElement>;
   public pageControlWrapper: Component;
-  public pageDown: Component;
+  public pageDown: Component<HTMLAnchorElement>;
   public pageNow: Component;
-  public pageUp: Component;
+  public pageUp: Component<HTMLAnchorElement>;
   public gameDropWrapper: Component;
   public gameDropBtn: Component;
   public dropDownContent: Component;
   public contentWrapper: Component;
+  public cardsWrapper: Component;
+  public spinnerWrapper: Component;
+  public spinner: Component;
+  public isPlay: boolean;
   cards: EbookWord[];
 
   constructor(parentElement: HTMLElement, params: QueryParam[] | null) {
     super(parentElement, 'div', 'ebook-wrapper');
     this.cards = [];
+    this.isPlay = false;
     let queryObj: WordsQuery = { group: '0', page: '0' };
     if (params) {
       const query = params.map((el) => Object.values(el));
       queryObj = Object.fromEntries(query);
-      console.log(queryObj);
     }
     this.wrapper = this;
     this.controls = new Component(this.wrapper.node, 'div', 'controls');
@@ -47,15 +51,15 @@ export default class EbookPage extends Component {
     this.select.node.innerHTML = groupSelect;
 
     this.select.node.addEventListener('change', () => {
-      const group = (<HTMLSelectElement>this.select.node).value;
+      const group = this.select.node.value;
       Router.goTo(new URL(`http://${window.location.host}/ebook?group=${group}&page=0`));
     });
 
-    (<HTMLSelectElement>this.select.node).value = queryObj.group;
+    this.select.node.value = queryObj.group;
     this.pageControlWrapper = new Component(this.controls.node, 'div', 'page-controls-wrapper');
     this.pageDown = new Component(this.pageControlWrapper.node, 'a', 'page-down', '←');
 
-    (<HTMLAnchorElement>this.pageDown.node).href = `/ebook?group=${queryObj.group}&page=${
+    this.pageDown.node.href = `/ebook?group=${queryObj.group}&page=${
       queryObj.page === MIN_PAGE ? queryObj.page : +queryObj.page - 1
     }`;
 
@@ -68,21 +72,22 @@ export default class EbookPage extends Component {
 
     this.pageUp = new Component(this.pageControlWrapper.node, 'a', 'page-up', '→');
 
-    (<HTMLAnchorElement>this.pageUp.node).href = `/ebook?page=${
+    this.pageUp.node.href = `/ebook?page=${
       queryObj.page === MAX_PAGE ? queryObj.page : +queryObj.page + 1
     }&group=${queryObj.group}`;
-
 
     this.gameDropWrapper = new Component(this.controls.node, 'div', 'dropdown');
     this.gameDropBtn = new Component(this.gameDropWrapper.node, 'button', 'dropbtn', 'Мини-Игры');
     this.dropDownContent = new Component(this.gameDropWrapper.node, 'div', 'game-drop-content');
     this.dropDownContent.node.innerHTML = gameLinks;
-    
+
     this.contentWrapper = new Component(this.wrapper.node, 'div', 'content-wrapper');
-    
+    this.cardsWrapper = new Component(this.contentWrapper.node, 'div', 'none');
     this.gameDropBtn.node.onclick = () => {
       this.dropDownContent.node.classList.toggle('show');
     };
+    this.spinnerWrapper = new Component(this.contentWrapper.node, 'div', 'spinner-wrapper');
+    this.spinner = new Component(this.spinnerWrapper.node, 'div', 'lds-dual-ring');
     window.addEventListener('click', (e) => {
       if (!(<HTMLElement>e.target).classList.contains('dropbtn')) {
         this.dropDownContent.node.classList.remove('show');
@@ -92,12 +97,20 @@ export default class EbookPage extends Component {
     cardsData.then((data) => {
       if (data) {
         this.addItems(data, queryObj.group);
+        setTimeout(() => {
+          this.cardsWrapper.node.classList.remove('none');
+          this.spinnerWrapper.destroy();
+        }, 300);
       }
     });
   }
   addItems(wordscards: Array<Word>, group: string): void {
     this.cards = wordscards.map((card) => {
-      const item = new EbookWord(this.contentWrapper.node, card, group);
+      const item = new EbookWord(this.cardsWrapper.node, card, group, {
+        startPlay: () => {
+          this.cards.map(el => el.stopPlay());
+        }
+      });
       return item;
     });
   }
