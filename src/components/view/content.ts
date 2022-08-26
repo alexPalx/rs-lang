@@ -27,7 +27,7 @@ export default class Content extends Component {
 
     switch (page) {
       case Constants.routes.main:
-        this.content = new MainPage(this.node, params);
+        this.content = new MainPage(this.node);
         break;
       case Constants.routes.ebook:
         this.content = new EbookPage(this.node, params);
@@ -42,7 +42,7 @@ export default class Content extends Component {
         this.content = new StatisticsPage(this.node, params);
         break;
       case Constants.routes.about:
-        this.content = new AboutPage(this.node, params);
+        this.content = new AboutPage(this.node);
         break;
       case Constants.routes.signin:
         this.content = new SignInPage(this.node, this.view);

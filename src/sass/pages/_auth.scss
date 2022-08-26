@@ -1,0 +1,32 @@
+.signup-wrapper,
+.signin-wrapper {
+    gap: 10px;
+    flex-direction: column;
+    display: flex;
+    margin: 0 auto;
+    width: 300px;
+}
+
+.signup-name,
+.signin-email,
+.signup-email,
+.signin-password,
+.signup-password {
+    gap: 5px;
+    flex-direction: column;
+    display: flex;
+}
+
+.signup-name-label,
+.signin-email-label,
+.signup-email-label,
+.signup-password-label,
+.signin-password-label {
+    font-size: 18px;
+}
+
+// .signup-name-input,
+// .signin-email-input,
+// .signup-email-input,
+// .signin-password-input,
+// .signup-password-input {}

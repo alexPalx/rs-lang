@@ -128,6 +128,7 @@ export default class UI {
       this.logOutButton.node.onclick = () => {
         document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
         document.cookie = `userId=; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        Router.goTo(new URL(window.location.href));
         this.generateAuthBlock();
       };
     } else {

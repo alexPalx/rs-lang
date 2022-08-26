@@ -1,3 +1,4 @@
+import Constants from '../common/constants';
 import View from '../components/view/view';
 import { QueryParam } from '../interfaces/types';
 
@@ -17,7 +18,6 @@ export default class Router {
   public static updateListeners(): void {
     document.querySelectorAll('[href^="/"]').forEach((item) => {
       const element = <HTMLElement>item;
-      element.onclick = null;
       element.onclick = (e: Event) => {
         e.preventDefault();
         let target = <Node>e.target;
@@ -47,6 +47,7 @@ export default class Router {
   public static goTo(path: URL): void {
     const pathString = String(path);
     window.history.pushState({ pathString }, pathString, pathString);
+    Constants.LastPage = path.pathname.slice(1);
     this.render(`${path.pathname}${path.search}`);
   }
 }

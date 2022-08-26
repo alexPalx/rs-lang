@@ -35,13 +35,8 @@ module.exports = {
     new CleanWebpackPlugin(),
     new CopyPlugin({
       patterns: [{
-        from: path.resolve(__dirname, 'src/assets/svg'),
-        to: path.resolve(__dirname, 'dist/assets/svg'),
-        noErrorOnMissing: true
-      },
-      {
-        from: path.resolve(__dirname, 'src/assets/img'),
-        to: path.resolve(__dirname, 'dist/assets/img'),
+        from: path.resolve(__dirname, 'src/assets'),
+        to: path.resolve(__dirname, 'dist/assets'),
         noErrorOnMissing: true
       }],
     }),
@@ -72,6 +67,10 @@ module.exports = {
         test: /\.(woff2?|eot|ttf|otf)$/i,
         type: 'asset/resource',
       },
+      {
+        test: /\.(?:mp3|wav|ogg|mp4)$/i,
+        type: 'asset/resource',
+      }
     ],
   },
   experiments: {
