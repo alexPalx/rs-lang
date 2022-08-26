@@ -58,6 +58,7 @@ export default class AuthPage extends Component {
       };
       const response = await API.users.loginUser(userInfo);
       if (response) {
+        Constants.UserMetadata = { token: response.token, userId: response.userId };
         this.view.ui.generateAuthBlock(true);
         Router.goTo(new URL(`http://${window.location.host}${Constants.LastPage}`));
       }

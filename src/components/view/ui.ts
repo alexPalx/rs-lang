@@ -132,6 +132,7 @@ export default class UI {
         this.generateAuthBlock();
       };
     } else {
+      Constants.UserMetadata = null;
       this.signInButton = new Component(this.authBlock.node, 'a', 'signin', 'Войти');
       this.signInButton.node.href = `/${Constants.routes.signin}`;
       this.signUpButton = new Component(this.authBlock.node, 'a', 'signup', 'Регистрация');
