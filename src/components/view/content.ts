@@ -1,7 +1,6 @@
 import Constants from '../../common/constants';
 import { QueryParam } from '../../interfaces/types';
 import AboutPage from '../../pages/aboutPage';
-import DictionaryPage from '../../pages/dictionaryPage';
 import EbookPage from '../../pages/ebookPage';
 import GamesPage from '../../pages/gamesPage';
 import MainPage from '../../pages/mainPage';
@@ -31,9 +30,6 @@ export default class Content extends Component {
         break;
       case Constants.routes.ebook:
         this.content = new EbookPage(this.node, params);
-        break;
-      case Constants.routes.dictionary:
-        this.content = new DictionaryPage(this.node, params);
         break;
       case Constants.routes.games:
         this.content = new GamesPage(this.node, params);

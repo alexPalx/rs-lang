@@ -1,4 +1,4 @@
-import { UserMetadata } from '../interfaces/typesAPI';
+import { UserMetadata, UserWord } from '../interfaces/typesAPI';
 
 export default class Constants {
   // ┌───────── for production use only ───────────────────────────────────┐
@@ -46,7 +46,6 @@ export default class Constants {
   public static routes = {
     main: '',
     ebook: 'ebook',
-    dictionary: 'dictionary',
     games: 'games',
     statistics: 'statistics',
     about: 'about',
@@ -71,4 +70,6 @@ export default class Constants {
       this.lastPage = `/${this.routes.main}`;
     }
   }
+
+  public static userWords: UserWord[] | undefined;
 }

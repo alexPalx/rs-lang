@@ -32,8 +32,15 @@ export default class API {
         },
         body: JSON.stringify(body),
       });
-      const content: T =
-        method === RequestMethod.DELETE ? rawResponse.ok : await rawResponse.json();
+      const json = await (async () => {
+        try {
+          const response = await rawResponse.json();
+          return response;
+        } catch {
+          return undefined;
+        }
+      })();
+      const content: T = method === RequestMethod.DELETE ? rawResponse.ok : json;
       if (!content || 'error' in content) throw new Error('Server returned an error');
       return content;
     } catch (err) {

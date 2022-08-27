@@ -40,7 +40,10 @@ export interface UserMetadata {
 export interface UserWord {
   userId: string;
   difficulty: string;
-  optional?: {};
+  optional?: {
+    difficult: boolean;
+    learned: boolean;
+  };
   wordId: string;
 }
 

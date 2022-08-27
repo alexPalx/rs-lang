@@ -26,7 +26,6 @@ export default class UI {
   public nav: Component;
   public navLinkMain: NavLink;
   public navLinkEbook: NavLink;
-  public navLinkDict: NavLink;
   public navLinkGames: NavLink;
   public navLinkStats: NavLink;
   public navLinkAbout: NavLink;
@@ -79,14 +78,6 @@ export default class UI {
       'electronic-book-page',
       'Учебник'
     );
-
-    this.navLinkDict = new NavLink(
-      this.nav.node,
-      `/${Constants.routes.dictionary}`,
-      './assets/svg/dictionary.svg',
-      'dictionary-page',
-      'Словарь'
-    );
     this.navLinkGames = new NavLink(
       this.nav.node,
       `/${Constants.routes.games}`,
@@ -128,11 +119,11 @@ export default class UI {
       this.logOutButton.node.onclick = () => {
         document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
         document.cookie = `userId=; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+        Constants.UserMetadata = null;
         Router.goTo(new URL(window.location.href));
         this.generateAuthBlock();
       };
     } else {
-      Constants.UserMetadata = null;
       this.signInButton = new Component(this.authBlock.node, 'a', 'signin', 'Войти');
       this.signInButton.node.href = `/${Constants.routes.signin}`;
       this.signUpButton = new Component(this.authBlock.node, 'a', 'signup', 'Регистрация');

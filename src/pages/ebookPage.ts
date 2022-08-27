@@ -2,8 +2,9 @@ import { QueryParam, WordsQuery } from '../interfaces/types';
 import Component from '../common/component';
 import API from '../api/api';
 import Router from '../router/router';
-import EbookWord from '../components/view/ebookWord';
+import EbookWord from './components/ebookWord';
 import { Word } from '../interfaces/typesAPI';
+import Constants from '../common/constants';
 
 const groupSelect = `<option value="0">Раздел 1</option>
 <option value="1">Раздел 2</option>
@@ -94,8 +95,12 @@ export default class EbookPage extends Component {
       }
     });
     const cardsData = API.words.getWords(queryObj);
-    cardsData.then((data) => {
+    cardsData.then(async (data) => {
       if (data) {
+        if (Constants.UserMetadata) {
+          Constants.userWords = await API.userWords.getWords(Constants.UserMetadata.userId);
+          console.dir(Constants.userWords);
+        }
         this.addItems(data, queryObj.group);
         setTimeout(() => {
           this.cardsWrapper.node.classList.remove('none');
@@ -108,8 +113,8 @@ export default class EbookPage extends Component {
     this.cards = wordscards.map((card) => {
       const item = new EbookWord(this.cardsWrapper.node, card, group, {
         startPlay: () => {
-          this.cards.map(el => el.stopPlay());
-        }
+          this.cards.map((el) => el.stopPlay());
+        },
       });
       return item;
     });

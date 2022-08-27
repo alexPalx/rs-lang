@@ -142,6 +142,10 @@
       border-radius: 50%;
       margin: 20px 0;
 
+      &.difficult {
+        background-color: #ddd;
+      }
+
       .set-hard-word {
         cursor: pointer;
         width: 24px;
@@ -181,6 +185,10 @@
       padding: 12px;
       border-radius: 50%;
       margin: 20px 0;
+
+      &.studied {
+        background-color: #ddd;
+      }
 
       .set-studied-word {
         cursor: pointer;
