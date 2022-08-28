@@ -10,6 +10,8 @@ import Component from '../../common/component';
 import SignInPage from '../../pages/signInPage';
 import SignUpPage from '../../pages/signUpPage';
 import View from './view';
+import SprintPage from '../../pages/sprintPage';
+import AudioPage from '../../pages/audioPage';
 
 export default class Content extends Component {
   public content: Component | undefined;
@@ -32,7 +34,13 @@ export default class Content extends Component {
         this.content = new EbookPage(this.node, params);
         break;
       case Constants.routes.games:
-        this.content = new GamesPage(this.node, params);
+        this.content = new GamesPage(this.node);
+        break;
+      case Constants.routes.sprint:
+        this.content = new SprintPage(this.node, params);
+        break;
+      case Constants.routes.audio:
+        this.content = new AudioPage(this.node, params);
         break;
       case Constants.routes.statistics:
         this.content = new StatisticsPage(this.node, params);
