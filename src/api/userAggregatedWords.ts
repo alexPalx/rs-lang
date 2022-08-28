@@ -9,8 +9,8 @@ export default class UserAggregatedWords {
     page?: string,
     wordsPerPage?: string,
     filter?: string
-  ): Promise<Word | undefined> {
-    const responseData = await API.sendRequest<Word>(
+  ): Promise<Word[] | undefined> {
+    const responseData = await API.sendRequest<[{ paginatedResults: Word[] }]>(
       Utils.buildLink(
         ['users', userId, 'aggregatedWords'],
         [group, page, wordsPerPage, filter]
@@ -28,13 +28,22 @@ export default class UserAggregatedWords {
                 return '';
             }
           })
-          .filter((el) => el)
+          .filter((el) => !el.includes('undefined'))
       ),
       RequestMethod.GET,
       undefined,
       true
     );
-    return responseData;
+    const result = responseData ? responseData[0].paginatedResults : undefined;
+    if (result) {
+      result.map((word) => {
+        const correctWord = word;
+        correctWord.id = String(correctWord._id);
+        delete correctWord._id;
+        return correctWord;
+      });
+    }
+    return result;
   }
 
   public static async getWord(userId: string, wordId: string): Promise<UserWordConfig | undefined> {
