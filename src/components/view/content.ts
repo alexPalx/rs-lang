@@ -10,6 +10,7 @@ import Component from '../../common/component';
 import SignInPage from '../../pages/signInPage';
 import SignUpPage from '../../pages/signUpPage';
 import View from './view';
+import SprintPage from '../../pages/sprintPage';
 
 export default class Content extends Component {
   public content: Component | undefined;
@@ -33,6 +34,9 @@ export default class Content extends Component {
         break;
       case Constants.routes.games:
         this.content = new GamesPage(this.node, params);
+        break;
+      case Constants.routes.sprint:
+        this.content = new SprintPage(this.node);
         break;
       case Constants.routes.statistics:
         this.content = new StatisticsPage(this.node, params);

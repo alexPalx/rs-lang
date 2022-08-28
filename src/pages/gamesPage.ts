@@ -1,5 +1,8 @@
 import { QueryParam } from '../interfaces/types';
 import Component from '../common/component';
+import Router from '../router/router';
+import Constants from '../common/constants';
+import SprintPage from './sprintPage';
 
 enum GameNames {
   SprintGameName = 'СПРИНТ',
@@ -42,11 +45,27 @@ export default class GamesPage extends Component {
     this.wrapper = this;
     this.levelContainer = new Component(this.wrapper.node, 'div', 'level-container');
 
-    this.sprintContainerContent = new Component(this.levelContainer.node, 'div', 'sprint-container__content');
-    this.sprintContainerContent.node.innerHTML = drawGameContainerContent(GameNames.SprintGameName, sprintGameConditions);
-    this.sprintContainerButtons = new Component(this.sprintContainerContent.node, 'div', 'sprint-container__buttons');
+    this.sprintContainerContent = new Component(
+      this.levelContainer.node, 'div', 'sprint-container__content'
+    );
+    this.sprintContainerContent.node.innerHTML = drawGameContainerContent(
+      GameNames.SprintGameName, sprintGameConditions
+    );
+    this.sprintContainerButtons = new Component(
+      this.sprintContainerContent.node, 'div', 'sprint-container__buttons'
+    );
     this.sprintContainerButtons.node.innerHTML = levelContainerButtons;
 
+    SprintPage.level = 0;
+
     this.contentWrapper = new Component(this.wrapper.node, 'div', 'content-wrapper');
+
+    Array.from(this.sprintContainerButtons.node.children).forEach((button) => {
+      button.addEventListener('click', () => {
+        SprintPage.level = +<String>button.textContent - 1;
+        
+        Router.goTo(new URL(`http://${window.location.host}/${Constants.routes.sprint}`));
+      });
+    });
   }
 }

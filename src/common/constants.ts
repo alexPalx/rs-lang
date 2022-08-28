@@ -47,6 +47,7 @@ export default class Constants {
     main: '',
     ebook: 'ebook',
     games: 'games',
+    sprint: 'sprint',
     statistics: 'statistics',
     about: 'about',
     signin: 'signin',
