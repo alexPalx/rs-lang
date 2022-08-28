@@ -1,4 +1,3 @@
-import { QueryParam } from '../interfaces/types';
 import Component from '../common/component';
 import Router from '../router/router';
 import Constants from '../common/constants';
@@ -14,6 +13,14 @@ const sprintGameConditions = `
     <li>выберите верный перевод слова, выведенного на экран</li>
     <li>игра на время - у вас будет всего 60 секунд </li>
     <li>за ряд ответов без ошибок - бонус</li>
+    <li>выберите сложность от 1 до 6 и начните играть!</li>
+  </ul>
+`;
+const audiocallGameConditions = `
+  <ul>
+    <li>определите значение слова на слух</li>
+    <li>время выполнения этого задания не ограничено </li>
+    <li>каждое слово можно прослушать повторно</li>
     <li>выберите сложность от 1 до 6 и начните играть!</li>
   </ul>
 `;
@@ -38,8 +45,11 @@ export default class GamesPage extends Component {
   public sprintContainerContent: Component;
   public sprintContainerButtons: Component;
   public contentWrapper: Component;
+  public audiocallContainerContent: Component;
+  public audiocallContainerButtons: Component;
+  public getRandomNumber: (min: number, max: number) => number;
 
-  constructor(parentElement: HTMLElement, params: QueryParam[] | null) {
+  constructor(parentElement: HTMLElement) {
     super(parentElement, 'div', 'games-wrapper');
 
     this.wrapper = this;
@@ -63,8 +73,34 @@ export default class GamesPage extends Component {
     Array.from(this.sprintContainerButtons.node.children).forEach((button) => {
       button.addEventListener('click', () => {
         SprintPage.level = +<String>button.textContent - 1;
-        
+
         Router.goTo(new URL(`http://${window.location.host}/${Constants.routes.sprint}`));
+      });
+    });
+
+    this.audiocallContainerContent = new Component(
+      this.levelContainer.node, 'div', 'audiocall-container__content'
+    );
+    this.audiocallContainerContent.node.innerHTML = drawGameContainerContent(
+      GameNames.AudiocallGameName, audiocallGameConditions
+    );
+    this.audiocallContainerButtons = new Component(
+      this.audiocallContainerContent.node, 'div', 'audiocall-container__buttons'
+    );
+    this.audiocallContainerButtons.node.innerHTML = levelContainerButtons;
+
+    this.getRandomNumber = (min: number, max: number): number =>
+      Math.floor(Math.random() * (max - min + 1)) + min;
+    
+    Array.from(this.audiocallContainerButtons.node.children).forEach((button) => {
+      button.addEventListener('click', () => {
+        const group = String(+<String>button.textContent - 1);
+        const page = String(this.getRandomNumber(0, 29));
+
+        Router.goTo(new URL(
+          `http://${window.location.host}/${Constants.routes.audio}
+          ?group=${group}&page=${page}`
+        ));
       });
     });
   }

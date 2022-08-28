@@ -1,7 +1,7 @@
 import Component from '../common/component';
 import { QueryParam, WordsQuery } from '../interfaces/types';
 
-export default class SprintPage extends Component {
+export default class AudioPage extends Component {
   static level = 0;
   public wrapper: Component;
 
@@ -17,5 +17,6 @@ export default class SprintPage extends Component {
       const query = params.map((el) => Object.values(el));
       queryObj = Object.fromEntries(query);
     }
+
   }
 }
