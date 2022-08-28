@@ -164,7 +164,6 @@ export default class EbookWord extends Component {
   }
   private async updateWord(toggleDifficult = false, toggleLearned = false): Promise<void> {
     if (!Constants.UserMetadata || !Constants.userWords) return;
-
     // if word doesn't exist
     if (!(Constants.userWords.filter((word) => word.wordId === this.cardId).length !== 0)) {
       const created = await API.userWords.createWord(Constants.UserMetadata.userId, this.cardId, {
