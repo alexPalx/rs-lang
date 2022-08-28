@@ -37,7 +37,7 @@ export default class Content extends Component {
         this.content = new GamesPage(this.node);
         break;
       case Constants.routes.sprint:
-        this.content = new SprintPage(this.node);
+        this.content = new SprintPage(this.node, params);
         break;
       case Constants.routes.audio:
         this.content = new AudioPage(this.node, params);
