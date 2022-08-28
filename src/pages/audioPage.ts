@@ -7,16 +7,16 @@ export default class AudioPage extends Component {
 
   public content: Component;
 
+  public queryObj: WordsQuery = { group: '0', page: '0' };
+
   constructor(parentElement: HTMLElement, params: QueryParam[] | null) {
     super(parentElement);
     this.wrapper = new Component(this.node);
     this.content = new Component(this.wrapper.node, 'div', '');
 
-    let queryObj: WordsQuery = { group: '0', page: '0' };
     if (params) {
       const query = params.map((el) => Object.values(el));
-      queryObj = Object.fromEntries(query);
+      this.queryObj = Object.fromEntries(query);
     }
-
   }
 }

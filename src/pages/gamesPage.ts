@@ -98,8 +98,7 @@ export default class GamesPage extends Component {
         const page = String(this.getRandomNumber(0, 29));
 
         Router.goTo(new URL(
-          `http://${window.location.host}/${Constants.routes.audio}
-          ?group=${group}&page=${page}`
+          `http://${window.location.host}/${Constants.routes.audio}?group=${group}&page=${page}`
         ));
       });
     });
