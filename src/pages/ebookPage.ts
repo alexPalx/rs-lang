@@ -50,6 +50,8 @@ export default class EbookPage extends Component {
     this.group = new Component(this.controls.node, 'div', 'group-select');
     this.select = new Component(this.group.node, 'select', 'select-classic');
     this.select.node.innerHTML = groupSelect;
+    if (Constants.UserMetadata)
+      this.select.node.innerHTML += '<option value="6">Сложные слова</option>';
 
     this.select.node.addEventListener('change', () => {
       const group = this.select.node.value;
@@ -73,9 +75,9 @@ export default class EbookPage extends Component {
 
     this.pageUp = new Component(this.pageControlWrapper.node, 'a', 'page-up', '→');
 
-    this.pageUp.node.href = `/ebook?page=${
+    this.pageUp.node.href = `/ebook?group=${queryObj.group}&page=${
       queryObj.page === MAX_PAGE ? queryObj.page : +queryObj.page + 1
-    }&group=${queryObj.group}`;
+    }`;
 
     this.gameDropWrapper = new Component(this.controls.node, 'div', 'dropdown');
     this.gameDropBtn = new Component(this.gameDropWrapper.node, 'button', 'dropbtn', 'Мини-Игры');
@@ -94,12 +96,20 @@ export default class EbookPage extends Component {
         this.dropDownContent.node.classList.remove('show');
       }
     });
-    const cardsData = API.words.getWords(queryObj);
+    const cardsData =
+      queryObj.group !== '6'
+        ? API.words.getWords(queryObj)
+        : API.userAggregatedWords.getWords(
+            String(Constants.UserMetadata?.userId),
+            undefined,
+            queryObj.page,
+            '20',
+            '{"userWord.optional.difficult":true}'
+          );
     cardsData.then(async (data) => {
       if (data) {
-        if (Constants.UserMetadata) {
+        if (Constants.UserMetadata && !Constants.userWords) {
           Constants.userWords = await API.userWords.getWords(Constants.UserMetadata.userId);
-          console.dir(Constants.userWords);
         }
         this.addItems(data, queryObj.group);
         setTimeout(() => {
