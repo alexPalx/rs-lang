@@ -88,12 +88,9 @@ export default class EbookWord extends Component {
 
       this.setHardWordWrapper = new Component(this.authBlock.node, 'div', 'set-hard-word-wrapper');
 
-      this.setHardWordWrapper.node.onclick = async () => {
-        this.updateWord(true);
-      };
-
       this.setHardWord = new Component(this.setHardWordWrapper.node, 'img', 'set-hard-word');
-      this.setHardWord.node.src = './assets/svg/hardword.svg';
+      // this.setHardWord.node.src = './assets/svg/hardword.svg';
+      this.setHardWord.node.src = './assets/svg/brain.svg';
       this.hardWordTitle = new Component(
         this.setHardWordWrapper.node,
         'div',
@@ -106,9 +103,21 @@ export default class EbookWord extends Component {
         'div',
         'set-studied-word-wrapper'
       );
-
+      this.setHardWordWrapper.node.onclick = async () => {
+        this.updateWord(true);
+        if (this.wordCard.node.classList.contains('hard-card')) {
+          (<Component>this.hardWordTitle).node.textContent = 'Убрать из Сложных Слов';
+          this.wordCard.node.classList.remove('hard-card');
+        } else {
+          (<Component>this.hardWordTitle).node.textContent = 'Добавить в Сложные слова';
+          this.wordCard.node.classList.add('hard-card');
+        }
+      };
       this.setStudiedWordWrapper.node.onclick = () => {
-        this.updateWord(false, true);
+        if (!this.wordCard.node.classList.contains('studied-card')) {
+          this.updateWord(false, true);
+          this.wordCard.node.classList.toggle('studied-card');
+        }
       };
 
       this.setStudiedWord = new Component(
@@ -128,8 +137,16 @@ export default class EbookWord extends Component {
         const userWord = Constants.userWords.find((word) => word.wordId === this.cardId);
         this.difficult = userWord?.optional?.difficult || this.difficult;
         this.studied = userWord?.optional?.learned || this.studied;
-        if (this.difficult) this.setHardWordWrapper?.node.classList.add('difficult');
-        if (this.studied) this.setStudiedWordWrapper?.node.classList.add('studied');
+        if (this.difficult) {
+          this.setHardWordWrapper?.node.classList.add('difficult');
+          this.wordCard.node.classList.add('hard-card');
+          this.hardWordTitle.node.textContent = 'Убрать из Сложных Слов';
+        }
+        if (this.studied) {
+          this.setStudiedWordWrapper?.node.classList.add('studied');
+          this.wordCard.node.classList.add('studied-card');
+          this.studiedWordTitle.node.textContent = 'Изученное слово';
+        }
       }
     }
 
@@ -182,13 +199,17 @@ export default class EbookWord extends Component {
     });
 
     if (updated) {
+      const localWord = Constants.userWords.filter((word) => word.wordId === this.cardId)[0];
+
       if (toggleDifficult) {
         this.difficult = !this.difficult;
         this.setHardWordWrapper?.node.classList.toggle('difficult');
+        if (localWord.optional) localWord.optional.difficult = this.difficult;
       }
       if (toggleLearned) {
         this.studied = !this.studied;
         this.setStudiedWordWrapper?.node.classList.toggle('studied');
+        if (localWord.optional) localWord.optional.learned = this.studied;
       }
     }
   }
