@@ -44,6 +44,9 @@ export interface UserWord {
   optional?: {
     difficult: boolean;
     learned: boolean;
+    sprint: string;
+    audio: string;
+    allGames: string;    
   };
   wordId: string;
 }

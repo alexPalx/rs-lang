@@ -14,8 +14,8 @@ const groupSelect = `<option value="0">Раздел 1</option>
 <option value="5">Раздел 6</option>`;
 const MAX_PAGE = '29';
 const MIN_PAGE = '0';
-const gameLinks = `<a href="/games/audio">Аудиовызов</a>
-<a href="/games/sprint">Спринт</a>`;
+const gameLinks = `<a href="/audio">Аудиовызов</a>
+<a href="/sprint">Спринт</a>`;
 
 export default class EbookPage extends Component {
   public wrapper: Component;
