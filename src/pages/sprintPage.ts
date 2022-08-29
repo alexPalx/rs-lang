@@ -1,4 +1,5 @@
 import Component from '../common/component';
+import Constants from '../common/constants';
 import { QueryParam, WordsQuery } from '../interfaces/types';
 import { Word } from '../interfaces/typesAPI';
 import Router from '../router/router';
@@ -12,10 +13,22 @@ const answersSeriesHTML = `
       </svg>
   </div>
 `;
+const exitGameHTML = `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"
+      style="width: 20px; height: 20px;">
+    <path d="M.974 0L0 .974 5.026 6 0 11.026.974 12 6 6.974 
+      11.026 12l.974-.974L6.974 6 12 .974 11.026 0 6 5.026z">
+    </path>
+  </svg>
+`;
 
-enum TimeToStart {
+enum GameTime {
   InitialTime = 4,
-
+  TimeForGame = 60
+}
+enum TextColor {
+  LessThan10 = 'yellow',
+  LessThan5 = 'red'
 }
 
 export default class SprintPage extends Component {
@@ -30,6 +43,10 @@ export default class SprintPage extends Component {
   static arrayOfRandomGameWordsKeys: number[] = [];
   static drawInitialStartPage: () => void;
   static startGame: () => void;
+  static renderDataGameboard: () => void;
+  static setValuesKeyboardKeys: (event: KeyboardEvent) => void;
+  static showGameResults: () => void;
+  static checkUserAnswer: (answer: boolean) => void;
 
   public wrapper: Component;
   public exitWrapper: Component;
@@ -170,11 +187,11 @@ export default class SprintPage extends Component {
       this.hideLoader();
       this.counterBeforeGame.node.classList.remove('game-hidden');
 
-      let timeToStart = TimeToStart.InitialTime;
+      let timeToStart = GameTime.InitialTime;
       console.log('5 drawInitialStartPage work', timeToStart);
 
       const countdownToStart = setInterval(() => {
-        if (timeToStart <= TimeToStart.InitialTime && timeToStart > 0) {
+        if (timeToStart <= GameTime.InitialTime && timeToStart > 0) {
           this.counterBeforeGame.node.innerHTML = `
             <div class="time-to-start">${timeToStart}<span class="circle-time"></span></div>
             <div class="ready">Приготовьтесь</div>
@@ -200,6 +217,72 @@ export default class SprintPage extends Component {
       });
     }
     // ------ 3
-    SprintPage.startGame = (): void => {};
+    SprintPage.startGame = (): void => {
+      
+      this.exitGame.node.innerHTML = exitGameHTML;
+      this.counterBeforeGame.node.classList.add('game-hidden');
+      this.counterBeforeGame.node.innerHTML = '';
+      this.sprintGameContainer.node.classList.remove('game-hidden');
+  
+      let timeToEnd = GameTime.TimeForGame;
+      const countdownToEnd = setInterval(() => {
+        timeToEnd -= 1;
+        this.timerContainer.node.textContent = `${timeToEnd}`;
+        if (timeToEnd < 10 && timeToEnd > 5) {
+          this.timerContainer.node.style.color = TextColor.LessThan10;
+        } else if (timeToEnd <= 5) {
+          this.timerContainer.node.style.color = TextColor.LessThan5;
+        }
+        console.log('7 timeToEnd строка 218', timeToEnd);
+      }, 1000);
+  
+      SprintPage.renderDataGameboard();
+
+      document.addEventListener('keydown', SprintPage.setValuesKeyboardKeys);
+
+      const actionsAfterTimeout = setTimeout(() => {
+        if (SprintPage.collectionWordsFromServer.length > 0) {
+          clearInterval(countdownToEnd);
+          document.removeEventListener('keydown', SprintPage.setValuesKeyboardKeys);
+          SprintPage.showGameResults();
+        }
+      }, 60000);
+        
+      this.sprintGameButtons.node.addEventListener('click', (e) => {
+        const target = e.target as HTMLDivElement;
+
+        if (target.classList.contains('sprint-game__button')) {
+          
+          const userAnswer = target.className.includes('correct') === true;
+          SprintPage.checkUserAnswer(userAnswer);
+          
+          if (SprintPage.indexGameMove === SprintPage.arrayOfRandomGameWordsKeys.length) {
+            clearInterval(countdownToEnd);
+            clearTimeout(actionsAfterTimeout);
+          }
+        }
+      });
+      
+      this.exitGame.node.addEventListener('click', () => {
+        Router.goTo(new URL(`http://${window.location.host}/${Constants.routes.games}`));
+        clearInterval(countdownToEnd);
+        clearTimeout(actionsAfterTimeout);
+      });
+
+      const CONTENT = document.querySelector('.content') as HTMLDivElement;
+      const LINK = document.getElementsByTagName('a');
+      window.addEventListener('click', function changeValuesKeys(e) {
+        const target = e.target as HTMLElement;
+        if (!CONTENT.contains(target) &&
+          Array.from(LINK).find((element): boolean => element.contains(target))) 
+        {
+          document.removeEventListener('keydown', SprintPage.setValuesKeyboardKeys);
+          clearInterval(countdownToEnd);
+          clearTimeout(actionsAfterTimeout);
+          window.removeEventListener('click', changeValuesKeys);
+        }
+      });
+    }
+  
   }
 }
