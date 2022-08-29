@@ -103,7 +103,7 @@ export default class EbookPage extends Component {
             String(Constants.UserMetadata?.userId),
             undefined,
             queryObj.page,
-            '20',
+            '3600',
             '{"userWord.optional.difficult":true}'
           );
     cardsData.then(async (data) => {
