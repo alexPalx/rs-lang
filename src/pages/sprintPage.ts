@@ -60,6 +60,7 @@ export default class SprintPage extends Component {
   static arrayOfRandomGameWordsKeys: number[] = [];
   static drawInitialStartPage: () => void;
   static startGame: () => void;
+  private static countdownToEnd: NodeJS.Timer;
   static renderDataGameboard: () => void;
   static setValuesKeyboardKeys: (event: KeyboardEvent) => void;
   static showGameResults: () => void;
@@ -260,7 +261,7 @@ export default class SprintPage extends Component {
       this.sprintGameContainer.node.classList.remove('game-hidden');
   
       let timeToEnd = GameTime.TimeForGame;
-      const countdownToEnd = setInterval(() => {
+      SprintPage.countdownToEnd = setInterval(() => {
         timeToEnd -= 1;
         this.timerContainer.node.textContent = `${timeToEnd}`;
         if (timeToEnd < 10 && timeToEnd > 5) {
@@ -277,7 +278,7 @@ export default class SprintPage extends Component {
 
       const actionsAfterTimeout = setTimeout(() => {
         if (SprintPage.collectionWordsFromServer.length > 0) {
-          clearInterval(countdownToEnd);
+          clearInterval(SprintPage.countdownToEnd);
           document.removeEventListener('keydown', SprintPage.setValuesKeyboardKeys);
           SprintPage.showGameResults();
         }
@@ -292,7 +293,7 @@ export default class SprintPage extends Component {
           SprintPage.checkUserAnswer(userAnswer);
           
           if (SprintPage.indexGameMove === SprintPage.arrayOfRandomGameWordsKeys.length) {
-            clearInterval(countdownToEnd);
+            clearInterval(SprintPage.countdownToEnd);
             clearTimeout(actionsAfterTimeout);
           }
         }
@@ -300,7 +301,7 @@ export default class SprintPage extends Component {
       
       this.exitGame.node.addEventListener('click', () => {
         Router.goTo(new URL(`http://${window.location.host}/${Constants.routes.games}`));
-        clearInterval(countdownToEnd);
+        clearInterval(SprintPage.countdownToEnd);
         clearTimeout(actionsAfterTimeout);
         SprintPage.collectionWordsFromServer = [];
       });
@@ -313,7 +314,7 @@ export default class SprintPage extends Component {
           Array.from(LINK).find((element): boolean => element.contains(target))) 
         {
           document.removeEventListener('keydown', SprintPage.setValuesKeyboardKeys);
-          clearInterval(countdownToEnd);
+          clearInterval(SprintPage.countdownToEnd);
           clearTimeout(actionsAfterTimeout);
           SprintPage.collectionWordsFromServer = [];
           window.removeEventListener('click', changeValuesKeys);
@@ -425,6 +426,7 @@ export default class SprintPage extends Component {
       SprintPage.indexGameMove += 1;
 
       if (SprintPage.indexGameMove === SprintPage.arrayOfRandomGameWordsKeys.length) {
+        clearInterval(SprintPage.countdownToEnd);
         SprintPage.showGameResults();
         document.removeEventListener('keydown', SprintPage.setValuesKeyboardKeys);
       } else {
