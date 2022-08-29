@@ -114,10 +114,17 @@
 .none {
   display: none;
 }
+
+.hard-card {
+  background-color: #FBAB7E;
+  background-image: linear-gradient(62deg, #FBAB7E 0%, #F7CE68 100%);
+}
+
 .studied-card {
   background-color: #85FFBD;
   background-image: linear-gradient(45deg, #85FFBD 0%, #FFFB7D 100%);
 }
+
 .word-card {
   display: flex;
   justify-content: space-between;
@@ -125,8 +132,6 @@
   padding-right: 20px;
   border: 1px solid gray;
   border-radius: 6px;
-  // background-color: #85FFBD;
-  // background-image: linear-gradient(45deg, #85FFBD 0%, #FFFB7D 100%);
 
   &:last-child {
     margin-bottom: 100px;
@@ -149,7 +154,7 @@
       margin: 20px 0;
 
       &.difficult {
-        background-color: #ddd;
+        background-color: #fff;
 
         .set-hard-word {
           filter: invert(17%) sepia(29%) saturate(6977%) hue-rotate(214deg) brightness(83%) contrast(109%);
@@ -197,7 +202,7 @@
       margin: 20px 0;
 
       &.studied {
-        background-color: #ddd;
+        background-color: #fff;
 
         .set-studied-word {
           filter: invert(30%) sepia(89%) saturate(1552%) hue-rotate(156deg) brightness(92%) contrast(101%);
