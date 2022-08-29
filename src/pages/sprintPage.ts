@@ -47,6 +47,9 @@ export default class SprintPage extends Component {
   static setValuesKeyboardKeys: (event: KeyboardEvent) => void;
   static showGameResults: () => void;
   static checkUserAnswer: (answer: boolean) => void;
+  private static audioCorrectAnswer = new Audio('../../assets/audio/correctanswer.mp3');
+  private static audioIncorrectAnswer = new Audio('../../assets/audio/incorrectanswer.mp3');
+  static updateServerData: (word: Word, result: boolean) => Promise<void>;
 
   public wrapper: Component;
   public exitWrapper: Component;
@@ -329,6 +332,65 @@ export default class SprintPage extends Component {
         );
         this.translateWord.node.textContent =
           SprintPage.collectionWordsFromServer[indexRandomTranslation].wordTranslate;
+      }
+    }
+    // ------ 5
+    SprintPage.setValuesKeyboardKeys = (event: KeyboardEvent): void => {
+      if (event.code === 'ArrowRight') 
+        SprintPage.checkUserAnswer(true);
+      if (event.code === 'ArrowLeft') 
+        SprintPage.checkUserAnswer(false);
+    }
+    // ------ 6
+    SprintPage.checkUserAnswer = (userAnswer: boolean): void => {
+      
+      const currentWord = SprintPage.collectionWordsFromServer[
+        SprintPage.arrayOfRandomGameWordsKeys[SprintPage.indexGameMove]
+      ];
+      const currentTranslate = this.translateWord.node.textContent;
+
+      console.log('11 проверка checkUserAnswer: currentWord', currentWord);
+      console.log('11 проверка checkUserAnswer: currentTranslate', currentTranslate);
+
+      const checkedAnswer = currentWord.wordTranslate === currentTranslate;
+
+      SprintPage.audioCorrectAnswer.pause();
+      SprintPage.audioCorrectAnswer.currentTime = 0;
+      SprintPage.audioIncorrectAnswer.pause();
+      SprintPage.audioIncorrectAnswer.currentTime = 0;
+
+      if (userAnswer === checkedAnswer) {
+        
+        SprintPage.audioCorrectAnswer.play();
+        SprintPage.arrayCorrectAnswers.push(SprintPage.arrayOfRandomGameWordsKeys[
+          SprintPage.indexGameMove]);
+        SprintPage.updateServerData(currentWord, true);
+        SprintPage.correctAnswersSeries += 1;
+
+        SprintPage.scoreTotal += SprintPage.scoreGrowth;
+        if (SprintPage.correctAnswersSeries === 4) 
+          SprintPage.scoreGrowth = 20;
+        if (SprintPage.correctAnswersSeries === 8) 
+          SprintPage.scoreGrowth = 40;
+        if (SprintPage.correctAnswersSeries === 12) 
+          SprintPage.scoreGrowth = 80;
+      } else {
+        
+        SprintPage.audioIncorrectAnswer.play();
+        SprintPage.arrayIncorrectAnswers.push(SprintPage.arrayOfRandomGameWordsKeys[
+          SprintPage.indexGameMove]);
+        SprintPage.updateServerData(currentWord, false);  
+        SprintPage.scoreGrowth = 10;
+        SprintPage.correctAnswersSeries = 0;
+      }
+
+      SprintPage.indexGameMove += 1;
+
+      if (SprintPage.indexGameMove === SprintPage.arrayOfRandomGameWordsKeys.length) {
+        SprintPage.showGameResults();
+        document.removeEventListener('keydown', SprintPage.setValuesKeyboardKeys);
+      } else {
+        SprintPage.renderDataGameboard();
       }
     }
   }
