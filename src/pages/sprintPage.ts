@@ -106,17 +106,27 @@ export default class SprintPage extends Component {
     this.iconLoaderWrapper = new Component(this.wrapper.node, 'div', 'icon-loader-wrapper');
     this.iconLoader = new Component(this.iconLoaderWrapper.node, 'div', 'icon-loader');
 
-    this.sprintGameContainer = new Component(this.wrapper.node, 'div', 'sprint-game__container game-hidden');
+    this.sprintGameContainer = new Component(
+      this.wrapper.node, 'div', 'sprint-game__container game-hidden'
+    );
     
-    this.counterBeforeGame = new Component(this.wrapper.node, 'div', 'counter-before-game game-hidden');
+    this.counterBeforeGame = new Component(
+      this.wrapper.node, 'div', 'counter-before-game game-hidden'
+    );
 
-    this.sprintGameCounter = new Component(this.sprintGameContainer.node, 'div', 'sprint-game__counter');
+    this.sprintGameCounter = new Component(
+      this.sprintGameContainer.node, 'div', 'sprint-game__counter'
+    );
     this.timerContainer = new Component(this.sprintGameCounter.node, 'div', 'timer-container');
     this.timerContainer.node.textContent = '60';
-    this.sprintGameCounterScore = new Component(this.sprintGameCounter.node, 'div', 'sprint-game-counter__score');
+    this.sprintGameCounterScore = new Component(
+      this.sprintGameCounter.node, 'div', 'sprint-game-counter__score'
+    );
     this.sprintGameCounterScore.node.textContent ='0';
 
-    this.sprintGameContent = new Component(this.sprintGameContainer.node, 'div', 'sprint-game__content');
+    this.sprintGameContent = new Component(
+      this.sprintGameContainer.node, 'div', 'sprint-game__content'
+    );
     this.row1 = new Component(this.sprintGameContent.node, 'div', 'row1');
     this.row1.node.innerHTML = answersSeriesHTML.repeat(3);
     this.wordVoicing = new Component(this.row1.node, 'div', 'word-voicing');
@@ -129,19 +139,24 @@ export default class SprintPage extends Component {
     this.questionWord = new Component(this.sprintGameContent.node, 'div', 'question-word', '');
     this.translateWord = new Component(this.sprintGameContent.node, 'div', 'translate-word', '');
 
-    this.sprintGameButtons = new Component(this.sprintGameContainer.node, 'div', 'sprint-game__buttons');
-    this.sprintWrongButton = new Component(this.sprintGameButtons.node, 'div', 'sprint-game__button wrong-button', 'Неверно');
-    this.sprintCorrectButton = new Component(this.sprintGameButtons.node, 'div', 'sprint-game__button correct-button', 'Верно');
+    this.sprintGameButtons = new Component(
+      this.sprintGameContainer.node, 'div', 'sprint-game__buttons'
+    );
+    this.sprintWrongButton = new Component(
+      this.sprintGameButtons.node, 'div', 'sprint-game__button wrong-button', 'Неверно'
+    );
+    this.sprintCorrectButton = new Component(
+      this.sprintGameButtons.node, 'div', 'sprint-game__button correct-button', 'Верно'
+    );
     
-    this.resultsContainer = new Component(this.wrapper.node, 'div', 'results__container game-hidden');
+    this.resultsContainer = new Component(
+      this.wrapper.node, 'div', 'results__container game-hidden'
+    );
 
     if (params) {
       const query = params.map((el) => Object.values(el));
       this.queryObj = Object.fromEntries(query);
-      Router.goTo(new URL(`
-        http://${window.location.host}/sprint?group=${this.queryObj.group}&page=${
-          this.queryObj.page
-        }`));
+      Router.goTo(new URL(`http://${window.location.host}/sprint?group=${this.queryObj.group}&page=${this.queryObj.page}`));
     }
 
     this.manageGame = async () => {
@@ -440,7 +455,8 @@ export default class SprintPage extends Component {
       const correctList = document.querySelector('.correct-list') as HTMLDivElement;
       SprintPage.arrayCorrectAnswers.forEach((item) => {
         correctList.innerHTML += `
-          <li class="word-item"><span class="word-en">${SprintPage.collectionWordsFromServer[item].word}
+          <li class="word-item"><span class="word-en">${SprintPage.
+            collectionWordsFromServer[item].word}
             &nbsp;${SprintPage.collectionWordsFromServer[item].transcription}</span> - 
             ${SprintPage.collectionWordsFromServer[item].wordTranslate}
           </li>
@@ -449,7 +465,8 @@ export default class SprintPage extends Component {
       const incorrectList = document.querySelector('.incorrect-list') as HTMLDivElement;
       SprintPage.arrayIncorrectAnswers.forEach((item) => {
         incorrectList.innerHTML += `
-          <li class="word-item"><span class="word-en">${SprintPage.collectionWordsFromServer[item].word}
+          <li class="word-item"><span class="word-en">${SprintPage.
+            collectionWordsFromServer[item].word}
             &nbsp;${SprintPage.collectionWordsFromServer[item].transcription}</span> - 
             ${SprintPage.collectionWordsFromServer[item].wordTranslate}
           </li>
