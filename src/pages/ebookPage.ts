@@ -14,8 +14,6 @@ const groupSelect = `<option value="0">Раздел 1</option>
 <option value="5">Раздел 6</option>`;
 const MAX_PAGE = '29';
 const MIN_PAGE = '0';
-const gameLinks = `<a href="/audio">Аудиовызов</a>
-<a href="/sprint">Спринт</a>`;
 
 export default class EbookPage extends Component {
   public wrapper: Component;
@@ -82,7 +80,7 @@ export default class EbookPage extends Component {
     this.gameDropWrapper = new Component(this.controls.node, 'div', 'dropdown');
     this.gameDropBtn = new Component(this.gameDropWrapper.node, 'button', 'dropbtn', 'Мини-Игры');
     this.dropDownContent = new Component(this.gameDropWrapper.node, 'div', 'game-drop-content');
-    this.dropDownContent.node.innerHTML = gameLinks;
+    this.dropDownContent.node.innerHTML = this.setGameLinks(queryObj.group, queryObj.page);
 
     this.contentWrapper = new Component(this.wrapper.node, 'div', 'content-wrapper');
     this.cardsWrapper = new Component(this.contentWrapper.node, 'div', 'none');
@@ -128,5 +126,9 @@ export default class EbookPage extends Component {
       });
       return item;
     });
+  }
+  setGameLinks(group: string, page: string): string {
+    return `<a href="/audio?group=${group}&page=${page}">Аудиовызов</a>
+            <a href="/sprint?group=${group}&page=${page}">Спринт</a>`;
   }
 }

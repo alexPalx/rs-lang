@@ -93,7 +93,8 @@ export default class EbookWord extends Component {
       };
 
       this.setHardWord = new Component(this.setHardWordWrapper.node, 'img', 'set-hard-word');
-      this.setHardWord.node.src = './assets/svg/hardword.svg';
+      // this.setHardWord.node.src = './assets/svg/hardword.svg';
+      this.setHardWord.node.src = './assets/svg/brain.svg';
       this.hardWordTitle = new Component(
         this.setHardWordWrapper.node,
         'div',
@@ -109,6 +110,7 @@ export default class EbookWord extends Component {
 
       this.setStudiedWordWrapper.node.onclick = () => {
         this.updateWord(false, true);
+        this.wordCard.node.classList.toggle('studied-card');
       };
 
       this.setStudiedWord = new Component(
@@ -129,7 +131,10 @@ export default class EbookWord extends Component {
         this.difficult = userWord?.optional?.difficult || this.difficult;
         this.studied = userWord?.optional?.learned || this.studied;
         if (this.difficult) this.setHardWordWrapper?.node.classList.add('difficult');
-        if (this.studied) this.setStudiedWordWrapper?.node.classList.add('studied');
+        if (this.studied) {
+          this.setStudiedWordWrapper?.node.classList.add('studied');
+          this.wordCard.node.classList.add('studied-card');
+        };
       }
     }
 
