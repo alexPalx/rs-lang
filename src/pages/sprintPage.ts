@@ -153,12 +153,6 @@ export default class SprintPage extends Component {
       this.wrapper.node, 'div', 'results__container game-hidden'
     );
 
-    if (params) {
-      const query = params.map((el) => Object.values(el));
-      this.queryObj = Object.fromEntries(query);
-      Router.goTo(new URL(`http://${window.location.host}/sprint?group=${this.queryObj.group}&page=${this.queryObj.page}`));
-    }
-
     this.manageGame = async () => {
       SprintPage.scoreTotal = 0;
       SprintPage.correctAnswersSeries = 0;
@@ -190,12 +184,17 @@ export default class SprintPage extends Component {
     this.getWordsForGame = async (): Promise<void> => {
       if (SprintPage.collectionWordsFromServer.length === 0) {
         const tempCollectionWords: Promise<Word[]>[] = [];
-
-        for (let i = 0; i <= 29; i += 1) {
+        if (params) {
+          const query = params.map((el) => Object.values(el));
+          this.queryObj = Object.fromEntries(query);
+          tempCollectionWords.push(this.getWords(this.queryObj));
+        } else {
+          for (let i = 0; i <= 29; i += 1) {
           const group = String(SprintPage.level);
           const page = String(i);
           this.queryObj = { group, page };
           tempCollectionWords.push(this.getWords(this.queryObj));
+          }
         }
         SprintPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
       }
@@ -238,7 +237,7 @@ export default class SprintPage extends Component {
         }
       }, 1000);
       
-      console.log('6 countdownToStart', countdownToStart);
+      console.log('6 countdownToStart', timeToStart);
       const CONTENT = document.querySelector('.content') as HTMLDivElement;
       const LINK = document.getElementsByTagName('a');
       window.addEventListener('click', function clearCountdown(e) {
@@ -247,6 +246,7 @@ export default class SprintPage extends Component {
           Array.from(LINK).find((element): boolean => element.contains(target))) 
         {
           clearInterval(countdownToStart);
+          SprintPage.collectionWordsFromServer = [];
           window.removeEventListener('click', clearCountdown);
         }
       });
@@ -302,6 +302,7 @@ export default class SprintPage extends Component {
         Router.goTo(new URL(`http://${window.location.host}/${Constants.routes.games}`));
         clearInterval(countdownToEnd);
         clearTimeout(actionsAfterTimeout);
+        SprintPage.collectionWordsFromServer = [];
       });
 
       const CONTENT = document.querySelector('.content') as HTMLDivElement;
@@ -314,6 +315,7 @@ export default class SprintPage extends Component {
           document.removeEventListener('keydown', SprintPage.setValuesKeyboardKeys);
           clearInterval(countdownToEnd);
           clearTimeout(actionsAfterTimeout);
+          SprintPage.collectionWordsFromServer = [];
           window.removeEventListener('click', changeValuesKeys);
         }
       });
@@ -368,10 +370,14 @@ export default class SprintPage extends Component {
     }
     // ------ 5
     SprintPage.setValuesKeyboardKeys = (event: KeyboardEvent): void => {
-      if (event.code === 'ArrowRight') 
+      if (event.code === 'ArrowRight') {
+        if (event.repeat) return;
         SprintPage.checkUserAnswer(true);
-      if (event.code === 'ArrowLeft') 
+      }
+      if (event.code === 'ArrowLeft') {
+        if (event.repeat) return;
         SprintPage.checkUserAnswer(false);
+      }
     }
     // ------ 6
     SprintPage.checkUserAnswer = (userAnswer: boolean): void => {
