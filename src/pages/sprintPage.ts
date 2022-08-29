@@ -13,6 +13,11 @@ const answersSeriesHTML = `
   </div>
 `;
 
+enum TimeToStart {
+  InitialTime = 4,
+
+}
+
 export default class SprintPage extends Component {
   static level = 0;
   static scoreTotal = 0;
@@ -23,6 +28,8 @@ export default class SprintPage extends Component {
   private static arrayIncorrectAnswers: number[] = [];
   static collectionWordsFromServer: (Word)[] = [];
   static arrayOfRandomGameWordsKeys: number[] = [];
+  static drawInitialStartPage: () => void;
+  static startGame: () => void;
 
   public wrapper: Component;
   public exitWrapper: Component;
@@ -49,7 +56,8 @@ export default class SprintPage extends Component {
   public queryObj: WordsQuery = { group: '0', page: '0' };
   public manageGame: () => Promise<void>;
   public getWordsForGame: () => Promise<void>;
-  getWords: (query: WordsQuery) => Promise<Word[]>;
+  public getWords: (query: WordsQuery) => Promise<Word[]>;
+  public hideLoader: () => void;
 
   constructor(parentElement: HTMLElement, params: QueryParam[] | null) {
     super(parentElement, 'div', 'sprint-game-wrapper');
@@ -108,7 +116,8 @@ export default class SprintPage extends Component {
       SprintPage.arrayIncorrectAnswers = [];
 
       await this.getWordsForGame();
-
+      
+      SprintPage.drawInitialStartPage();
     }
 
     this.getWords = async (query: WordsQuery): Promise<Word[]> => {
@@ -153,5 +162,44 @@ export default class SprintPage extends Component {
       }
     }
 // ------ 2
+    this.hideLoader = (): void => {
+      this.iconLoaderWrapper.node.classList.add('game-hidden');
+    }
+
+    SprintPage.drawInitialStartPage = (): void => {
+      this.hideLoader();
+      this.counterBeforeGame.node.classList.remove('game-hidden');
+
+      let timeToStart = TimeToStart.InitialTime;
+      console.log('5 drawInitialStartPage work', timeToStart);
+
+      const countdownToStart = setInterval(() => {
+        if (timeToStart <= TimeToStart.InitialTime && timeToStart > 0) {
+          this.counterBeforeGame.node.innerHTML = `
+            <div class="time-to-start">${timeToStart}<span class="circle-time"></span></div>
+            <div class="ready">Приготовьтесь</div>
+          `;
+          timeToStart -= 1;
+        } else {
+          clearInterval(countdownToStart);
+          SprintPage.startGame();
+        }
+      }, 1000);
+      
+      console.log('6 countdownToStart', countdownToStart);
+      const CONTENT = document.querySelector('.content') as HTMLDivElement;
+      const LINK = document.getElementsByTagName('a');
+      window.addEventListener('click', function clearCountdown(e) {
+        const target = e.target as HTMLElement;
+        if (!CONTENT.contains(target) &&
+          Array.from(LINK).find((element): boolean => element.contains(target))) 
+        {
+          clearInterval(countdownToStart);
+          window.removeEventListener('click', clearCountdown);
+        }
+      });
+    }
+    // ------ 3
+    SprintPage.startGame = (): void => {};
   }
 }
