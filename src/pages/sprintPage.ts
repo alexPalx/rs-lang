@@ -21,6 +21,22 @@ const exitGameHTML = `
     </path>
   </svg>
 `;
+const drawResults = (
+  scoreFinal: number, countCorrect: number, countIncorrect: number
+  ): string => `
+  <h1 class="results-title">Итоговый счет: ${scoreFinal}</h1>
+  <h2 class="content-evaluation"></h2>
+  <div class="results-content">
+    <div class="results-content__correct">
+      <h3 class="content-title">Верные ответы: ${countCorrect}</h3>
+      <ul class="correct-list"></ul>
+    </div>
+    <div class="results-content__incorrect">
+      <h3 class="content-title">Ошибки: ${countIncorrect}</h3>
+      <ul class="incorrect-list"></ul>
+    </div>
+  </div>
+`;
 
 enum GameTime {
   InitialTime = 4,
@@ -393,5 +409,54 @@ export default class SprintPage extends Component {
         SprintPage.renderDataGameboard();
       }
     }
+    // ------ 7
+    SprintPage.showGameResults = (): void => {
+
+      this.sprintGameContainer.node.classList.add('game-hidden');
+      this.resultsContainer.node.classList.remove('game-hidden');
+      const countCorrectAnswers = SprintPage.arrayCorrectAnswers.length;
+      const countIncorrectAnswers = SprintPage.arrayIncorrectAnswers.length;
+      this.resultsContainer.node.innerHTML = 
+        drawResults(SprintPage.scoreTotal, countCorrectAnswers, countIncorrectAnswers);
+      
+      const contentEvaluation = document.querySelector('.content-evaluation') as HTMLHeadingElement;
+      let evaluationCriteria;
+      if (countCorrectAnswers + countIncorrectAnswers > 0) {
+        evaluationCriteria = countCorrectAnswers / (countCorrectAnswers + countIncorrectAnswers);
+      } else {
+        evaluationCriteria = 0;
+      }
+      if (evaluationCriteria < 0.25) {
+        contentEvaluation.innerHTML = 'Нужно тренироваться чаще!';
+      } else if (evaluationCriteria >= 0.25 && evaluationCriteria < 0.5) {
+        contentEvaluation.innerHTML = 'Вы можете лучше!';
+      } else if (evaluationCriteria >= 0.5 && evaluationCriteria < 0.75) {
+        contentEvaluation.innerHTML = 'Неплохой результат!';
+      } else {
+        contentEvaluation.innerHTML = 'Отличный результат!';
+      }
+
+      const correctList = document.querySelector('.correct-list') as HTMLDivElement;
+      SprintPage.arrayCorrectAnswers.forEach((item) => {
+        correctList.innerHTML += `
+          <li class="word-item"><span class="word-en">${SprintPage.collectionWordsFromServer[item].word}
+            &nbsp;${SprintPage.collectionWordsFromServer[item].transcription}</span> - 
+            ${SprintPage.collectionWordsFromServer[item].wordTranslate}
+          </li>
+        `;
+      });
+      const incorrectList = document.querySelector('.incorrect-list') as HTMLDivElement;
+      SprintPage.arrayIncorrectAnswers.forEach((item) => {
+        incorrectList.innerHTML += `
+          <li class="word-item"><span class="word-en">${SprintPage.collectionWordsFromServer[item].word}
+            &nbsp;${SprintPage.collectionWordsFromServer[item].transcription}</span> - 
+            ${SprintPage.collectionWordsFromServer[item].wordTranslate}
+          </li>
+        `;
+      });
+  
+      SprintPage.collectionWordsFromServer = [];
+    }
+    
   }
 }
