@@ -1,6 +1,8 @@
 import Component from '../common/component';
 import { QueryParam, WordsQuery } from '../interfaces/types';
+import { Word } from '../interfaces/typesAPI';
 import Router from '../router/router';
+import Utils from '../utils/utils';
 
 const answersSeriesHTML = `
   <div class="answers-series">
@@ -13,6 +15,15 @@ const answersSeriesHTML = `
 
 export default class SprintPage extends Component {
   static level = 0;
+  static scoreTotal = 0;
+  static correctAnswersSeries = 0;
+  static scoreGrowth = 10;
+  static indexGameMove = 0;
+  private static arrayCorrectAnswers: number[] = [];
+  private static arrayIncorrectAnswers: number[] = [];
+  static collectionWordsFromServer: (Word)[] = [];
+  static arrayOfRandomGameWordsKeys: number[] = [];
+
   public wrapper: Component;
   public exitWrapper: Component;
   public exitGame: Component;
@@ -35,8 +46,10 @@ export default class SprintPage extends Component {
   public sprintWrongButton: Component;
   public sprintCorrectButton: Component;
   public resultsContainer: Component;
-
   public queryObj: WordsQuery = { group: '0', page: '0' };
+  public manageGame: () => Promise<void>;
+  public getWordsForGame: () => Promise<void>;
+  getWords: (query: WordsQuery) => Promise<Word[]>;
 
   constructor(parentElement: HTMLElement, params: QueryParam[] | null) {
     super(parentElement, 'div', 'sprint-game-wrapper');
@@ -85,5 +98,60 @@ export default class SprintPage extends Component {
           this.queryObj.page
         }`));
     }
+
+    this.manageGame = async () => {
+      SprintPage.scoreTotal = 0;
+      SprintPage.correctAnswersSeries = 0;
+      SprintPage.scoreGrowth = 10;
+      SprintPage.indexGameMove = 0;
+      SprintPage.arrayCorrectAnswers = [];
+      SprintPage.arrayIncorrectAnswers = [];
+
+      await this.getWordsForGame();
+
+    }
+
+    this.getWords = async (query: WordsQuery): Promise<Word[]> => {
+      try {
+        const rawResponse = await fetch(
+          Utils.buildLink(['words'], [`group=${query.group}`, `page=${query.page}`])
+        );
+        if (!rawResponse.ok) throw new Error('Server error');
+        const content: Word[] = await rawResponse.json();
+        console.log('2: this.getWords work');
+        return content;
+      } catch (err) {
+        console.error((<Error>err).message);
+        throw err;
+      }
+    }
+// ------ 1
+    this.getWordsForGame = async (): Promise<void> => {
+      if (SprintPage.collectionWordsFromServer.length === 0) {
+        const tempCollectionWords: Promise<Word[]>[] = [];
+
+        for (let i = 0; i <= 29; i += 1) {
+          const group = String(SprintPage.level);
+          const page = String(i);
+          this.queryObj = { group, page };
+          tempCollectionWords.push(this.getWords(this.queryObj));
+        }
+        SprintPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
+      }
+      const arrayOfWordsKeysFromServer = Object.keys(SprintPage.collectionWordsFromServer);
+
+      console.log('3: getWordsForGame work \n arrayOfWordsKeysFromServer \n 4: норм', 
+      arrayOfWordsKeysFromServer);
+
+      while (SprintPage.arrayOfRandomGameWordsKeys.length <
+        SprintPage.collectionWordsFromServer.length) {
+        
+        const keyRandom = arrayOfWordsKeysFromServer
+          .splice(Math.floor(Math.random() * arrayOfWordsKeysFromServer.length), 1);
+
+        SprintPage.arrayOfRandomGameWordsKeys.push(+keyRandom);
+      }
+    }
+// ------ 2
   }
 }
