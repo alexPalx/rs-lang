@@ -76,7 +76,9 @@ export default class EbookPage extends Component {
     this.pageUp.node.href = `/ebook?group=${queryObj.group}&page=${
       queryObj.page === MAX_PAGE ? queryObj.page : +queryObj.page + 1
     }`;
-
+    if (queryObj.group === '6') {
+      this.pageControlWrapper.destroy();
+    }
     this.gameDropWrapper = new Component(this.controls.node, 'div', 'dropdown');
     this.gameDropBtn = new Component(this.gameDropWrapper.node, 'button', 'dropbtn', 'Мини-Игры');
     this.dropDownContent = new Component(this.gameDropWrapper.node, 'div', 'game-drop-content');

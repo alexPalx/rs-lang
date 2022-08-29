@@ -199,13 +199,17 @@ export default class EbookWord extends Component {
     });
 
     if (updated) {
+      const localWord = Constants.userWords.filter((word) => word.wordId === this.cardId)[0];
+
       if (toggleDifficult) {
         this.difficult = !this.difficult;
         this.setHardWordWrapper?.node.classList.toggle('difficult');
+        if (localWord.optional) localWord.optional.difficult = this.difficult;
       }
       if (toggleLearned) {
         this.studied = !this.studied;
         this.setStudiedWordWrapper?.node.classList.toggle('studied');
+        if (localWord.optional) localWord.optional.learned = this.studied;
       }
     }
   }
