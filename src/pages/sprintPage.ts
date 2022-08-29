@@ -22,9 +22,7 @@ const exitGameHTML = `
     </path>
   </svg>
 `;
-const drawResults = (
-  scoreFinal: number, countCorrect: number, countIncorrect: number
-  ): string => `
+const drawResults = (scoreFinal: number, countCorrect: number, countIncorrect: number): string => `
   <h1 class="results-title">Итоговый счет: ${scoreFinal}</h1>
   <h2 class="content-evaluation"></h2>
   <div class="results-content">
@@ -41,11 +39,11 @@ const drawResults = (
 
 enum GameTime {
   InitialTime = 4,
-  TimeForGame = 60
+  TimeForGame = 60,
 }
 enum TextColor {
   LessThan10 = 'yellow',
-  LessThan5 = 'red'
+  LessThan5 = 'red',
 }
 
 export default class SprintPage extends Component {
@@ -56,7 +54,7 @@ export default class SprintPage extends Component {
   static indexGameMove = 0;
   private static arrayCorrectAnswers: number[] = [];
   private static arrayIncorrectAnswers: number[] = [];
-  static collectionWordsFromServer: (Word)[] = [];
+  static collectionWordsFromServer: Word[] = [];
   static arrayOfRandomGameWordsKeys: number[] = [];
   static drawInitialStartPage: () => void;
   static startGame: () => void;
@@ -108,25 +106,35 @@ export default class SprintPage extends Component {
     this.iconLoader = new Component(this.iconLoaderWrapper.node, 'div', 'icon-loader');
 
     this.sprintGameContainer = new Component(
-      this.wrapper.node, 'div', 'sprint-game__container game-hidden'
+      this.wrapper.node,
+      'div',
+      'sprint-game__container game-hidden'
     );
-    
+
     this.counterBeforeGame = new Component(
-      this.wrapper.node, 'div', 'counter-before-game game-hidden'
+      this.wrapper.node,
+      'div',
+      'counter-before-game game-hidden'
     );
 
     this.sprintGameCounter = new Component(
-      this.sprintGameContainer.node, 'div', 'sprint-game__counter'
+      this.sprintGameContainer.node,
+      'div',
+      'sprint-game__counter'
     );
     this.timerContainer = new Component(this.sprintGameCounter.node, 'div', 'timer-container');
     this.timerContainer.node.textContent = '60';
     this.sprintGameCounterScore = new Component(
-      this.sprintGameCounter.node, 'div', 'sprint-game-counter__score'
+      this.sprintGameCounter.node,
+      'div',
+      'sprint-game-counter__score'
     );
-    this.sprintGameCounterScore.node.textContent ='0';
+    this.sprintGameCounterScore.node.textContent = '0';
 
     this.sprintGameContent = new Component(
-      this.sprintGameContainer.node, 'div', 'sprint-game__content'
+      this.sprintGameContainer.node,
+      'div',
+      'sprint-game__content'
     );
     this.row1 = new Component(this.sprintGameContent.node, 'div', 'row1');
     this.row1.node.innerHTML = answersSeriesHTML.repeat(3);
@@ -136,22 +144,32 @@ export default class SprintPage extends Component {
     this.reward.node.textContent = '+10';
     this.rewardText = new Component(this.answersReward.node, 'span', 'reward-text');
     this.rewardText.node.textContent = ` очков за слово`;
-    
+
     this.questionWord = new Component(this.sprintGameContent.node, 'div', 'question-word', '');
     this.translateWord = new Component(this.sprintGameContent.node, 'div', 'translate-word', '');
 
     this.sprintGameButtons = new Component(
-      this.sprintGameContainer.node, 'div', 'sprint-game__buttons'
+      this.sprintGameContainer.node,
+      'div',
+      'sprint-game__buttons'
     );
     this.sprintWrongButton = new Component(
-      this.sprintGameButtons.node, 'div', 'sprint-game__button wrong-button', 'Неверно'
+      this.sprintGameButtons.node,
+      'div',
+      'sprint-game__button wrong-button',
+      'Неверно'
     );
     this.sprintCorrectButton = new Component(
-      this.sprintGameButtons.node, 'div', 'sprint-game__button correct-button', 'Верно'
+      this.sprintGameButtons.node,
+      'div',
+      'sprint-game__button correct-button',
+      'Верно'
     );
-    
+
     this.resultsContainer = new Component(
-      this.wrapper.node, 'div', 'results__container game-hidden'
+      this.wrapper.node,
+      'div',
+      'results__container game-hidden'
     );
 
     this.manageGame = async () => {
@@ -162,10 +180,14 @@ export default class SprintPage extends Component {
       SprintPage.arrayCorrectAnswers = [];
       SprintPage.arrayIncorrectAnswers = [];
 
+      if (Constants.UserMetadata && !Constants.userWords) {
+        Constants.userWords = await API.userWords.getWords(Constants.UserMetadata.userId);
+      }
+
       await this.getWordsForGame();
-      
+
       SprintPage.drawInitialStartPage();
-    }
+    };
 
     this.getWords = async (query: WordsQuery): Promise<Word[]> => {
       try {
@@ -180,7 +202,7 @@ export default class SprintPage extends Component {
         console.error((<Error>err).message);
         throw err;
       }
-    }
+    };
     // ------ 1
     this.getWordsForGame = async (): Promise<void> => {
       if (SprintPage.collectionWordsFromServer.length === 0) {
@@ -191,32 +213,36 @@ export default class SprintPage extends Component {
           tempCollectionWords.push(this.getWords(this.queryObj));
         } else {
           for (let i = 0; i <= 29; i += 1) {
-          const group = String(SprintPage.level);
-          const page = String(i);
-          this.queryObj = { group, page };
-          tempCollectionWords.push(this.getWords(this.queryObj));
+            const group = String(SprintPage.level);
+            const page = String(i);
+            this.queryObj = { group, page };
+            tempCollectionWords.push(this.getWords(this.queryObj));
           }
         }
         SprintPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
       }
       const arrayOfWordsKeysFromServer = Object.keys(SprintPage.collectionWordsFromServer);
 
-      console.log('3: getWordsForGame work \n arrayOfWordsKeysFromServer \n 4: норм', 
-      arrayOfWordsKeysFromServer);
+      console.log(
+        '3: getWordsForGame work \n arrayOfWordsKeysFromServer \n 4: норм',
+        arrayOfWordsKeysFromServer
+      );
 
-      while (SprintPage.arrayOfRandomGameWordsKeys.length <
-        SprintPage.collectionWordsFromServer.length) {
-        
-        const keyRandom = arrayOfWordsKeysFromServer
-          .splice(Math.floor(Math.random() * arrayOfWordsKeysFromServer.length), 1);
+      while (
+        SprintPage.arrayOfRandomGameWordsKeys.length < SprintPage.collectionWordsFromServer.length
+      ) {
+        const keyRandom = arrayOfWordsKeysFromServer.splice(
+          Math.floor(Math.random() * arrayOfWordsKeysFromServer.length),
+          1
+        );
 
         SprintPage.arrayOfRandomGameWordsKeys.push(+keyRandom);
       }
-    }
+    };
     // ------ 2
     this.hideLoader = (): void => {
       this.iconLoaderWrapper.node.classList.add('game-hidden');
-    }
+    };
 
     SprintPage.drawInitialStartPage = (): void => {
       this.hideLoader();
@@ -237,29 +263,29 @@ export default class SprintPage extends Component {
           SprintPage.startGame();
         }
       }, 1000);
-      
+
       console.log('6 countdownToStart', timeToStart);
       const CONTENT = document.querySelector('.content') as HTMLDivElement;
       const LINK = document.getElementsByTagName('a');
       window.addEventListener('click', function clearCountdown(e) {
         const target = e.target as HTMLElement;
-        if (!CONTENT.contains(target) &&
-          Array.from(LINK).find((element): boolean => element.contains(target))) 
-        {
+        if (
+          !CONTENT.contains(target) &&
+          Array.from(LINK).find((element): boolean => element.contains(target))
+        ) {
           clearInterval(countdownToStart);
           SprintPage.collectionWordsFromServer = [];
           window.removeEventListener('click', clearCountdown);
         }
       });
-    }
+    };
     // ------ 3
     SprintPage.startGame = (): void => {
-      
       this.exitGame.node.innerHTML = exitGameHTML;
       this.counterBeforeGame.node.classList.add('game-hidden');
       this.counterBeforeGame.node.innerHTML = '';
       this.sprintGameContainer.node.classList.remove('game-hidden');
-  
+
       let timeToEnd = GameTime.TimeForGame;
       SprintPage.countdownToEnd = setInterval(() => {
         timeToEnd -= 1;
@@ -271,7 +297,7 @@ export default class SprintPage extends Component {
         }
         console.log('7 timeToEnd строка 218', timeToEnd);
       }, 1000);
-  
+
       SprintPage.renderDataGameboard();
 
       document.addEventListener('keydown', SprintPage.setValuesKeyboardKeys);
@@ -283,22 +309,21 @@ export default class SprintPage extends Component {
           SprintPage.showGameResults();
         }
       }, 60000);
-        
+
       this.sprintGameButtons.node.addEventListener('click', (e) => {
         const target = e.target as HTMLDivElement;
 
         if (target.classList.contains('sprint-game__button')) {
-          
           const userAnswer = target.className.includes('correct') === true;
           SprintPage.checkUserAnswer(userAnswer);
-          
+
           if (SprintPage.indexGameMove === SprintPage.arrayOfRandomGameWordsKeys.length) {
             clearInterval(SprintPage.countdownToEnd);
             clearTimeout(actionsAfterTimeout);
           }
         }
       });
-      
+
       this.exitGame.node.addEventListener('click', () => {
         Router.goTo(new URL(`http://${window.location.host}/${Constants.routes.games}`));
         clearInterval(SprintPage.countdownToEnd);
@@ -310,9 +335,10 @@ export default class SprintPage extends Component {
       const LINK = document.getElementsByTagName('a');
       window.addEventListener('click', function changeValuesKeys(e) {
         const target = e.target as HTMLElement;
-        if (!CONTENT.contains(target) &&
-          Array.from(LINK).find((element): boolean => element.contains(target))) 
-        {
+        if (
+          !CONTENT.contains(target) &&
+          Array.from(LINK).find((element): boolean => element.contains(target))
+        ) {
           document.removeEventListener('keydown', SprintPage.setValuesKeyboardKeys);
           clearInterval(SprintPage.countdownToEnd);
           clearTimeout(actionsAfterTimeout);
@@ -320,13 +346,14 @@ export default class SprintPage extends Component {
           window.removeEventListener('click', changeValuesKeys);
         }
       });
-    }
+    };
     // ------ 4
-    SprintPage.renderDataGameboard = (): void =>  {
-
+    SprintPage.renderDataGameboard = (): void => {
       this.sprintGameCounterScore.node.textContent = `${SprintPage.scoreTotal}`;
-      console.log('9 renderDataGameboard work, this.sprintGameCounterScore.node.textContent', 
-        this.sprintGameCounterScore.node.textContent);
+      console.log(
+        '9 renderDataGameboard work, this.sprintGameCounterScore.node.textContent',
+        this.sprintGameCounterScore.node.textContent
+      );
 
       const answersSeries = document.querySelectorAll('.answers-series') as NodeListOf<HTMLElement>;
       answersSeries.forEach((item) => {
@@ -349,26 +376,26 @@ export default class SprintPage extends Component {
       }
 
       this.reward.node.textContent = `+${SprintPage.scoreGrowth}`;
-      
+
       console.log('10 this.reward.node.textContent:', this.reward.node.textContent);
-      this.questionWord.node.textContent = SprintPage.collectionWordsFromServer[
-        SprintPage.arrayOfRandomGameWordsKeys[SprintPage.indexGameMove]
-      ].word;
-  
-      if (Math.random() > 0.5) {
-
-        this.translateWord.node.textContent = SprintPage.collectionWordsFromServer[
+      this.questionWord.node.textContent =
+        SprintPage.collectionWordsFromServer[
           SprintPage.arrayOfRandomGameWordsKeys[SprintPage.indexGameMove]
-        ].wordTranslate;
-      } else {
+        ].word;
 
+      if (Math.random() > 0.5) {
+        this.translateWord.node.textContent =
+          SprintPage.collectionWordsFromServer[
+            SprintPage.arrayOfRandomGameWordsKeys[SprintPage.indexGameMove]
+          ].wordTranslate;
+      } else {
         const indexRandomTranslation = Math.floor(
           Math.random() * SprintPage.collectionWordsFromServer.length
         );
         this.translateWord.node.textContent =
           SprintPage.collectionWordsFromServer[indexRandomTranslation].wordTranslate;
       }
-    }
+    };
     // ------ 5
     SprintPage.setValuesKeyboardKeys = (event: KeyboardEvent): void => {
       if (event.code === 'ArrowRight') {
@@ -379,13 +406,13 @@ export default class SprintPage extends Component {
         if (event.repeat) return;
         SprintPage.checkUserAnswer(false);
       }
-    }
+    };
     // ------ 6
     SprintPage.checkUserAnswer = (userAnswer: boolean): void => {
-      
-      const currentWord = SprintPage.collectionWordsFromServer[
-        SprintPage.arrayOfRandomGameWordsKeys[SprintPage.indexGameMove]
-      ];
+      const currentWord =
+        SprintPage.collectionWordsFromServer[
+          SprintPage.arrayOfRandomGameWordsKeys[SprintPage.indexGameMove]
+        ];
       const currentTranslate = this.translateWord.node.textContent;
 
       console.log('11 проверка checkUserAnswer: currentWord', currentWord);
@@ -399,26 +426,23 @@ export default class SprintPage extends Component {
       SprintPage.audioIncorrectAnswer.currentTime = 0;
 
       if (userAnswer === checkedAnswer) {
-        
         SprintPage.audioCorrectAnswer.play();
-        SprintPage.arrayCorrectAnswers.push(SprintPage.arrayOfRandomGameWordsKeys[
-          SprintPage.indexGameMove]);
+        SprintPage.arrayCorrectAnswers.push(
+          SprintPage.arrayOfRandomGameWordsKeys[SprintPage.indexGameMove]
+        );
         SprintPage.updateServerData(currentWord, true);
         SprintPage.correctAnswersSeries += 1;
 
         SprintPage.scoreTotal += SprintPage.scoreGrowth;
-        if (SprintPage.correctAnswersSeries === 4) 
-          SprintPage.scoreGrowth = 20;
-        if (SprintPage.correctAnswersSeries === 8) 
-          SprintPage.scoreGrowth = 40;
-        if (SprintPage.correctAnswersSeries === 12) 
-          SprintPage.scoreGrowth = 80;
+        if (SprintPage.correctAnswersSeries === 4) SprintPage.scoreGrowth = 20;
+        if (SprintPage.correctAnswersSeries === 8) SprintPage.scoreGrowth = 40;
+        if (SprintPage.correctAnswersSeries === 12) SprintPage.scoreGrowth = 80;
       } else {
-        
         SprintPage.audioIncorrectAnswer.play();
-        SprintPage.arrayIncorrectAnswers.push(SprintPage.arrayOfRandomGameWordsKeys[
-          SprintPage.indexGameMove]);
-        SprintPage.updateServerData(currentWord, false);  
+        SprintPage.arrayIncorrectAnswers.push(
+          SprintPage.arrayOfRandomGameWordsKeys[SprintPage.indexGameMove]
+        );
+        SprintPage.updateServerData(currentWord, false);
         SprintPage.scoreGrowth = 10;
         SprintPage.correctAnswersSeries = 0;
       }
@@ -432,17 +456,19 @@ export default class SprintPage extends Component {
       } else {
         SprintPage.renderDataGameboard();
       }
-    }
+    };
     // ------ 7
     SprintPage.showGameResults = (): void => {
-
       this.sprintGameContainer.node.classList.add('game-hidden');
       this.resultsContainer.node.classList.remove('game-hidden');
       const countCorrectAnswers = SprintPage.arrayCorrectAnswers.length;
       const countIncorrectAnswers = SprintPage.arrayIncorrectAnswers.length;
-      this.resultsContainer.node.innerHTML = 
-        drawResults(SprintPage.scoreTotal, countCorrectAnswers, countIncorrectAnswers);
-      
+      this.resultsContainer.node.innerHTML = drawResults(
+        SprintPage.scoreTotal,
+        countCorrectAnswers,
+        countIncorrectAnswers
+      );
+
       const contentEvaluation = document.querySelector('.content-evaluation') as HTMLHeadingElement;
       let evaluationCriteria;
       if (countCorrectAnswers + countIncorrectAnswers > 0) {
@@ -463,8 +489,7 @@ export default class SprintPage extends Component {
       const correctList = document.querySelector('.correct-list') as HTMLDivElement;
       SprintPage.arrayCorrectAnswers.forEach((item) => {
         correctList.innerHTML += `
-          <li class="word-item"><span class="word-en">${SprintPage.
-            collectionWordsFromServer[item].word}
+          <li class="word-item"><span class="word-en">${SprintPage.collectionWordsFromServer[item].word}
             &nbsp;${SprintPage.collectionWordsFromServer[item].transcription}</span> - 
             ${SprintPage.collectionWordsFromServer[item].wordTranslate}
           </li>
@@ -473,24 +498,30 @@ export default class SprintPage extends Component {
       const incorrectList = document.querySelector('.incorrect-list') as HTMLDivElement;
       SprintPage.arrayIncorrectAnswers.forEach((item) => {
         incorrectList.innerHTML += `
-          <li class="word-item"><span class="word-en">${SprintPage.
-            collectionWordsFromServer[item].word}
+          <li class="word-item"><span class="word-en">${SprintPage.collectionWordsFromServer[item].word}
             &nbsp;${SprintPage.collectionWordsFromServer[item].transcription}</span> - 
             ${SprintPage.collectionWordsFromServer[item].wordTranslate}
           </li>
         `;
       });
-  
+
       SprintPage.collectionWordsFromServer = [];
-    }
+    };
     // ------ 8
     SprintPage.updateServerData = async (word: Word, isCorrectAnswer: boolean): Promise<void> => {
-      
       if (Constants.UserMetadata) {
+        if (
+          Constants.userWords &&
+          !(Constants.userWords.filter((userWord) => userWord.wordId === word.id).length !== 0)
+        ) {
+          const created = await API.userWords.createWord(Constants.UserMetadata.userId, word.id, {
+            difficulty: String(word.group),
+            optional: { difficult: false, learned: false },
+          });
+          if (created) Constants.userWords.push(created);
+        }
 
-        const userWord = await API.userWords.getWord(
-          Constants.UserMetadata.userId, word.id
-        );
+        const userWord = await API.userWords.getWord(Constants.UserMetadata.userId, word.id);
         const wordStore = {
           difficulty: '0',
           optional: {
@@ -500,19 +531,16 @@ export default class SprintPage extends Component {
             learned: false,
           },
         };
-  
+
         if (userWord) {
           wordStore.difficulty = userWord.difficulty;
           wordStore.optional.sprint = userWord.optional!.sprint;
           wordStore.optional.audio = userWord.optional!.audio;
           wordStore.optional.allGames = userWord.optional!.allGames;
-  
+
           wordStore.optional.sprint += isCorrectAnswer ? '1' : '0';
           wordStore.optional.allGames += isCorrectAnswer ? '1' : '0';
-          if (
-            wordStore.difficulty === '0' &&
-            wordStore.optional.allGames.slice(-3) === '111'
-          ) {
+          if (wordStore.difficulty === '0' && wordStore.optional.allGames.slice(-3) === '111') {
             wordStore.optional.learned = true;
             wordStore.difficulty = '0';
           } else if (
@@ -524,20 +552,15 @@ export default class SprintPage extends Component {
           } else {
             wordStore.optional.learned = false;
           }
-          await API.userWords.updateWord(
-            Constants.UserMetadata.userId, word.id, wordStore
-          );
-
+          await API.userWords.updateWord(Constants.UserMetadata.userId, word.id, wordStore);
         } else {
           wordStore.optional.sprint += isCorrectAnswer ? '1' : '0';
           wordStore.optional.allGames += isCorrectAnswer ? '1' : '0';
           wordStore.optional.learned = false;
-          await API.userWords.createWord(
-            Constants.UserMetadata.userId, word.id, wordStore
-          );
+          await API.userWords.createWord(Constants.UserMetadata.userId, word.id, wordStore);
         }
       }
-    }
+    };
 
     this.manageGame();
   }
