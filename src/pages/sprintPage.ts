@@ -151,7 +151,7 @@ export default class SprintPage extends Component {
         throw err;
       }
     }
-// ------ 1
+    // ------ 1
     this.getWordsForGame = async (): Promise<void> => {
       if (SprintPage.collectionWordsFromServer.length === 0) {
         const tempCollectionWords: Promise<Word[]>[] = [];
@@ -178,7 +178,7 @@ export default class SprintPage extends Component {
         SprintPage.arrayOfRandomGameWordsKeys.push(+keyRandom);
       }
     }
-// ------ 2
+    // ------ 2
     this.hideLoader = (): void => {
       this.iconLoaderWrapper.node.classList.add('game-hidden');
     }
@@ -283,6 +283,53 @@ export default class SprintPage extends Component {
         }
       });
     }
+    // ------ 4
+    SprintPage.renderDataGameboard = (): void =>  {
+
+      this.sprintGameCounterScore.node.textContent = `${SprintPage.scoreTotal}`;
+      console.log('9 renderDataGameboard work, this.sprintGameCounterScore.node.textContent', 
+        this.sprintGameCounterScore.node.textContent);
+
+      const answersSeries = document.querySelectorAll('.answers-series') as NodeListOf<HTMLElement>;
+      answersSeries.forEach((item) => {
+        const answer = item;
+        answer.style.visibility = 'hidden';
+      });
+      if (SprintPage.correctAnswersSeries < 12) {
+        for (let i = 0; i < SprintPage.correctAnswersSeries % 4; i += 1) {
+          answersSeries[i].style.visibility = 'visible';
+        }
+      } else {
+        answersSeries[0].style.visibility = 'hidden';
+        answersSeries[1].style.visibility = 'visible';
+        answersSeries[2].style.visibility = 'hidden';
+      }
+      if (SprintPage.correctAnswersSeries >= 12) {
+        this.reward.node.classList.add('reward-green');
+      } else {
+        this.reward.node.classList.remove('reward-green');
+      }
+
+      this.reward.node.textContent = `+${SprintPage.scoreGrowth}`;
+      
+      console.log('10 this.reward.node.textContent:', this.reward.node.textContent);
+      this.questionWord.node.textContent = SprintPage.collectionWordsFromServer[
+        SprintPage.arrayOfRandomGameWordsKeys[SprintPage.indexGameMove]
+      ].word;
   
+      if (Math.random() > 0.5) {
+
+        this.translateWord.node.textContent = SprintPage.collectionWordsFromServer[
+          SprintPage.arrayOfRandomGameWordsKeys[SprintPage.indexGameMove]
+        ].wordTranslate;
+      } else {
+
+        const indexRandomTranslation = Math.floor(
+          Math.random() * SprintPage.collectionWordsFromServer.length
+        );
+        this.translateWord.node.textContent =
+          SprintPage.collectionWordsFromServer[indexRandomTranslation].wordTranslate;
+      }
+    }
   }
 }
