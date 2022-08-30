@@ -105,6 +105,13 @@ export default class EbookWord extends Component {
       );
       this.setHardWordWrapper.node.onclick = async () => {
         this.updateWord(true);
+        if (group === '6') {
+          this.wordCard.node.classList.add('animate__animated');
+          this.wordCard.node.classList.add('animate__backOutDown');
+          setTimeout(() => {
+            this.wordCard.destroy()
+          }, 900);
+        }
         if (this.wordCard.node.classList.contains('hard-card')) {
           (<Component>this.hardWordTitle).node.textContent = 'Убрать из Сложных Слов';
           this.wordCard.node.classList.remove('hard-card');
@@ -117,6 +124,13 @@ export default class EbookWord extends Component {
         if (!this.wordCard.node.classList.contains('studied-card')) {
           this.updateWord(false, true);
           this.wordCard.node.classList.toggle('studied-card');
+        }
+        if (group === '6') {
+          this.wordCard.node.classList.add('animate__animated');
+          this.wordCard.node.classList.add('animate__backOutDown');
+          setTimeout(() => {
+            this.wordCard.destroy()
+          }, 900);
         }
       };
 
