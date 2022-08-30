@@ -104,7 +104,7 @@ export default class EbookPage extends Component {
             undefined,
             queryObj.page,
             '3600',
-            '{"userWord.optional.difficult":true}'
+            '{"$and":[{"userWord.optional.difficult":true}, {"userWord.optional.learned":false}]}'
           );
     cardsData.then(async (data) => {
       if (data) {

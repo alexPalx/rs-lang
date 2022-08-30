@@ -49,6 +49,7 @@
     "webpack-dev-server": "^4.10.0"
   },
   "dependencies": {
+    "animate.css": "^4.1.1",
     "route-parser": "^0.0.5"
   }
 }
