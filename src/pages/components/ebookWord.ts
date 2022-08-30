@@ -2,6 +2,7 @@ import API from '../../api/api';
 import Component from '../../common/component';
 import Constants from '../../common/constants';
 import { UserWord, Word } from '../../interfaces/typesAPI';
+import WordStatistics from './wordStatistics';
 
 type TypeOfCallbacks = {
   [key: string]: () => void;
@@ -34,8 +35,11 @@ export default class EbookWord extends Component {
   public studiedWordTitle: Component | undefined;
   public setHardWord: Component<HTMLImageElement> | undefined;
   public setStudiedWord: Component<HTMLImageElement> | undefined;
+  public getStatisticsWrapper: Component | undefined;
+  public getWordStatistics: Component<HTMLImageElement> | undefined;
+  public getWordStatisticsTitle: Component | undefined;
 
-  constructor(parentElement: HTMLElement, card: Word, group: string, actions: TypeOfCallbacks) {
+  constructor(parentElement: HTMLElement, wrapper: Component, card: Word, group: string, actions: TypeOfCallbacks) {
     super(parentElement, 'div', 'word-card');
     this.cardId = card.id;
     if (window.location.search) {
@@ -96,12 +100,25 @@ export default class EbookWord extends Component {
         'title',
         'Добавить в Сложные слова'
       );
-
+      this.getStatisticsWrapper = new Component(this.authBlock.node, 'div', 'get-statistics-wrapper');
+      this.getWordStatistics = new Component(this.getStatisticsWrapper.node, 'img', 'get-word-statistics');
+      this.getWordStatistics.node.src = './assets/svg/statistics.svg';
+      this.getWordStatisticsTitle = new Component(
+        this.getStatisticsWrapper.node,
+        'div',
+        'title',
+        'Статистика по слову'
+      );
       this.setStudiedWordWrapper = new Component(
         this.authBlock.node,
         'div',
         'set-studied-word-wrapper'
       );
+      this.getStatisticsWrapper.node.onclick = () => {
+        console.log(parentElement);
+        const statistics = new WordStatistics(wrapper,  card.word);
+        console.log(statistics);
+      }
       this.setHardWordWrapper.node.onclick = async () => {
         if (!this.studied) {
           this.updateWord(true);

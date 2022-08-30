@@ -121,7 +121,7 @@ export default class EbookPage extends Component {
   }
   addItems(wordscards: Array<Word>, group: string): void {
     this.cards = wordscards.map((card) => {
-      const item = new EbookWord(this.cardsWrapper.node, card, group, {
+      const item = new EbookWord(this.cardsWrapper.node, this.wrapper, card, group, {
         startPlay: () => {
           this.cards.map((el) => el.stopPlay());
         },
