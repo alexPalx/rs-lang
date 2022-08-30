@@ -89,7 +89,6 @@ export default class EbookWord extends Component {
       this.setHardWordWrapper = new Component(this.authBlock.node, 'div', 'set-hard-word-wrapper');
 
       this.setHardWord = new Component(this.setHardWordWrapper.node, 'img', 'set-hard-word');
-      // this.setHardWord.node.src = './assets/svg/hardword.svg';
       this.setHardWord.node.src = './assets/svg/brain.svg';
       this.hardWordTitle = new Component(
         this.setHardWordWrapper.node,
@@ -104,20 +103,23 @@ export default class EbookWord extends Component {
         'set-studied-word-wrapper'
       );
       this.setHardWordWrapper.node.onclick = async () => {
-        this.updateWord(true);
-        if (group === '6') {
-          this.wordCard.node.classList.add('animate__animated');
-          this.wordCard.node.classList.add('animate__backOutDown');
-          setTimeout(() => {
-            this.wordCard.destroy()
-          }, 900);
-        }
-        if (this.wordCard.node.classList.contains('hard-card')) {
-          (<Component>this.hardWordTitle).node.textContent = 'Убрать из Сложных Слов';
-          this.wordCard.node.classList.remove('hard-card');
-        } else {
-          (<Component>this.hardWordTitle).node.textContent = 'Добавить в Сложные слова';
-          this.wordCard.node.classList.add('hard-card');
+        if (!this.studied) {
+          this.updateWord(true);
+          if (group === '6') {
+            this.wordCard.node.classList.add('animate__animated');
+            this.wordCard.node.classList.add('animate__backOutDown');
+            setTimeout(() => {
+              this.wordCard.destroy();
+            }, 900);
+          }
+          if (this.wordCard.node.classList.contains('hard-card')) {
+            (<Component>this.hardWordTitle).node.textContent = 'Добавить в Сложные слова';
+            this.wordCard.node.classList.remove('hard-card');
+          } else {
+            (<Component>this.hardWordTitle).node.textContent = 'Убрать из Сложных Слов';
+
+            this.wordCard.node.classList.add('hard-card');
+          }
         }
       };
       this.setStudiedWordWrapper.node.onclick = () => {
@@ -129,7 +131,7 @@ export default class EbookWord extends Component {
           this.wordCard.node.classList.add('animate__animated');
           this.wordCard.node.classList.add('animate__backOutDown');
           setTimeout(() => {
-            this.wordCard.destroy()
+            this.wordCard.destroy();
           }, 900);
         }
       };
