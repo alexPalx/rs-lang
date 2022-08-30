@@ -1,7 +1,7 @@
 import API from '../../api/api';
 import Component from '../../common/component';
 import Constants from '../../common/constants';
-import { Word } from '../../interfaces/typesAPI';
+import { UserWord, Word } from '../../interfaces/typesAPI';
 
 type TypeOfCallbacks = {
   [key: string]: () => void;
@@ -206,9 +206,12 @@ export default class EbookWord extends Component {
       if (created) Constants.userWords.push(created);
     }
 
+    const userWord =
+      Constants.userWords.find((word) => word.wordId === this.cardId) || <UserWord>{};
     const updated = await API.userWords.updateWord(Constants.UserMetadata.userId, this.cardId, {
       difficulty: this.difficulty,
       optional: {
+        ...userWord.optional,
         difficult: toggleDifficult ? !this.difficult : this.difficult,
         learned: toggleLearned ? !this.studied : this.studied,
       },

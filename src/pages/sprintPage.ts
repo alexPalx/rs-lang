@@ -2,7 +2,7 @@ import API from '../api/api';
 import Component from '../common/component';
 import Constants from '../common/constants';
 import { QueryParam, WordsQuery } from '../interfaces/types';
-import { Word } from '../interfaces/typesAPI';
+import { UserWordConfig, Word } from '../interfaces/typesAPI';
 import Router from '../router/router';
 import Utils from '../utils/utils';
 
@@ -522,38 +522,44 @@ export default class SprintPage extends Component {
         }
 
         const userWord = await API.userWords.getWord(Constants.UserMetadata.userId, word.id);
-        const wordStore = {
+        const wordStore: UserWordConfig = {
           difficulty: '0',
           optional: {
             sprint: ' ',
+            sprintWins: ' ',
             audio: ' ',
             allGames: ' ',
             learned: false,
+            difficult: false,
           },
         };
 
-        if (userWord) {
+        if (userWord && wordStore.optional) {
           wordStore.difficulty = userWord.difficulty;
+          wordStore.optional.difficult = userWord.optional!.difficult;
           wordStore.optional.sprint = userWord.optional!.sprint;
+          wordStore.optional.sprintWins = userWord.optional!.sprintWins;
           wordStore.optional.audio = userWord.optional!.audio;
           wordStore.optional.allGames = userWord.optional!.allGames;
 
+          if (isCorrectAnswer && wordStore.optional)
+            wordStore.optional.sprintWins = String(Number(wordStore.optional.sprintWins || 0) + 1);
           wordStore.optional.sprint += isCorrectAnswer ? '1' : '0';
           wordStore.optional.allGames += isCorrectAnswer ? '1' : '0';
-          if (wordStore.difficulty === '0' && wordStore.optional.allGames.slice(-3) === '111') {
+          if (!wordStore.optional.difficult && wordStore.optional.allGames.slice(-3) === '111') {
             wordStore.optional.learned = true;
-            wordStore.difficulty = '0';
+            wordStore.optional.difficult = false;
           } else if (
-            wordStore.difficulty === '1' &&
+            wordStore.optional.difficult &&
             wordStore.optional.allGames.slice(-6) === '111111'
           ) {
             wordStore.optional.learned = true;
-            wordStore.difficulty = '0';
+            wordStore.optional.difficult = false;
           } else {
             wordStore.optional.learned = false;
           }
           await API.userWords.updateWord(Constants.UserMetadata.userId, word.id, wordStore);
-        } else {
+        } else if (wordStore.optional) {
           wordStore.optional.sprint += isCorrectAnswer ? '1' : '0';
           wordStore.optional.allGames += isCorrectAnswer ? '1' : '0';
           wordStore.optional.learned = false;
