@@ -2,6 +2,7 @@ import API from '../../api/api';
 import Component from '../../common/component';
 import Constants from '../../common/constants';
 import { Word } from '../../interfaces/typesAPI';
+import WordStatistics from './wordStatistics';
 
 type TypeOfCallbacks = {
   [key: string]: () => void;
@@ -38,7 +39,7 @@ export default class EbookWord extends Component {
   public getWordStatistics: Component<HTMLImageElement> | undefined;
   public getWordStatisticsTitle: Component | undefined;
 
-  constructor(parentElement: HTMLElement, card: Word, group: string, actions: TypeOfCallbacks) {
+  constructor(parentElement: HTMLElement, wrapper: Component, card: Word, group: string, actions: TypeOfCallbacks) {
     super(parentElement, 'div', 'word-card');
     this.cardId = card.id;
     if (window.location.search) {
@@ -113,6 +114,11 @@ export default class EbookWord extends Component {
         'div',
         'set-studied-word-wrapper'
       );
+      this.getStatisticsWrapper.node.onclick = () => {
+        console.log(parentElement);
+        const statistics = new WordStatistics(wrapper,  card.word);
+        console.log(statistics);
+      }
       this.setHardWordWrapper.node.onclick = async () => {
         if (!this.studied) {
           this.updateWord(true);

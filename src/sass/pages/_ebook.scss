@@ -1,8 +1,81 @@
 .ebook-wrapper {
   height: calc(100% - 66px);
+
+  .word-statistics {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    max-width: 600px;
+    max-height: fit-content;
+    background-color: #fff;
+    border: 1px solid gray;
+    padding: 30px 20px;
+
+    .statistics-header {
+      font-size: 28px;
+      color: #000;
+      margin-bottom: 25px;
+      .word-name {
+        color: #55c2da;
+      }
+    }
+    table.greyGridTable {
+      border: 2px solid #FFFFFF;
+      width: 100%;
+      height: 150px;
+      text-align: center;
+      border-collapse: collapse;
+    }
+    table.greyGridTable td, table.greyGridTable th {
+      border: 1px solid #C5C5C5;
+      padding: 3px 4px;
+    }
+    table.greyGridTable tbody td {
+      font-size: 16px;
+      color: #000000;
+      vertical-align: middle;
+    }
+    // table.greyGridTable td:nth-child(even) {
+    //   background: #8FEB83;
+    // }
+    table.greyGridTable thead {
+      background: #FFFFFF;
+      border-bottom: 2px solid #333333;
+    }
+    table.greyGridTable thead th {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333333;
+      text-align: center;
+      border-left: 2px solid #333333;
+    }
+    table.greyGridTable thead th:first-child {
+      border-left: none;
+    }
+    
+    table.greyGridTable tfoot td {
+      font-size: 14px;
+    }
+    .close-btn::after {
+      cursor: pointer;
+      position: absolute;
+      right: 15px;
+      top: 3px;
+      display: inline-block;
+      content: "\00d7";
+      color: #000;
+      font-size: 38px;
+      font-weight: 300;
+      font-family: Arial, sans-serif;
+    }
+  }
 }
 
 .controls {
+  position: relative;
   display: flex;
   align-items: center;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
@@ -143,7 +216,8 @@
     align-items: center;
     justify-content: center;
 
-    .set-hard-word-wrapper, .get-statistics-wrapper {
+    .set-hard-word-wrapper,
+    .get-statistics-wrapper {
       cursor: pointer;
       position: relative;
       display: flex;
@@ -161,7 +235,8 @@
         }
       }
 
-      .set-hard-word, .get-word-statistics {
+      .set-hard-word,
+      .get-word-statistics {
         cursor: pointer;
         width: 24px;
         height: 24px;
@@ -334,7 +409,9 @@
     .auth-block {
       flex-direction: row;
 
-      .set-hard-word-wrapper, .set-studied-word-wrapper, .get-statistics-wrapper {
+      .set-hard-word-wrapper,
+      .set-studied-word-wrapper,
+      .get-statistics-wrapper {
         margin: 20px 40px;
       }
     }
