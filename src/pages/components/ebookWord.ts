@@ -34,6 +34,9 @@ export default class EbookWord extends Component {
   public studiedWordTitle: Component | undefined;
   public setHardWord: Component<HTMLImageElement> | undefined;
   public setStudiedWord: Component<HTMLImageElement> | undefined;
+  public getStatisticsWrapper: Component | undefined;
+  public getWordStatistics: Component<HTMLImageElement> | undefined;
+  public getWordStatisticsTitle: Component | undefined;
 
   constructor(parentElement: HTMLElement, card: Word, group: string, actions: TypeOfCallbacks) {
     super(parentElement, 'div', 'word-card');
@@ -96,7 +99,15 @@ export default class EbookWord extends Component {
         'title',
         'Добавить в Сложные слова'
       );
-
+      this.getStatisticsWrapper = new Component(this.authBlock.node, 'div', 'get-statistics-wrapper');
+      this.getWordStatistics = new Component(this.getStatisticsWrapper.node, 'img', 'get-word-statistics');
+      this.getWordStatistics.node.src = './assets/svg/statistics.svg';
+      this.getWordStatisticsTitle = new Component(
+        this.getStatisticsWrapper.node,
+        'div',
+        'title',
+        'Статистика по слову'
+      );
       this.setStudiedWordWrapper = new Component(
         this.authBlock.node,
         'div',
