@@ -45,15 +45,23 @@ export interface UserWord {
     difficult: boolean;
     learned: boolean;
     sprint: string;
+    sprintWins: string;
     audio: string;
-    allGames: string;    
+    allGames: string;
   };
   wordId: string;
 }
 
 export interface UserWordConfig {
   difficulty: string;
-  optional?: {};
+  optional?: {
+    difficult?: boolean;
+    learned?: boolean;
+    sprint?: string;
+    sprintWins?: string;
+    audio?: string;
+    allGames?: string;
+  };
 }
 
 export interface StatisticsData {
