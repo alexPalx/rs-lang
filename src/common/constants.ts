@@ -64,7 +64,14 @@ export default class Constants {
   }
 
   public static set LastPage(value: string) {
-    if (!value || value === 'signin' || value === 'signup') return;
+    if (
+      !value ||
+      value === this.routes.signin ||
+      value === this.routes.signup ||
+      value === this.routes.sprint ||
+      value === this.routes.audio
+    )
+      return;
 
     if (Object.values(this.routes).includes(value)) {
       this.lastPage = `/${this.routes[<keyof typeof this.routes>value]}`;

@@ -1,25 +1,27 @@
 import Component from '../../common/component';
+import { UserWord } from '../../interfaces/typesAPI';
 
 export default class WordStatistics extends Component {
+  private wordData: UserWord;
   public header: Component;
   public closeBtn: Component;
   public table: Component;
 
-  constructor(parent: Component, word: string) {
+  constructor(parent: Component, word: string, wordData: UserWord) {
     super(parent.node, 'div', 'word-statistics');
+    this.wordData = wordData;
     this.header = new Component(this.node, 'h1', 'statistics-header', `Статистика по слову: `);
     this.header.node.innerHTML += `<span class="word-name">${word}</span>`;
     this.closeBtn = new Component(this.node, 'div', 'close-btn');
     this.closeBtn.node.addEventListener('click', () => this.closeStatistics());
     this.table = new Component(this.node, 'table', 'greyGridTable');
     this.table.node.innerHTML = this.drawStatistics();
-    
   }
   closeStatistics(): void {
     this.destroy();
   }
   // Параметры переделать, когда будет готова статистика
-  drawStatistics(sprintTrue = 0, sprintFalse = 0, audioTrue = 0, audioFalse = 0): string {
+  drawStatistics(audioTrue = 0, audioFalse = 0): string {
     return `
     <thead>
     <tr>
@@ -30,7 +32,9 @@ export default class WordStatistics extends Component {
     </thead>
     <tbody>
     <tr>
-    <td>Спринт</td><td>${sprintTrue}</td><td>${sprintFalse}</td></tr>
+    <td>Спринт</td><td>${this.wordData.optional?.sprintWins || 0}</td><td>${
+      this.wordData.optional?.sprintLoses || 0
+    }</td></tr>
     <tr>
     <td>Аудиовызов</td><td>${audioTrue}</td><td>${audioFalse}</td></tr>
     </tbody>
