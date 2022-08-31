@@ -46,6 +46,7 @@ export interface UserWord {
     learned: boolean;
     sprint: string;
     sprintWins: string;
+    sprintLoses: string;
     audio: string;
     allGames: string;
   };
@@ -59,6 +60,7 @@ export interface UserWordConfig {
     learned?: boolean;
     sprint?: string;
     sprintWins?: string;
+    sprintLoses?: string;
     audio?: string;
     allGames?: string;
   };

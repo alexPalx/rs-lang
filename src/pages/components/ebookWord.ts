@@ -115,9 +115,16 @@ export default class EbookWord extends Component {
         'set-studied-word-wrapper'
       );
       this.getStatisticsWrapper.node.onclick = () => {
-        console.log(parentElement);
-        const statistics = new WordStatistics(wrapper,  card.word);
-        console.log(statistics);
+        if (Constants.userWords) {
+          const userWord = Constants.userWords.find((word) => word.wordId === this.cardId);
+          if (userWord) {
+            const statistics = new WordStatistics(wrapper, card.word, userWord);
+            console.log(statistics);
+          } else {
+            const statistics = new WordStatistics(wrapper, card.word, <UserWord>{});
+            console.log(statistics);
+          }
+        }
       }
       this.setHardWordWrapper.node.onclick = async () => {
         if (!this.studied) {

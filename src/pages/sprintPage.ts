@@ -325,7 +325,7 @@ export default class SprintPage extends Component {
       });
 
       this.exitGame.node.addEventListener('click', () => {
-        Router.goTo(new URL(`http://${window.location.host}/${Constants.routes.games}`));
+        Router.goTo(new URL(`http://${window.location.host}${Constants.LastPage}`));
         clearInterval(SprintPage.countdownToEnd);
         clearTimeout(actionsAfterTimeout);
         SprintPage.collectionWordsFromServer = [];
@@ -521,12 +521,15 @@ export default class SprintPage extends Component {
           if (created) Constants.userWords.push(created);
         }
 
+        const currentWord = Constants.userWords!.find((w) => w.wordId === word.id);
+
         const userWord = await API.userWords.getWord(Constants.UserMetadata.userId, word.id);
         const wordStore: UserWordConfig = {
           difficulty: '0',
           optional: {
             sprint: ' ',
             sprintWins: ' ',
+            sprintLoses: ' ',
             audio: ' ',
             allGames: ' ',
             learned: false,
@@ -539,30 +542,44 @@ export default class SprintPage extends Component {
           wordStore.optional.difficult = userWord.optional!.difficult;
           wordStore.optional.sprint = userWord.optional!.sprint;
           wordStore.optional.sprintWins = userWord.optional!.sprintWins;
+          wordStore.optional.sprintLoses = userWord.optional!.sprintLoses;
           wordStore.optional.audio = userWord.optional!.audio;
           wordStore.optional.allGames = userWord.optional!.allGames;
 
-          if (isCorrectAnswer && wordStore.optional)
-            wordStore.optional.sprintWins = String(Number(wordStore.optional.sprintWins || 0) + 1);
+          if (isCorrectAnswer && wordStore.optional) {
+            const wins = String(Number(wordStore.optional.sprintWins || 0) + 1);
+            wordStore.optional.sprintWins = wins;
+            currentWord!.optional!.sprintWins = wins;
+          } else if (!isCorrectAnswer && wordStore.optional) {
+            const loses = String(Number(wordStore.optional.sprintLoses || 0) + 1);
+            wordStore.optional.sprintLoses = loses;
+            currentWord!.optional!.sprintLoses = loses;
+          }
           wordStore.optional.sprint += isCorrectAnswer ? '1' : '0';
           wordStore.optional.allGames += isCorrectAnswer ? '1' : '0';
           if (!wordStore.optional.difficult && wordStore.optional.allGames.slice(-3) === '111') {
             wordStore.optional.learned = true;
             wordStore.optional.difficult = false;
+            currentWord!.optional!.learned = true;
           } else if (
             wordStore.optional.difficult &&
             wordStore.optional.allGames.slice(-6) === '111111'
           ) {
             wordStore.optional.learned = true;
             wordStore.optional.difficult = false;
+            currentWord!.optional!.learned = true;
           } else {
             wordStore.optional.learned = false;
+            currentWord!.optional!.learned = false;
           }
           await API.userWords.updateWord(Constants.UserMetadata.userId, word.id, wordStore);
         } else if (wordStore.optional) {
           wordStore.optional.sprint += isCorrectAnswer ? '1' : '0';
           wordStore.optional.allGames += isCorrectAnswer ? '1' : '0';
           wordStore.optional.learned = false;
+          currentWord!.optional!.sprint += isCorrectAnswer ? '1' : '0';
+          currentWord!.optional!.allGames += isCorrectAnswer ? '1' : '0';
+          currentWord!.optional!.learned = false;
           await API.userWords.createWord(Constants.UserMetadata.userId, word.id, wordStore);
         }
       }
