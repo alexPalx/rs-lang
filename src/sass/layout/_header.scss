@@ -2,47 +2,79 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  min-height: 64px;
+  height: 80px;
   padding: 0 25px;
-  background-color: #ebebeb;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  background-color: #608AF4;
+  border-bottom: 2px solid #4c76e2;
+  overflow: hidden;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
 
-  .hamburger .line{
+  #hamburger {
+    margin-right: 50px;
+  }
+  .hamburger .line {
+
     width: 50px;
     height: 5px;
-    background-color: rgb(128, 128, 128);
+    background-color: #FFFFFF;
     display: block;
     margin: 8px auto;
     -webkit-transition: all 0.3s ease-in-out;
     -o-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
   }
-  
-  .hamburger:hover{
+
+  .hamburger:hover {
     cursor: pointer;
   }
 
-  #hamburger.is-active .line:nth-child(2){
+  #hamburger.is-active .line:nth-child(2) {
     opacity: 0;
   }
-  
-  #hamburger.is-active .line:nth-child(1){
+
+  #hamburger.is-active .line:nth-child(1) {
     -webkit-transform: translateY(13px) rotate(45deg);
     -ms-transform: translateY(13px) rotate(45deg);
     -o-transform: translateY(13px) rotate(45deg);
     transform: translateY(13px) rotate(45deg);
   }
-  
-  #hamburger.is-active .line:nth-child(3){
+
+  #hamburger.is-active .line:nth-child(3) {
     -webkit-transform: translateY(-13px) rotate(-45deg);
     -ms-transform: translateY(-13px) rotate(-45deg);
     -o-transform: translateY(-13px) rotate(-45deg);
     transform: translateY(-13px) rotate(-45deg);
   }
+
   .app-name {
-    color: grey;
-    font-weight: bold;
-    font-size: 1.5rem;
-    cursor: pointer;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 26px;
+    color: #FFFFFF;
+  }
+
+  .logo-img {
+    height: 60px;
+  }
+
+  .signin,
+  .signup {
+    font-family: 'PT Serif', serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 16px;
+    padding: 16px 38px;
+    background-color: #fff;
+    border-radius: 30px;
+    color: #608AF4;
+    text-decoration: none;
+    margin: 0 0 0 20px;
+    
+    &:hover {
+      background-color: #4c76e2;
+      color: #fff;
+    }
   }
 }

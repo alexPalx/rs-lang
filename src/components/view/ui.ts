@@ -7,13 +7,14 @@ import NavLink from './navLink';
 
 export default class UI {
   public header: Component;
+  public logo: Component<HTMLImageElement>;
 
   public hamburger: Component;
   private hamburgerLine0: Component;
   private hamburgerLine1: Component;
   private hamburgerLine2: Component;
 
-  public appName: Component;
+  // public appName: Component;
 
   public authBlock: Component | undefined;
   public signInButton: Component<HTMLAnchorElement> | undefined;
@@ -52,8 +53,9 @@ export default class UI {
     this.hamburgerLine1 = new Component(this.hamburger.node, 'span', 'line');
     this.hamburgerLine2 = new Component(this.hamburger.node, 'span', 'line');
 
-    this.appName = new Component(this.header.node, 'h1', 'app-name', Constants.appName);
-
+    // this.appName = new Component(this.header.node, 'h1', 'app-name', Constants.appName);
+    this.logo = new Component(this.header.node, 'img', 'logo-img');
+    this.logo.node.src = './assets/img/logo-white.png';
     this.generateAuthBlock();
     // ───────────────────────────────────────────────────────────────────────────────────┘
 
