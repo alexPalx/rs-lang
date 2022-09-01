@@ -3,6 +3,7 @@ import Component from '../common/component';
 import Constants from '../common/constants';
 import { QueryParam, WordsQuery } from '../interfaces/types';
 import { Word } from '../interfaces/typesAPI';
+import Router from '../router/router';
 import Utils from '../utils/utils';
 
 const audioIconSVG = `
@@ -39,14 +40,22 @@ const answerSign = `
         17l-5-5 1.4-1.4 3.6 3.6 7.6-7.6L19 8l-9 9z"></path>
       </svg>
   </div>
-`
+`;
 const answersContainerHTML = ():  string => `
   <div class="answer-variant__container">
     <div class="answer-variant__sign">${answerSign}</div>
     <div class="answer-variant__index"></div>
     <div class="answer-variant__word"></div>
   </div>
-`
+`;
+const exitGameHTML = `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"
+      style="width: 20px; height: 20px;">
+    <path d="M.974 0L0 .974 5.026 6 0 11.026.974 12 6 6.974 
+      11.026 12l.974-.974L6.974 6 12 .974 11.026 0 6 5.026z">
+    </path>
+  </svg>
+`;
 
 export default class AudioPage extends Component {
   static level = 0;
@@ -56,6 +65,10 @@ export default class AudioPage extends Component {
   static collectionWordsFromServer: Word[] = [];
   static arrayOfRandomGameWordsKeys: number[] = [];
   static startGame: () => void;
+  static renderDataGameboard: () => void;
+  static setValuesKeyboardKeys: (event: KeyboardEvent) => void;
+  static getAnswerVariants: (index: number) => void;
+  static checkUserAnswer: (target: HTMLElement) => void;
 
   public wrapper: Component;
   public exitWrapper: Component;
@@ -221,8 +234,67 @@ export default class AudioPage extends Component {
     };
 
     // ------ 3
-    AudioPage.startGame = (): void => {};
+    AudioPage.startGame = (): void => {
+      this.exitGame.node.innerHTML = exitGameHTML;
+      
+      this.hideLoader();
+      this.audiocallGameContainer.node.classList.remove('game-hidden');
 
+      AudioPage.renderDataGameboard();
+
+      document.addEventListener('keydown', AudioPage.setValuesKeyboardKeys);
+
+      this.exitGame.node.addEventListener('click', () => {
+        Router.goTo(new URL(`http://${window.location.host}/${Constants.routes.games}`));
+        FOOTER.classList.remove('game-hidden');
+        AudioPage.collectionWordsFromServer = [];
+      });
+
+      const CONTENT = document.querySelector('.content') as HTMLDivElement;
+      const LINK = document.getElementsByTagName('a');
+      window.addEventListener('click', function changeValuesKeys(e) {
+        const target = e.target as HTMLElement;
+        if (
+          !CONTENT.contains(target) &&
+          Array.from(LINK).find((element): boolean => element.contains(target))
+        ) {
+          document.removeEventListener('keydown', AudioPage.setValuesKeyboardKeys);
+          FOOTER.classList.remove('game-hidden');
+          AudioPage.collectionWordsFromServer = [];
+          window.removeEventListener('click', changeValuesKeys);
+        }
+      });
+    };
+
+// ------ 4
+    AudioPage.renderDataGameboard = (): void => {
+
+      this.askTitle.node.innerHTML = `
+        Слово ${AudioPage.indexGameMove + 1} из ${AudioPage.arrayOfRandomGameWordsKeys.length}
+      `;
+      AudioPage.getAnswerVariants(
+        AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove]
+      );
+
+      this.audiocallGameAnswersContainer.node.addEventListener('click', async (event) => {
+        const target = event.target as HTMLElement;
+        console.log('target.closest from 4:', target.closest('.answer-variant__container'));
+        if (target.closest('.answer-variant__container')) {
+          AudioPage.checkUserAnswer(target.closest('.answer-variant__container') as HTMLElement);
+          this.buttonSkip.node.classList.add('game-hidden');
+          this.buttonNext.node.classList.remove('game-hidden');
+        }
+      });
+      
+      document.addEventListener('keydown', AudioPage.setValuesKeyboardKeys);
+    }
+
+
+    AudioPage.setValuesKeyboardKeys = async (event: KeyboardEvent): Promise<void> => {};
+
+    AudioPage.getAnswerVariants = (index: number): void => {};
+
+    AudioPage.checkUserAnswer = async (target: HTMLElement): Promise<void> => {};
 
     this.manageGame();
   }
