@@ -69,6 +69,8 @@ export default class AudioPage extends Component {
   static setValuesKeyboardKeys: (event: KeyboardEvent) => void;
   static getAnswerVariants: (index: number) => void;
   static checkUserAnswer: (target: HTMLElement) => void;
+  private static audioCorrectAnswer = new Audio('../../assets/audio/correctanswer.mp3');
+  private static audioIncorrectAnswer = new Audio('../../assets/audio/incorrectanswer.mp3');
 
   public wrapper: Component;
   public exitWrapper: Component;
@@ -289,10 +291,54 @@ export default class AudioPage extends Component {
       document.addEventListener('keydown', AudioPage.setValuesKeyboardKeys);
     }
 
+    // ------ 5
+    AudioPage.getAnswerVariants = (index: number): void => {
+
+      const someArray: number[] = [];
+      someArray.push(index);
+      while (someArray.length < 5) {
+        const random = Math.floor(
+          Math.random() * AudioPage.collectionWordsFromServer.length
+        );
+        if (!someArray.includes(random))
+          someArray.push(random);
+      }
+      const mixedArray: number[] = [];
+      while (someArray.length) {
+        
+        const key = someArray.splice(Math.floor(Math.random() * someArray.length), 1);
+        console.log('Это элементы putArray:', key);
+        mixedArray.push(+key);
+      }
+      console.log('Это mixedArray:', mixedArray);
+
+      const answerVariantsGroup = document.querySelectorAll('.answer-variant__word');
+      const answerVariantIndexes = document.querySelectorAll('.answer-variant__index');
+
+      for (let i = 0; i < answerVariantsGroup.length; i += 1) {
+        answerVariantsGroup[i].textContent = 
+          AudioPage.collectionWordsFromServer[mixedArray[i]].wordTranslate;
+        answerVariantIndexes[i].textContent = `${i + 1}.`;
+      }
+      
+      AudioPage.audioCorrectAnswer.pause();
+      AudioPage.audioCorrectAnswer.currentTime = 0;
+      AudioPage.audioCorrectAnswer.volume = 0.25;
+      AudioPage.audioIncorrectAnswer.pause();
+      AudioPage.audioIncorrectAnswer.currentTime = 0;
+      AudioPage.audioIncorrectAnswer.volume = 0.25;
+
+      this.askPlayAudio.node.setAttribute(
+        "src", `${Constants.serverURL}/${AudioPage.collectionWordsFromServer[index].audio}`
+      );
+      console.log('this.askPlayAudio:', this.askPlayAudio.node);
+      (this.askPlayAudio.node as HTMLAudioElement).play();
+      this.askPlayIcon.node.addEventListener('click', () => 
+        (this.askPlayAudio.node as HTMLAudioElement).play()
+      );
+    }
 
     AudioPage.setValuesKeyboardKeys = async (event: KeyboardEvent): Promise<void> => {};
-
-    AudioPage.getAnswerVariants = (index: number): void => {};
 
     AudioPage.checkUserAnswer = async (target: HTMLElement): Promise<void> => {};
 
