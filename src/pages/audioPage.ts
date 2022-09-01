@@ -2,7 +2,7 @@ import API from '../api/api';
 import Component from '../common/component';
 import Constants from '../common/constants';
 import { QueryParam, WordsQuery } from '../interfaces/types';
-import { Word } from '../interfaces/typesAPI';
+import { UserWordConfig, Word } from '../interfaces/typesAPI';
 import Router from '../router/router';
 import Utils from '../utils/utils';
 
@@ -541,7 +541,83 @@ export default class AudioPage extends Component {
       AudioPage.collectionWordsFromServer = [];
     }
 
-    // AudioPage.updateServerData = async (word: Word, isCorrectAnswer: boolean): Promise<void> => {};
+    // ------ 11
+    AudioPage.updateServerData = async (word: Word, isCorrectAnswer: boolean): Promise<void> => {
+      if (Constants.UserMetadata) {
+        if (
+          Constants.userWords &&
+          !(Constants.userWords.filter((userWord) => userWord.wordId === word.id).length !== 0)
+        ) {
+          const created = await API.userWords.createWord(Constants.UserMetadata.userId, word.id, {
+            difficulty: String(word.group),
+            optional: { difficult: false, learned: false },
+          });
+          if (created) Constants.userWords.push(created);
+        }
+
+        const currentWord = Constants.userWords!.find((w) => w.wordId === word.id);
+
+        const userWord = await API.userWords.getWord(Constants.UserMetadata.userId, word.id);
+        const wordStore: UserWordConfig = {
+          difficulty: '0',
+          optional: {
+            sprint: ' ',
+            sprintWins: ' ',
+            sprintLoses: ' ',
+            audio: ' ',
+            allGames: ' ',
+            learned: false,
+            difficult: false,
+          },
+        };
+
+        if (userWord && wordStore.optional) {
+          wordStore.difficulty = userWord.difficulty;
+          wordStore.optional.difficult = userWord.optional!.difficult;
+          wordStore.optional.sprint = userWord.optional!.sprint;
+          wordStore.optional.sprintWins = userWord.optional!.sprintWins;
+          wordStore.optional.sprintLoses = userWord.optional!.sprintLoses;
+          wordStore.optional.audio = userWord.optional!.audio;
+          wordStore.optional.allGames = userWord.optional!.allGames;
+
+          if (isCorrectAnswer && wordStore.optional) {
+            const wins = String(Number(wordStore.optional.sprintWins || 0) + 1);
+            wordStore.optional.sprintWins = wins;
+            currentWord!.optional!.sprintWins = wins;
+          } else if (!isCorrectAnswer && wordStore.optional) {
+            const loses = String(Number(wordStore.optional.sprintLoses || 0) + 1);
+            wordStore.optional.sprintLoses = loses;
+            currentWord!.optional!.sprintLoses = loses;
+          }
+          wordStore.optional.sprint += isCorrectAnswer ? '1' : '0';
+          wordStore.optional.allGames += isCorrectAnswer ? '1' : '0';
+          if (!wordStore.optional.difficult && wordStore.optional.allGames.slice(-3) === '111') {
+            wordStore.optional.learned = true;
+            wordStore.optional.difficult = false;
+            currentWord!.optional!.learned = true;
+          } else if (
+            wordStore.optional.difficult &&
+            wordStore.optional.allGames.slice(-6) === '111111'
+          ) {
+            wordStore.optional.learned = true;
+            wordStore.optional.difficult = false;
+            currentWord!.optional!.learned = true;
+          } else {
+            wordStore.optional.learned = false;
+            currentWord!.optional!.learned = false;
+          }
+          await API.userWords.updateWord(Constants.UserMetadata.userId, word.id, wordStore);
+        } else if (wordStore.optional) {
+          wordStore.optional.sprint += isCorrectAnswer ? '1' : '0';
+          wordStore.optional.allGames += isCorrectAnswer ? '1' : '0';
+          wordStore.optional.learned = false;
+          currentWord!.optional!.sprint += isCorrectAnswer ? '1' : '0';
+          currentWord!.optional!.allGames += isCorrectAnswer ? '1' : '0';
+          currentWord!.optional!.learned = false;
+          await API.userWords.createWord(Constants.UserMetadata.userId, word.id, wordStore);
+        }
+      }
+    }
 
     this.manageGame();
   }
