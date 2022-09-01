@@ -73,6 +73,8 @@ export default class AudioPage extends Component {
   private static audioCorrectAnswer = new Audio('../../assets/audio/correctanswer.mp3');
   private static audioIncorrectAnswer = new Audio('../../assets/audio/incorrectanswer.mp3');
   static showGameResults: () => void;
+  static updateServerData: (word: Word, result: boolean) => Promise<void>;
+  private static showCorrectAnswerBoard: (word: Word) => Promise<void>;
 
   public wrapper: Component;
   public exitWrapper: Component;
@@ -422,9 +424,51 @@ export default class AudioPage extends Component {
       }
     }
 
-    // AudioPage.checkUserAnswer = async (target: HTMLElement): Promise<void> => {};
+    // ------ 8
+    AudioPage.checkUserAnswer = async (target: HTMLElement): Promise<void> => {
+      ANSWER_VARIANT_CONTAINERS.forEach((elem) => {
+        const item = elem;
+        item.classList.add('answer-disabled');
+      });
+      const currentAnswerVariant = target.lastElementChild!.textContent as string;
+      const currentAnswerText = target.lastElementChild as HTMLElement;
+      console.log('8 currentAnswerVariant:', currentAnswerVariant);
+      const index = AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove];
+      console.log('index from 8:', index);
+      const correctAnswer = AudioPage.collectionWordsFromServer[index].wordTranslate;
+      console.log('correctrAnswer:', correctAnswer);
+      
+      if (currentAnswerVariant === correctAnswer) {
+        const currentTarget = target.firstElementChild as HTMLElement;
+        currentTarget.style.visibility = "visible";
+        currentAnswerText.style.color = "lavenderblush";
+        AudioPage.arrayCorrectAnswers.push(index);
+        console.log('AudioPage.arrayCorrectAnswers:', AudioPage.arrayCorrectAnswers);
+        await AudioPage.audioCorrectAnswer.play();
+        await AudioPage.updateServerData(AudioPage.collectionWordsFromServer[index], true);
+      } else {
+        currentAnswerText.style.color = "#ff3131";
+        AudioPage.arrayIncorrectAnswers.push(index);
+        await AudioPage.audioIncorrectAnswer.play();
+        await AudioPage.updateServerData(AudioPage.collectionWordsFromServer[index], false);
+        const correctAnswerElements = document.querySelectorAll('.answer-variant__word');
+        correctAnswerElements.forEach((elem) => {
+          const item = elem as HTMLElement;
+          if (item.innerHTML === correctAnswer) {
+            item.style.color = "#74cd59";
+          }
+        })
+      }
+      await AudioPage.showCorrectAnswerBoard(
+        AudioPage.collectionWordsFromServer[index]
+      );
+    }
 
+    // AudioPage.showCorrectAnswerBoard = async (word: Word): Promise<void> => {};
+    
     // AudioPage.showGameResults = (): void => {};
+
+    // AudioPage.updateServerData = async (word: Word, isCorrectAnswer: boolean): Promise<void> => {};
 
     this.manageGame();
   }
