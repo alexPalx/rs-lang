@@ -1,5 +1,6 @@
 .ebook-wrapper {
   height: calc(100% - 66px);
+  font-family: 'Roboto';
 
   .word-statistics {
     position: fixed;
@@ -18,10 +19,12 @@
       font-size: 28px;
       color: #000;
       margin-bottom: 25px;
+
       .word-name {
         color: #55c2da;
       }
     }
+
     table.greyGridTable {
       border: 2px solid #FFFFFF;
       width: 100%;
@@ -29,22 +32,24 @@
       text-align: center;
       border-collapse: collapse;
     }
-    table.greyGridTable td, table.greyGridTable th {
+
+    table.greyGridTable td,
+    table.greyGridTable th {
       border: 1px solid #C5C5C5;
       padding: 3px 4px;
     }
+
     table.greyGridTable tbody td {
       font-size: 16px;
       color: #000000;
       vertical-align: middle;
     }
-    // table.greyGridTable td:nth-child(even) {
-    //   background: #8FEB83;
-    // }
+
     table.greyGridTable thead {
       background: #FFFFFF;
       border-bottom: 2px solid #333333;
     }
+
     table.greyGridTable thead th {
       font-size: 18px;
       font-weight: bold;
@@ -52,13 +57,15 @@
       text-align: center;
       border-left: 2px solid #333333;
     }
+
     table.greyGridTable thead th:first-child {
       border-left: none;
     }
-    
+
     table.greyGridTable tfoot td {
       font-size: 14px;
     }
+
     .close-btn::after {
       cursor: pointer;
       position: absolute;
@@ -77,14 +84,16 @@
 .controls {
   position: relative;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: 'PT Serif', serif;
   margin-bottom: 50px;
 
 
   .page-controls-wrapper {
     display: flex;
     justify-content: flex-start;
+    margin-right: 25px;
 
     .page-down {
       cursor: pointer;
@@ -98,8 +107,8 @@
       text-decoration: none;
       line-height: 35px;
       text-align: center;
-      background-color: #55c2da;
-      color: blue;
+      background-color: #2f87ed;
+      color: #fff;
     }
 
     .page-now {
@@ -108,11 +117,12 @@
       font-size: 16px;
       text-transform: uppercase;
       text-align: center;
-      background-color: rgb(224, 224, 224);
-      border: 1px solid gray;
-      border-left: none;
-      border-right: none;
+      background-color: #2f87ed;
+      // border: 1px solid rgb(164, 246, 251);
+      // border-left: none;
+      // border-right: none;
       line-height: 40px;
+      color: #fff;
     }
 
     .page-up {
@@ -126,15 +136,14 @@
       text-align: center;
       text-decoration: none;
       line-height: 35px;
-      background-color: #55c2da;
-      margin-right: 25px;
-      color: blue;
+      background-color: #2f87ed;
+      color: #fff;
     }
   }
 
   .dropbtn {
-    background-color: #55c2da;
-    color: black;
+    background-color: #2f87ed;
+    color: #fff;
     padding: 12px;
     font-size: 16px;
     border: none;
@@ -145,7 +154,7 @@
 
   .dropbtn:hover,
   .dropbtn:focus {
-    background-color: #6ab7ea;
+    background-color: #2471ca;
   }
 
   .dropdown {
@@ -176,6 +185,44 @@
 
   .show {
     display: block;
+  }
+
+  @media (max-width: 660px) {
+
+    justify-content: center;
+
+    .dropdown {
+      order: 1;
+    }
+
+    .page-controls-wrapper {
+      order: 2;
+      margin: 25px;
+    }
+
+
+  }
+
+  @media (max-width: 375px) {
+
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+
+    .dropdown {
+      margin-top: 25px;
+    }
+
+    .page-controls-wrapper {
+      margin: 25px 0;
+    }
+
+    .group-select {
+      .select-classic {
+        margin: 0;
+      }
+    }
+
   }
 }
 
@@ -249,19 +296,25 @@
       &:hover {
         background-color: rgb(227, 219, 219);
 
-
         .title {
+          font-family: 'PT Serif', serif;
+          font-size: 14px;
+          font-weight: 400;
           position: absolute;
           top: 0px;
-          left: -160px;
+          left: -175px;
           display: block;
-          width: 150px;
+          width: 170px;
           color: #000;
           background-color: rgb(227, 219, 219);
           padding: 6px 12px;
           text-align: center;
           border-radius: 5px;
           font-size: 18px;
+          @media (max-width: 768px) {
+            left: -65px;
+            top: -55px;
+          }
         }
       }
     }
@@ -275,7 +328,7 @@
       padding: 12px;
       border-radius: 50%;
       margin: 20px 0;
-
+      
       &.studied {
         background-color: #fff;
 
@@ -301,17 +354,24 @@
 
 
         .title {
+          font-family: 'PT Serif', serif;
+          font-size: 14px;
+          font-weight: 400;
           position: absolute;
-          top: 0;
-          left: -160px;
+          top: 0px;
+          left: -150px;
           display: block;
-          width: 150px;
+          width: 145px;
           color: #000;
           background-color: rgb(227, 219, 219);
           padding: 6px 12px;
           text-align: center;
           border-radius: 5px;
           font-size: 18px;
+          @media (max-width: 768px) {
+            left: -50px;
+            top: -55px;
+          }
         }
       }
     }
@@ -336,7 +396,9 @@
       flex-direction: column;
       justify-content: center;
       margin-right: 12px;
-
+      @media (max-width: 768px) {
+        flex-direction: row;
+      }
       .checked {
         color: orange;
         text-align: center;
@@ -344,8 +406,11 @@
     }
 
     .word-main {
+      padding: 10px 0;
       padding-right: 40px;
-
+      @media (max-width: 768px) {
+        padding: 0 20px;
+      }
       .word-header {
         margin-bottom: 12px;
 
@@ -353,7 +418,7 @@
           display: flex;
           align-items: center;
           font-size: 34px;
-          font-weight: 500;
+          font-weight: 400;
 
           .play-btn {
             cursor: pointer;
@@ -364,6 +429,15 @@
           }
         }
 
+      }
+
+      .word-translate,
+      .text-meaning-translate,
+      .text-example-translate {
+        font-family: 'PT Serif', serif;
+        font-weight: 400;
+        font-style: italic;
+        color: rgba(0, 0, 0, 0.7);
       }
 
       .word-translate {
@@ -413,8 +487,10 @@
       .set-studied-word-wrapper,
       .get-statistics-wrapper {
         margin: 20px 40px;
+        @media (max-width: 475px) {
+          margin: 20px 10px;
+        }
       }
     }
   }
-
 }
