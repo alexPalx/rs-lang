@@ -56,6 +56,20 @@ const exitGameHTML = `
     </path>
   </svg>
 `;
+const drawResults = (countCorrect: number, countIncorrect: number
+  ): string => `
+  <h1 class="content-evaluation"></h1>
+  <div class="results-content">
+    <div class="results-content__correct">
+      <h3 class="content-title">Верные ответы: ${countCorrect}</h3>
+      <ul class="correct-list"></ul>
+    </div>
+    <div class="results-content__incorrect">
+      <h3 class="content-title">Ошибки: ${countIncorrect}</h3>
+      <ul class="incorrect-list"></ul>
+    </div>
+  </div>
+`;
 
 export default class AudioPage extends Component {
   static level = 0;
@@ -464,9 +478,68 @@ export default class AudioPage extends Component {
       );
     }
 
-    // AudioPage.showCorrectAnswerBoard = async (word: Word): Promise<void> => {};
-    
-    // AudioPage.showGameResults = (): void => {};
+    // ------ 9
+    AudioPage.showCorrectAnswerBoard = async (word: Word): Promise<void> => {
+
+      this.audiocallGamePlayContainer.node.classList.add('game-hidden');
+      this.askWordWrapper.node.style.visibility = "visible";
+      this.askWordWrapper.node.innerHTML = askWordWrapperHTML(word.word);
+      const askImage = document.querySelector('.ask-image') as HTMLElement;
+      askImage.style.backgroundImage = `url("${Constants.serverURL}/${word.image}")`;
+
+      const askWordPlayIcon = document.querySelector('.ask-word__play-icon') as HTMLElement;
+      askWordPlayIcon.addEventListener('click', () => 
+        (this.askPlayAudio.node as HTMLAudioElement).play()
+      );
+    }
+    // ------ 10
+    AudioPage.showGameResults = (): void => {
+
+      this.audiocallGameContainer.node.classList.add('game-hidden');
+      this.resultsContainer.node.classList.remove('game-hidden');
+      const countCorrectAnswers = AudioPage.arrayCorrectAnswers.length;
+      const countIncorrectAnswers = AudioPage.arrayIncorrectAnswers.length;
+      this.resultsContainer.node.innerHTML = 
+        drawResults(countCorrectAnswers, countIncorrectAnswers);
+      
+      const contentEvaluation = document.querySelector('.content-evaluation') as HTMLHeadingElement;
+      let evaluationCriteria;
+      if (countCorrectAnswers + countIncorrectAnswers > 0) {
+        evaluationCriteria = countCorrectAnswers / (countCorrectAnswers + countIncorrectAnswers);
+      } else {
+        evaluationCriteria = 0;
+      }
+      if (evaluationCriteria < 0.25) {
+        contentEvaluation.innerHTML = 'Нужно тренироваться чаще!';
+      } else if (evaluationCriteria >= 0.25 && evaluationCriteria < 0.5) {
+        contentEvaluation.innerHTML = 'Вы можете лучше!';
+      } else if (evaluationCriteria >= 0.5 && evaluationCriteria < 0.75) {
+        contentEvaluation.innerHTML = 'Неплохой результат!';
+      } else {
+        contentEvaluation.innerHTML = 'Отличный результат!';
+      }
+
+      const correctList = document.querySelector('.correct-list') as HTMLDivElement;
+      AudioPage.arrayCorrectAnswers.forEach((item) => {
+        correctList.innerHTML += `
+          <li class="word-item"><span class="word-en">${AudioPage.collectionWordsFromServer[item].word}
+            &nbsp;${AudioPage.collectionWordsFromServer[item].transcription}</span> - 
+            ${AudioPage.collectionWordsFromServer[item].wordTranslate}
+          </li>
+        `;
+      });
+      const incorrectList = document.querySelector('.incorrect-list') as HTMLDivElement;
+      AudioPage.arrayIncorrectAnswers.forEach((item) => {
+        incorrectList.innerHTML += `
+          <li class="word-item"><span class="word-en">${AudioPage.collectionWordsFromServer[item].word}
+            &nbsp;${AudioPage.collectionWordsFromServer[item].transcription}</span> - 
+            ${AudioPage.collectionWordsFromServer[item].wordTranslate}
+          </li>
+        `;
+      });
+  
+      AudioPage.collectionWordsFromServer = [];
+    }
 
     // AudioPage.updateServerData = async (word: Word, isCorrectAnswer: boolean): Promise<void> => {};
 
