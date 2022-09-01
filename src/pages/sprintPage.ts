@@ -171,6 +171,8 @@ export default class SprintPage extends Component {
       'div',
       'results__container game-hidden'
     );
+    
+    const FOOTER = document.querySelector('.footer') as HTMLElement;
 
     this.manageGame = async () => {
       SprintPage.scoreTotal = 0;
@@ -179,6 +181,8 @@ export default class SprintPage extends Component {
       SprintPage.indexGameMove = 0;
       SprintPage.arrayCorrectAnswers = [];
       SprintPage.arrayIncorrectAnswers = [];
+      
+      FOOTER.classList.add('game-hidden');
 
       if (Constants.UserMetadata && !Constants.userWords) {
         Constants.userWords = await API.userWords.getWords(Constants.UserMetadata.userId);
@@ -273,6 +277,7 @@ export default class SprintPage extends Component {
           !CONTENT.contains(target) &&
           Array.from(LINK).find((element): boolean => element.contains(target))
         ) {
+          FOOTER.classList.remove('game-hidden');
           clearInterval(countdownToStart);
           SprintPage.collectionWordsFromServer = [];
           window.removeEventListener('click', clearCountdown);
@@ -326,6 +331,7 @@ export default class SprintPage extends Component {
 
       this.exitGame.node.addEventListener('click', () => {
         Router.goTo(new URL(`http://${window.location.host}${Constants.LastPage}`));
+        FOOTER.classList.remove('game-hidden');
         clearInterval(SprintPage.countdownToEnd);
         clearTimeout(actionsAfterTimeout);
         SprintPage.collectionWordsFromServer = [];
@@ -339,6 +345,7 @@ export default class SprintPage extends Component {
           !CONTENT.contains(target) &&
           Array.from(LINK).find((element): boolean => element.contains(target))
         ) {
+          FOOTER.classList.remove('game-hidden');
           document.removeEventListener('keydown', SprintPage.setValuesKeyboardKeys);
           clearInterval(SprintPage.countdownToEnd);
           clearTimeout(actionsAfterTimeout);

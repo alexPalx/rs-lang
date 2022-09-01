@@ -1,0 +1,297 @@
+.audiocall-game-wrapper {
+    background-color: rgb(140, 127, 255);
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    min-height: calc(100vh - 88px);
+    margin: -20px;
+}
+
+.icon-loader-wrapper {
+    height: calc(100vh - 88px);
+    display: flex;
+}
+.icon-loader {
+    width: 3.5rem;
+    height: 3.5rem;
+    border: 0.2rem solid #a97862;
+    border-top: 0.25rem solid #bd5341;
+    border-radius: 100%;
+    position: relative;
+    left: calc(50% - 1.75rem);
+    top: calc(50% - 1.75rem);
+    animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+    from{
+        transform: rotate(0deg);
+    }to{
+        transform: rotate(360deg);
+    }
+}
+
+.exit-wrapper {
+    position: absolute;
+    top: 7rem;
+    right: 2rem;
+    justify-content: flex-end;
+    z-index: 5;
+}
+.exit-game {
+    position: relative;
+    right: 1.5rem;
+    top: 1.5rem;
+    color: #d1d2f1;
+    fill: currentColor;
+}
+.exit-game:hover {
+    cursor: pointer;
+}
+.exit-game:active {
+    color: #a71e0d;
+    fill: currentColor;
+}
+
+.audiocall-game__container {
+    min-height: calc(100vh - 88px);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    background-color: rgba(71, 71, 102, 0.5);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 0.1rem solid #d1d2f1;
+    padding: 0 1rem;
+    justify-content: flex-start;
+    align-items: center;
+    color: lavenderblush;
+}
+
+.audiocall-game__ask-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    padding-top: 1rem;
+}
+
+.audiocall-game__play-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    fill: lavenderblush;
+}
+.audiocall-game__play-container:hover {
+    fill: #b5aeff;
+}
+.audiocall-game__play-container:active {
+    fill: lavenderblush;
+    transition: none;
+}
+
+.ask-description {
+    display: flex;
+    flex-direction: column;
+    width: 15rem;
+    align-items: center;
+}
+.ask-title {
+    font-size: 1.5rem;
+}
+.ask-play-icon {
+    height: 8rem;
+    width: 8rem;
+    padding: 2rem;
+    transition: 0.2s;
+    border: 0.1rem solid #d1d2f1;
+    border-radius: 50%;
+    background-color: #726262;
+    cursor: pointer;
+    margin-top: 3rem;
+}
+
+.ask-word__wrapper {
+    visibility: hidden;
+}
+.ask-image {
+    height: 12rem;
+    width: 12rem;
+    border: 0.3rem solid #d1d2f1;
+    border-radius: 50%;
+    background-color: #6862b2;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 0 auto;
+    animation: bubble 0.5s linear;
+}
+@keyframes bubble {
+    from{
+        transform: scale(0);
+    }to{
+        transform: scale(1);
+    }
+}
+.ask-word__container {
+    display: flex;
+    align-items: center;
+    margin: 1rem;
+}
+.ask-word__play-container {
+    border: 0.1rem solid #d1d2f1;
+    border-radius: 50%;
+    background-color: #726262;
+    cursor: pointer;
+    fill: lavenderblush;
+}
+.ask-word__play-icon {
+    width: 3.2rem;
+    height: 3.2rem;
+    padding: 0.7rem;
+}
+.ask-word__play-icon:hover {
+    fill: #b5aeff;
+    transition: 0.2s;
+}
+.ask-word__play-icon:active {
+    fill: lavenderblush;
+}
+.ask-word {
+    font-size: 2.5rem;
+    padding-left: 1rem;
+    color: #74cd59;
+}
+
+.audiocall-game__answers-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-bottom: 2rem;
+}
+.answer-variant__container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.5rem;
+    padding: 1rem;
+    transition: 0.2s;
+}
+.answer-variant__container:hover {
+    cursor: pointer;
+    background-color: rgba(71, 71, 102, 0.7);
+}
+.answer-variant__container:active {
+    background-color: rgba(71, 71, 102, 0.4);
+}
+.answer-disabled {
+    color: #bfb2b2;
+    pointer-events: none;
+}
+.answer-variant__sign {
+    position: absolute;
+    left: 0.7rem;
+    visibility: hidden;
+    background-color: #6862b2;
+}
+.answer-variant__index {
+    display: block;
+    margin-right: 0.4rem;
+    padding-top: 0.15rem;
+    font-size: 1.2rem;
+    visibility: visible;
+}
+.answer-variant__word {
+    font-size: 1.4rem;
+}
+
+.audiocall-game__button-container {
+    padding: 1rem;
+}
+.button-skip,
+.button-next {
+    border: 0.1rem solid #d1d2f1;
+    border-radius: 4px;
+    background: transparent;
+    color: lavenderblush;
+    height: 50px;
+    text-align: center;
+    width: 183px;
+    cursor: pointer;
+    padding: 0.9rem;
+}
+.button-skip {
+    font-size: 1rem;
+}
+.button-next {
+    font-size: 4rem;
+}
+.button-skip:hover,
+.button-next:hover {
+    background-color: rgba(71, 71, 102, 0.7);
+}
+.button-skip:active,
+.button-next:active {
+    background-color: rgba(71, 71, 102, 0.4);
+}
+.button-skip:disabled,
+.button-next:disabled {
+    cursor: default;
+    background-color: inherit;
+    color: #bfb2b2;
+    border: 0.1rem solid #bfb2b2;
+}
+.arrow-next {
+    display: block;
+    position: relative;
+    top: -2rem;
+}
+
+.results__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 2rem 5rem 2rem;
+    gap: 2rem;
+    background-color: rgb(140, 127, 255);
+    color: #1906b7;
+}
+.results-content {
+    display: flex;
+    margin-bottom: 1rem;
+    padding: 1rem 2rem;
+    gap: 1rem;
+    border: 0.1rem solid #ffffff;
+    border-radius: 1.5rem;
+}
+.results-title {
+    font-size: 2rem;
+}
+.content-evaluation {
+    font-size: 1.5rem;
+    color: palegoldenrod;
+}
+.content-title {
+    font-size: 1.5rem;
+    text-align: center;
+    padding: 1rem 0;
+}
+.results-content__correct .content-title {
+    color:#75ff4e;
+}
+.results-content__incorrect .content-title {
+    color:#bb0505;
+}
+.word-item {
+    padding: 0.3rem 0;
+    color: lavenderblush;
+}
+.word-en {
+    color:#1906b7;
+}
+.game-hidden {
+    display: none;
+}
