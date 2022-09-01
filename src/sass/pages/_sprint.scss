@@ -1,7 +1,7 @@
 .sprint-game-wrapper {
     background-color: rgb(140, 127, 255);
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    min-height: calc(100vh - 155px);
+    min-height: calc(100vh - 88px);
     margin: -20px;
 }
 
@@ -10,7 +10,7 @@
     flex-direction: column;
     justify-content: center;
     text-align: center;
-    height: 75vh;
+    height: calc(100vh - 88px);
     gap: 2rem;
     color: whitesmoke;
 }
@@ -90,7 +90,7 @@
     background-color: #47476682;
     z-index: 1;
     left: 50%;
-    transform: translate(-50%, 40%);
+    transform: translate(-50%, 30%);
     border: 0.1rem solid #d1d2f1;
     padding: 1rem 1rem 0;
 }
