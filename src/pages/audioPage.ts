@@ -69,8 +69,10 @@ export default class AudioPage extends Component {
   static setValuesKeyboardKeys: (event: KeyboardEvent) => void;
   static getAnswerVariants: (index: number) => void;
   static checkUserAnswer: (target: HTMLElement) => void;
+  private static manageButtons: () => void;
   private static audioCorrectAnswer = new Audio('../../assets/audio/correctanswer.mp3');
   private static audioIncorrectAnswer = new Audio('../../assets/audio/incorrectanswer.mp3');
+  static showGameResults: () => void;
 
   public wrapper: Component;
   public exitWrapper: Component;
@@ -277,6 +279,8 @@ export default class AudioPage extends Component {
       AudioPage.getAnswerVariants(
         AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove]
       );
+      
+      AudioPage.manageButtons();
 
       this.audiocallGameAnswersContainer.node.addEventListener('click', async (event) => {
         const target = event.target as HTMLElement;
@@ -338,9 +342,89 @@ export default class AudioPage extends Component {
       );
     }
 
-    AudioPage.setValuesKeyboardKeys = async (event: KeyboardEvent): Promise<void> => {};
+    // ------ 6
+    const ANSWER_VARIANT_CONTAINERS = document.querySelectorAll('.answer-variant__container');
 
-    AudioPage.checkUserAnswer = async (target: HTMLElement): Promise<void> => {};
+    AudioPage.manageButtons = (): void => {
+      this.buttonSkip.node.addEventListener('click', () => {
+        AudioPage.indexGameMove += 1;
+        console.log('AudioPage.indexGameMove:', AudioPage.indexGameMove);
+        if (AudioPage.indexGameMove < AudioPage.arrayOfRandomGameWordsKeys.length) {
+          AudioPage.getAnswerVariants(
+            AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove]
+          );
+          this.askTitle.node.innerHTML = `
+            Слово ${AudioPage.indexGameMove + 1} из ${AudioPage.arrayOfRandomGameWordsKeys.length}
+          `;
+        } else {
+          ANSWER_VARIANT_CONTAINERS.forEach((elem) => {
+            const item = elem;
+            item.classList.add('answer-disabled');
+          });
+          this.buttonSkip.node.setAttribute("disabled", "disabled");
+          document.removeEventListener('keydown', AudioPage.setValuesKeyboardKeys);
+          AudioPage.showGameResults();
+        }
+        this.audiocallGamePlayContainer.node.classList.remove('game-hidden');
+        this.askWordWrapper.node.style.visibility = "hidden";
+      });
+      this.buttonNext.node.addEventListener('click', () => {
+        AudioPage.indexGameMove += 1;
+        if (AudioPage.indexGameMove < AudioPage.arrayOfRandomGameWordsKeys.length) {
+          AudioPage.getAnswerVariants(
+            AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove]
+          );
+          this.askTitle.node.innerHTML = `
+            Слово ${AudioPage.indexGameMove + 1} из ${AudioPage.arrayOfRandomGameWordsKeys.length}
+          `;
+          ANSWER_VARIANT_CONTAINERS.forEach((elem) => {
+            const item = elem;
+            item.classList.remove('answer-disabled');
+          });
+          const answerVariantsGroup = document.querySelectorAll('.answer-variant__word');
+          answerVariantsGroup.forEach((elem) => {
+            const item = elem as HTMLElement;
+            item.style.color = "inherit";
+          });
+          const answerVariantSigns = document.querySelectorAll('.answer-variant__sign');
+          answerVariantSigns.forEach((elem) => {
+            const item = elem as HTMLElement;
+            item.style.visibility = "hidden";
+          })
+          this.buttonNext.node.classList.add('game-hidden');
+          this.buttonSkip.node.classList.remove('game-hidden');
+        } else {
+          this.buttonNext.node.setAttribute("disabled", "disabled");
+          document.removeEventListener('keydown', AudioPage.setValuesKeyboardKeys);
+          AudioPage.showGameResults();
+        }
+        this.audiocallGamePlayContainer.node.classList.remove('game-hidden');
+        this.askWordWrapper.node.style.visibility = "hidden";
+      });
+    }
+    // ------ 7
+
+    AudioPage.setValuesKeyboardKeys = async (event: KeyboardEvent): Promise<void> => {
+      
+      if (+event.key >= 1 && +event.key <=5 
+          && !ANSWER_VARIANT_CONTAINERS[+event.key - 1].classList.contains('disabled')) {
+        AudioPage.checkUserAnswer(ANSWER_VARIANT_CONTAINERS[+event.key - 1] as HTMLElement);
+        this.buttonNext.node.classList.remove('game-hidden');
+        this.buttonSkip.node.classList.add('game-hidden');
+      }  
+      if (event.code === 'Enter' && !(this.buttonSkip.node as HTMLButtonElement).disabled ||
+          event.code === 'Enter' && !(this.buttonNext.node as HTMLButtonElement).disabled) {
+        AudioPage.manageButtons();
+      }
+      if (event.key === ' ') {
+        event.preventDefault();
+        await (this.askPlayAudio.node as HTMLAudioElement).play();
+      }
+    }
+
+    // AudioPage.checkUserAnswer = async (target: HTMLElement): Promise<void> => {};
+
+    // AudioPage.showGameResults = (): void => {};
 
     this.manageGame();
   }
