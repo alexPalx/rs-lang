@@ -1,5 +1,9 @@
+import API from '../api/api';
 import Component from '../common/component';
+import Constants from '../common/constants';
 import { QueryParam, WordsQuery } from '../interfaces/types';
+import { Word } from '../interfaces/typesAPI';
+import Utils from '../utils/utils';
 
 const audioIconSVG = `
   <svg class="audio-icon" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" 
@@ -46,6 +50,13 @@ const answersContainerHTML = ():  string => `
 
 export default class AudioPage extends Component {
   static level = 0;
+  static indexGameMove = 0;
+  private static arrayCorrectAnswers: number[] = [];
+  private static arrayIncorrectAnswers: number[] = [];
+  static collectionWordsFromServer: Word[] = [];
+  static arrayOfRandomGameWordsKeys: number[] = [];
+  static startGame: () => void;
+
   public wrapper: Component;
   public exitWrapper: Component;
   public exitGame: Component;
@@ -65,6 +76,10 @@ export default class AudioPage extends Component {
   public askPlayAudio: Component;
   public resultsContainer: Component;
   public arrowNext: Component;
+  public manageGame: () => Promise<void>;
+  public getWordsForGame: () => Promise<void>;
+  public getWords: (query: WordsQuery) => Promise<Word[]>;
+  public hideLoader: () => void;
 
   public queryObj: WordsQuery = { group: '0', page: '0' };
 
@@ -123,9 +138,92 @@ export default class AudioPage extends Component {
       this.wrapper.node, 'div', 'results__container game-hidden'
     );
 
-    if (params) {
-      const query = params.map((el) => Object.values(el));
-      this.queryObj = Object.fromEntries(query);
-    }
+    const FOOTER = document.querySelector('.footer') as HTMLElement;
+
+    this.manageGame = async () => {
+      
+      AudioPage.indexGameMove = 0;
+      AudioPage.arrayCorrectAnswers = [];
+      AudioPage.arrayIncorrectAnswers = [];
+      AudioPage.arrayOfRandomGameWordsKeys = [];
+
+      FOOTER.classList.add('game-hidden');
+
+      if (Constants.UserMetadata && !Constants.userWords) {
+        Constants.userWords = await API.userWords.getWords(Constants.UserMetadata.userId);
+      }
+
+      await this.getWordsForGame();
+      AudioPage.startGame();
+    };
+
+    this.getWords = async (query: WordsQuery): Promise<Word[]> => {
+      try {
+        const rawResponse = await fetch(
+          Utils.buildLink(['words'], [`group=${query.group}`, `page=${query.page}`])
+        );
+        if (!rawResponse.ok) throw new Error('Server error');
+        const content: Word[] = await rawResponse.json();
+        console.log('2: this.getWords work');
+        return content;
+      } catch (err) {
+        console.error((<Error>err).message);
+        throw err;
+      }
+    };
+    // ------ 1
+    this.getWordsForGame = async (): Promise<void> => {
+      if (AudioPage.collectionWordsFromServer.length === 0) {
+        const tempCollectionWords: Promise<Word[]>[] = [];
+        
+        if (params) {
+          const query = params.map((el) => Object.values(el));
+          this.queryObj = Object.fromEntries(query);
+          tempCollectionWords.push(this.getWords(this.queryObj));
+        } else {
+          for (let i = 0; i <= 29; i += 1) {
+            const group = String(AudioPage.level);
+            const page = String(i);
+            this.queryObj = { group, page };
+            tempCollectionWords.push(this.getWords(this.queryObj));
+          }
+        }
+        AudioPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
+      }
+      const arrayOfWordsKeysFromServer = Object.keys(AudioPage.collectionWordsFromServer);
+
+      console.log(
+        '3: getWordsForGame work \n arrayOfWordsKeysFromServer:',
+        arrayOfWordsKeysFromServer
+      );
+      console.log(
+        '4: AudioPage.collectionWordsFromServer:', 
+        AudioPage.collectionWordsFromServer
+      );
+
+      while (
+        AudioPage.arrayOfRandomGameWordsKeys.length < 20 &&
+        AudioPage.arrayOfRandomGameWordsKeys.length < 
+        AudioPage.collectionWordsFromServer.length
+      ) {
+        const keyRandom = arrayOfWordsKeysFromServer.splice(
+          Math.floor(Math.random() * arrayOfWordsKeysFromServer.length),
+          1
+        );
+
+        AudioPage.arrayOfRandomGameWordsKeys.push(+keyRandom);
+      }
+      console.log('5 arrayOfRandomGameWordsKeys:', AudioPage.arrayOfRandomGameWordsKeys)
+    };
+    // ------ 2
+    this.hideLoader = (): void => {
+      this.iconLoaderWrapper.node.classList.add('game-hidden');
+    };
+
+    // ------ 3
+    AudioPage.startGame = (): void => {};
+
+
+    this.manageGame();
   }
 }
