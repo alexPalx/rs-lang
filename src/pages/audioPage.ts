@@ -314,6 +314,8 @@ export default class AudioPage extends Component {
     }
 
     // ------ 5
+    const ANSWER_VARIANTS_GROUP = document.querySelectorAll('.answer-variant__word');
+
     AudioPage.getAnswerVariants = (index: number): void => {
 
       const someArray: number[] = [];
@@ -334,11 +336,10 @@ export default class AudioPage extends Component {
       }
       console.log('Это mixedArray:', mixedArray);
 
-      const answerVariantsGroup = document.querySelectorAll('.answer-variant__word');
       const answerVariantIndexes = document.querySelectorAll('.answer-variant__index');
 
-      for (let i = 0; i < answerVariantsGroup.length; i += 1) {
-        answerVariantsGroup[i].textContent = 
+      for (let i = 0; i < ANSWER_VARIANTS_GROUP.length; i += 1) {
+        ANSWER_VARIANTS_GROUP[i].textContent = 
           AudioPage.collectionWordsFromServer[mixedArray[i]].wordTranslate;
         answerVariantIndexes[i].textContent = `${i + 1}.`;
       }
@@ -362,7 +363,6 @@ export default class AudioPage extends Component {
 
     // ------ 6
     const ANSWER_VARIANT_CONTAINERS = document.querySelectorAll('.answer-variant__container');
-    const ANSWER_VARIANT_GROUP = document.querySelectorAll('.answer-variant__word');
 
     AudioPage.manageButtonSkip = (): void => {
       ANSWER_VARIANT_CONTAINERS.forEach((elem) => {
@@ -378,7 +378,7 @@ export default class AudioPage extends Component {
       
       const correctAnswer = AudioPage.collectionWordsFromServer[index].wordTranslate;
       
-      ANSWER_VARIANT_GROUP.forEach((elem) => {
+      ANSWER_VARIANTS_GROUP.forEach((elem) => {
         const item = elem as HTMLElement;
         if (item.textContent === correctAnswer)
           item.style.color = "lavenderblush";
@@ -387,7 +387,7 @@ export default class AudioPage extends Component {
       AudioPage.arrayIncorrectAnswers.push(index);
       AudioPage.updateServerData(AudioPage.collectionWordsFromServer[index], false);
     };
-    
+
     AudioPage.getNextWord = (): void => {
       AudioPage.indexGameMove += 1;
       if (AudioPage.indexGameMove < AudioPage.arrayOfRandomGameWordsKeys.length) {
@@ -401,8 +401,7 @@ export default class AudioPage extends Component {
           const item = elem;
           item.classList.remove('answer-disabled');
         });
-        const answerVariantsGroup = document.querySelectorAll('.answer-variant__word');
-        answerVariantsGroup.forEach((elem) => {
+        ANSWER_VARIANTS_GROUP.forEach((elem) => {
           const item = elem as HTMLElement;
           item.style.color = "inherit";
         });
@@ -471,8 +470,7 @@ export default class AudioPage extends Component {
         AudioPage.arrayIncorrectAnswers.push(index);
         await AudioPage.audioIncorrectAnswer.play();
         await AudioPage.updateServerData(AudioPage.collectionWordsFromServer[index], false);
-        const correctAnswerElements = document.querySelectorAll('.answer-variant__word');
-        correctAnswerElements.forEach((elem) => {
+        ANSWER_VARIANTS_GROUP.forEach((elem) => {
           const item = elem as HTMLElement;
           if (item.innerHTML === correctAnswer) {
             item.style.color = "#74cd59";
