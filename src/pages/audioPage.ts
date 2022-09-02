@@ -297,7 +297,7 @@ export default class AudioPage extends Component {
         AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove]
       );
       
-      AudioPage.manageButtonSkip();
+      this.buttonSkip.node.addEventListener('click', AudioPage.manageButtonSkip);
       this.buttonNext.node.addEventListener('click', AudioPage.getNextWord);
 
       this.audiocallGameAnswersContainer.node.addEventListener('click', async (event) => {
@@ -365,30 +365,29 @@ export default class AudioPage extends Component {
     const ANSWER_VARIANT_GROUP = document.querySelectorAll('.answer-variant__word');
 
     AudioPage.manageButtonSkip = (): void => {
-      this.buttonSkip.node.addEventListener('click', () => {
-        ANSWER_VARIANT_CONTAINERS.forEach((elem) => {
-          const item = elem as HTMLElement;
-          item.classList.add('answer-disabled');
-        });
-        this.buttonNext.node.classList.remove('game-hidden');
-        this.buttonSkip.node.classList.add('game-hidden');
-        
-        const index = AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove];
-        console.log('index from 6:', index);
-        AudioPage.showCorrectAnswerBoard(AudioPage.collectionWordsFromServer[index]);
-        
-        const correctAnswer = AudioPage.collectionWordsFromServer[index].wordTranslate;
-        
-        ANSWER_VARIANT_GROUP.forEach((elem) => {
-          const item = elem as HTMLElement;
-          if (item.textContent === correctAnswer)
-            item.style.color = "lavenderblush";
-        });
-        AudioPage.audioIncorrectAnswer.play();
-        AudioPage.arrayIncorrectAnswers.push(index);
-        AudioPage.updateServerData(AudioPage.collectionWordsFromServer[index], false);
+      ANSWER_VARIANT_CONTAINERS.forEach((elem) => {
+        const item = elem as HTMLElement;
+        item.classList.add('answer-disabled');
       });
-    }
+      this.buttonNext.node.classList.remove('game-hidden');
+      this.buttonSkip.node.classList.add('game-hidden');
+      
+      const index = AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove];
+      console.log('index from 6:', index);
+      AudioPage.showCorrectAnswerBoard(AudioPage.collectionWordsFromServer[index]);
+      
+      const correctAnswer = AudioPage.collectionWordsFromServer[index].wordTranslate;
+      
+      ANSWER_VARIANT_GROUP.forEach((elem) => {
+        const item = elem as HTMLElement;
+        if (item.textContent === correctAnswer)
+          item.style.color = "lavenderblush";
+      });
+      AudioPage.audioIncorrectAnswer.play();
+      AudioPage.arrayIncorrectAnswers.push(index);
+      AudioPage.updateServerData(AudioPage.collectionWordsFromServer[index], false);
+    };
+    
     AudioPage.getNextWord = (): void => {
       AudioPage.indexGameMove += 1;
       if (AudioPage.indexGameMove < AudioPage.arrayOfRandomGameWordsKeys.length) {
@@ -432,9 +431,12 @@ export default class AudioPage extends Component {
         this.buttonNext.node.classList.remove('game-hidden');
         this.buttonSkip.node.classList.add('game-hidden');
       }  
-      if (event.code === 'Enter' && !(this.buttonSkip.node as HTMLButtonElement).disabled ||
-          event.code === 'Enter' && !(this.buttonNext.node as HTMLButtonElement).disabled) {
-            AudioPage.getNextWord();
+      if (event.code === 'Enter'
+          && this.buttonSkip.node.classList.contains('game-hidden')) {
+        AudioPage.getNextWord();
+      } else if (event.code === 'Enter' 
+          && this.buttonNext.node.classList.contains('game-hidden')) {
+        AudioPage.manageButtonSkip();
       }
       if (event.key === ' ') {
         event.preventDefault();
