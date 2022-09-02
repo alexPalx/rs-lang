@@ -9,18 +9,21 @@
   overflow: hidden;
 
   #hamburger {
+    position: relative;
     margin-right: 50px;
+    z-index: 2;
   }
-  .hamburger .line {
 
+  .hamburger .line {
     width: 50px;
     height: 5px;
     background-color: #FFFFFF;
     display: block;
     margin: 8px auto;
-    -webkit-transition: all 0.3s ease-in-out;
-    -o-transition: all 0.3s ease-in-out;
-    transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.5s ease-in-out;
+    -o-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
+    transition: margin 0.3 ease-in-out;
   }
 
   .hamburger:hover {
@@ -45,6 +48,18 @@
     transform: translateY(-13px) rotate(-45deg);
   }
 
+  #hamburger.is-active {
+    @media (max-width: 474px) {
+      position: fixed;
+      top: 15px;
+      right: -35px;
+      transition: all 0.3s ease-in-out;
+      .line {
+        background-color: #608AF4;
+      }
+    }
+  }
+
   .app-name {
     font-family: 'Roboto', sans-serif;
     font-weight: 700;
@@ -55,10 +70,16 @@
 
   .logo-img {
     height: 60px;
+
+    @media (max-width: 767px) {
+      display: none;
+    }
   }
 
+  .logout,
   .signin,
   .signup {
+    cursor: pointer;
     font-family: 'PT Serif', serif;
     font-weight: 700;
     font-size: 14px;
@@ -69,10 +90,15 @@
     color: #608AF4;
     text-decoration: none;
     margin: 0 0 0 20px;
-    
+    border: none;
+
     &:hover {
       background-color: #4c76e2;
       color: #fff;
+    }
+
+    @media (max-width: 767px) {
+      padding: 8px 16px;
     }
   }
 }
