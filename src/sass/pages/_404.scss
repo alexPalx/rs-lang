@@ -39,5 +39,8 @@
     border-radius: 5px;
     text-decoration: none;
     transition-duration: .3s;
+    @media (max-width: 375px) {
+      padding: 12px 15px;
+    }
   }
 }

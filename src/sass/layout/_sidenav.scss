@@ -42,10 +42,12 @@
 }
 
 #main,
-.header,
-.footer {
+.header {
   transition: margin-left .5s;
   padding: 20px;
+}
+.footer {
+  transition: margin-left .5s;
 }
 
 @media screen and (max-height: 450px) {
