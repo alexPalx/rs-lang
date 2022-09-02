@@ -43,7 +43,7 @@ export default class Content extends Component {
         this.content = new AudioPage(this.node, params);
         break;
       case Constants.routes.statistics:
-        this.content = new StatisticsPage(this.node, params);
+        this.content = new StatisticsPage(this.node);
         break;
       case Constants.routes.about:
         this.content = new AboutPage(this.node);

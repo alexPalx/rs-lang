@@ -5,6 +5,7 @@ import Router from '../router/router';
 import EbookWord from './components/ebookWord';
 import { Word } from '../interfaces/typesAPI';
 import Constants from '../common/constants';
+import Statistics from '../common/statisticsData';
 
 const groupSelect = `<option value="0">Раздел 1</option>
 <option value="1">Раздел 2</option>
@@ -126,6 +127,7 @@ export default class EbookPage extends Component {
           this.cards.map((el) => el.stopPlay());
         },
       });
+      Statistics.add(card.id, 'seen');
       return item;
     });
   }
