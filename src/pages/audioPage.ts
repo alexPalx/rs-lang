@@ -80,7 +80,7 @@ export default class AudioPage extends Component {
   static arrayOfRandomGameWordsKeys: number[] = [];
   static startGame: () => void;
   static renderDataGameboard: () => void;
-  static setValuesKeyboardKeys: (event: KeyboardEvent) => void;
+  static setValuesKeyboardKeys: (event: KeyboardEvent) => Promise<void>;
   static getAnswerVariants: (index: number) => void;
   static checkUserAnswer: (target: HTMLElement) => void;
   private static manageButtons: () => void;
@@ -348,9 +348,9 @@ export default class AudioPage extends Component {
       AudioPage.audioIncorrectAnswer.currentTime = 0;
       AudioPage.audioIncorrectAnswer.volume = 0.25;
 
-      this.askPlayAudio.node.setAttribute(
-        "src", `${Constants.serverURL}/${AudioPage.collectionWordsFromServer[index].audio}`
-      );
+      (this.askPlayAudio.node as HTMLAudioElement).src = `
+        ${Constants.serverURL}/${AudioPage.collectionWordsFromServer[index].audio}
+      `;
       console.log('this.askPlayAudio:', this.askPlayAudio.node);
       (this.askPlayAudio.node as HTMLAudioElement).play();
       this.askPlayIcon.node.addEventListener('click', () => 
@@ -360,29 +360,31 @@ export default class AudioPage extends Component {
 
     // ------ 6
     const ANSWER_VARIANT_CONTAINERS = document.querySelectorAll('.answer-variant__container');
+    const ANSWER_VARIANT_GROUP = document.querySelectorAll('.answer-variant__word');
 
     AudioPage.manageButtons = (): void => {
       this.buttonSkip.node.addEventListener('click', () => {
-        AudioPage.indexGameMove += 1;
-        console.log('AudioPage.indexGameMove:', AudioPage.indexGameMove);
-        if (AudioPage.indexGameMove < AudioPage.arrayOfRandomGameWordsKeys.length) {
-          AudioPage.getAnswerVariants(
-            AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove]
-          );
-          this.askTitle.node.innerHTML = `
-            Слово ${AudioPage.indexGameMove + 1} из ${AudioPage.arrayOfRandomGameWordsKeys.length}
-          `;
-        } else {
-          ANSWER_VARIANT_CONTAINERS.forEach((elem) => {
-            const item = elem;
-            item.classList.add('answer-disabled');
-          });
-          this.buttonSkip.node.setAttribute("disabled", "disabled");
-          document.removeEventListener('keydown', AudioPage.setValuesKeyboardKeys);
-          AudioPage.showGameResults();
-        }
-        this.audiocallGamePlayContainer.node.classList.remove('game-hidden');
-        this.askWordWrapper.node.style.visibility = "hidden";
+        ANSWER_VARIANT_CONTAINERS.forEach((elem) => {
+          const item = elem as HTMLElement;
+          item.classList.add('answer-disabled');
+        });
+        this.buttonNext.node.classList.remove('game-hidden');
+        this.buttonSkip.node.classList.add('game-hidden');
+        
+        const index = AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove];
+        console.log('index from 6:', index);
+        AudioPage.showCorrectAnswerBoard(AudioPage.collectionWordsFromServer[index]);
+        
+        const correctAnswer = AudioPage.collectionWordsFromServer[index].wordTranslate;
+        
+        ANSWER_VARIANT_GROUP.forEach((elem) => {
+          const item = elem as HTMLElement;
+          if (item.textContent === correctAnswer)
+            item.style.color = "lavenderblush";
+        });
+        AudioPage.audioIncorrectAnswer.play();
+        AudioPage.arrayIncorrectAnswers.push(index);
+        AudioPage.updateServerData(AudioPage.collectionWordsFromServer[index], false);
       });
       this.buttonNext.node.addEventListener('click', () => {
         AudioPage.indexGameMove += 1;
@@ -423,7 +425,7 @@ export default class AudioPage extends Component {
     AudioPage.setValuesKeyboardKeys = async (event: KeyboardEvent): Promise<void> => {
       
       if (+event.key >= 1 && +event.key <=5 
-          && !ANSWER_VARIANT_CONTAINERS[+event.key - 1].classList.contains('disabled')) {
+          && !ANSWER_VARIANT_CONTAINERS[+event.key - 1].classList.contains('answer-disabled')) {
         AudioPage.checkUserAnswer(ANSWER_VARIANT_CONTAINERS[+event.key - 1] as HTMLElement);
         this.buttonNext.node.classList.remove('game-hidden');
         this.buttonSkip.node.classList.add('game-hidden');
