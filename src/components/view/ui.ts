@@ -7,13 +7,13 @@ import NavLink from './navLink';
 
 export default class UI {
   public header: Component;
-
+  public logo: Component<HTMLImageElement>;
+  public navMobileWrapper: Component;
+  public navLogo: Component<HTMLImageElement>;
   public hamburger: Component;
   private hamburgerLine0: Component;
   private hamburgerLine1: Component;
   private hamburgerLine2: Component;
-
-  public appName: Component;
 
   public authBlock: Component | undefined;
   public signInButton: Component<HTMLAnchorElement> | undefined;
@@ -52,8 +52,8 @@ export default class UI {
     this.hamburgerLine1 = new Component(this.hamburger.node, 'span', 'line');
     this.hamburgerLine2 = new Component(this.hamburger.node, 'span', 'line');
 
-    this.appName = new Component(this.header.node, 'h1', 'app-name', Constants.appName);
-
+    this.logo = new Component(this.header.node, 'img', 'logo-img');
+    this.logo.node.src = './assets/img/logo-white.png';
     this.generateAuthBlock();
     // ───────────────────────────────────────────────────────────────────────────────────┘
 
@@ -63,7 +63,15 @@ export default class UI {
 
     this.nav = new Component(this.aside.node, 'nav', 'sidenav');
     this.nav.node.id = 'sidenav';
-
+    this.navMobileWrapper = new Component(this.nav.node, 'div', 'nav-mobile-wrapper');
+    this.navLogo = new Component(this.navMobileWrapper.node, 'img', 'nav-logo');
+    this.navLogo.node.src = './assets/img/logo-prime.png';
+    this.nav.node.onclick = () => {
+      if (window.screen.width < 475) {
+        closeNav();
+        this.hamburger.node.classList.toggle('is-active');
+      }
+    };
     this.navLinkMain = new NavLink(
       this.nav.node,
       `/${Constants.routes.main}`,
@@ -88,7 +96,7 @@ export default class UI {
     this.navLinkStats = new NavLink(
       this.nav.node,
       `/${Constants.routes.statistics}`,
-      './assets/svg/statistics.svg',
+      './assets/svg/menu-statistic.svg',
       'statistics-page',
       'Статистика'
     );
