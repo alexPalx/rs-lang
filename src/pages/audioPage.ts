@@ -71,6 +71,23 @@ const drawResults = (countCorrect: number, countIncorrect: number
   </div>
 `;
 
+enum CountItems {
+  AnswerVariantCountInGameboard = 5,
+  MaxPagesIndex = 29,
+  WordsPerPage = 20,
+}
+enum Level {
+  Low = 0.25,
+  Middle = 0.5,
+  High = 0.75
+}
+enum TextColor {
+  Main = "lavenderblush",
+  Inherit = "inherit",
+  IncorrectAnswer = "#ff3131",
+  CorrectAnswer = "#74cd59"
+}
+
 export default class AudioPage extends Component {
   static level = 0;
   static indexGameMove = 0;
@@ -152,7 +169,8 @@ export default class AudioPage extends Component {
     this.audiocallGameAnswersContainer = new Component(
       this.audiocallGameContainer.node, 'div', 'audiocall-game__answers-container'
     );
-    this.audiocallGameAnswersContainer.node.innerHTML = answersContainerHTML().repeat(5);
+    this.audiocallGameAnswersContainer.node.innerHTML =
+      answersContainerHTML().repeat(CountItems.AnswerVariantCountInGameboard);
 
     this.audiocallGameButtonContainer = new Component(
       this.audiocallGameContainer.node, 'div', 'audiocall-game__button-container'
@@ -215,7 +233,7 @@ export default class AudioPage extends Component {
           this.queryObj = Object.fromEntries(query);
           tempCollectionWords.push(this.getWords(this.queryObj));
         } else {
-          for (let i = 0; i <= 29; i += 1) {
+          for (let i = 0; i <= CountItems.MaxPagesIndex; i += 1) {
             const group = String(AudioPage.level);
             const page = String(i);
             this.queryObj = { group, page };
@@ -236,7 +254,7 @@ export default class AudioPage extends Component {
       );
 
       while (
-        AudioPage.arrayOfRandomGameWordsKeys.length < 20 &&
+        AudioPage.arrayOfRandomGameWordsKeys.length < CountItems.WordsPerPage &&
         AudioPage.arrayOfRandomGameWordsKeys.length < 
         AudioPage.collectionWordsFromServer.length
       ) {
@@ -320,7 +338,7 @@ export default class AudioPage extends Component {
 
       const someArray: number[] = [];
       someArray.push(index);
-      while (someArray.length < 5) {
+      while (someArray.length < CountItems.AnswerVariantCountInGameboard) {
         const random = Math.floor(
           Math.random() * AudioPage.collectionWordsFromServer.length
         );
@@ -346,10 +364,10 @@ export default class AudioPage extends Component {
       
       AudioPage.audioCorrectAnswer.pause();
       AudioPage.audioCorrectAnswer.currentTime = 0;
-      AudioPage.audioCorrectAnswer.volume = 0.25;
+      AudioPage.audioCorrectAnswer.volume = Level.Low;
       AudioPage.audioIncorrectAnswer.pause();
       AudioPage.audioIncorrectAnswer.currentTime = 0;
-      AudioPage.audioIncorrectAnswer.volume = 0.25;
+      AudioPage.audioIncorrectAnswer.volume = Level.Low;
 
       (this.askPlayAudio.node as HTMLAudioElement).src = `
         ${Constants.serverURL}/${AudioPage.collectionWordsFromServer[index].audio}
@@ -381,7 +399,7 @@ export default class AudioPage extends Component {
       ANSWER_VARIANTS_GROUP.forEach((elem) => {
         const item = elem as HTMLElement;
         if (item.textContent === correctAnswer)
-          item.style.color = "lavenderblush";
+          item.style.color = TextColor.Main;
       });
       AudioPage.audioIncorrectAnswer.play();
       AudioPage.arrayIncorrectAnswers.push(index);
@@ -403,7 +421,7 @@ export default class AudioPage extends Component {
         });
         ANSWER_VARIANTS_GROUP.forEach((elem) => {
           const item = elem as HTMLElement;
-          item.style.color = "inherit";
+          item.style.color = TextColor.Inherit;
         });
         const answerVariantSigns = document.querySelectorAll('.answer-variant__sign');
         answerVariantSigns.forEach((elem) => {
@@ -424,7 +442,7 @@ export default class AudioPage extends Component {
 
     AudioPage.setValuesKeyboardKeys = async (event: KeyboardEvent): Promise<void> => {
       
-      if (+event.key >= 1 && +event.key <=5 
+      if (+event.key >= 1 && +event.key <= CountItems.AnswerVariantCountInGameboard 
           && !ANSWER_VARIANT_CONTAINERS[+event.key - 1].classList.contains('answer-disabled')) {
         AudioPage.checkUserAnswer(ANSWER_VARIANT_CONTAINERS[+event.key - 1] as HTMLElement);
         this.buttonNext.node.classList.remove('game-hidden');
@@ -460,20 +478,20 @@ export default class AudioPage extends Component {
       if (currentAnswerVariant === correctAnswer) {
         const currentTarget = target.firstElementChild as HTMLElement;
         currentTarget.style.visibility = "visible";
-        currentAnswerText.style.color = "lavenderblush";
+        currentAnswerText.style.color = TextColor.Main;
         AudioPage.arrayCorrectAnswers.push(index);
         console.log('AudioPage.arrayCorrectAnswers:', AudioPage.arrayCorrectAnswers);
         await AudioPage.audioCorrectAnswer.play();
         await AudioPage.updateServerData(AudioPage.collectionWordsFromServer[index], true);
       } else {
-        currentAnswerText.style.color = "#ff3131";
+        currentAnswerText.style.color = TextColor.IncorrectAnswer;
         AudioPage.arrayIncorrectAnswers.push(index);
         await AudioPage.audioIncorrectAnswer.play();
         await AudioPage.updateServerData(AudioPage.collectionWordsFromServer[index], false);
         ANSWER_VARIANTS_GROUP.forEach((elem) => {
           const item = elem as HTMLElement;
           if (item.innerHTML === correctAnswer) {
-            item.style.color = "#74cd59";
+            item.style.color = TextColor.CorrectAnswer;
           }
         })
       }
@@ -513,11 +531,11 @@ export default class AudioPage extends Component {
       } else {
         evaluationCriteria = 0;
       }
-      if (evaluationCriteria < 0.25) {
+      if (evaluationCriteria < Level.Low) {
         contentEvaluation.innerHTML = 'Нужно тренироваться чаще!';
-      } else if (evaluationCriteria >= 0.25 && evaluationCriteria < 0.5) {
+      } else if (evaluationCriteria >= Level.Low && evaluationCriteria < Level.Middle) {
         contentEvaluation.innerHTML = 'Вы можете лучше!';
-      } else if (evaluationCriteria >= 0.5 && evaluationCriteria < 0.75) {
+      } else if (evaluationCriteria >= Level.Middle && evaluationCriteria < Level.High) {
         contentEvaluation.innerHTML = 'Неплохой результат!';
       } else {
         contentEvaluation.innerHTML = 'Отличный результат!';

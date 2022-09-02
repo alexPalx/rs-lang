@@ -37,6 +37,26 @@ const drawResults = (scoreFinal: number, countCorrect: number, countIncorrect: n
   </div>
 `;
 
+enum CountItems {
+  MaxCountCorrectSign = 3,
+  MaxPagesIndex = 29,
+}
+enum GrowthScore {
+  Minimal = 10,
+  Increased = 20,
+  Middle = 40,
+  Maximum = 80
+}
+enum CorrectAnswerSeries {
+  Start = 4,
+  Middle = 8,
+  Super = 12
+}
+enum Level {
+  Low = 0.25,
+  Middle = 0.5,
+  High = 0.75
+}
 enum GameTime {
   InitialTime = 4,
   TimeForGame = 60,
@@ -50,7 +70,7 @@ export default class SprintPage extends Component {
   static level = 0;
   static scoreTotal = 0;
   static correctAnswersSeries = 0;
-  static scoreGrowth = 10;
+  static scoreGrowth = GrowthScore.Minimal;
   static indexGameMove = 0;
   private static arrayCorrectAnswers: number[] = [];
   private static arrayIncorrectAnswers: number[] = [];
@@ -123,7 +143,7 @@ export default class SprintPage extends Component {
       'sprint-game__counter'
     );
     this.timerContainer = new Component(this.sprintGameCounter.node, 'div', 'timer-container');
-    this.timerContainer.node.textContent = '60';
+    this.timerContainer.node.textContent = `${GameTime.TimeForGame}`;
     this.sprintGameCounterScore = new Component(
       this.sprintGameCounter.node,
       'div',
@@ -137,11 +157,11 @@ export default class SprintPage extends Component {
       'sprint-game__content'
     );
     this.row1 = new Component(this.sprintGameContent.node, 'div', 'row1');
-    this.row1.node.innerHTML = answersSeriesHTML.repeat(3);
+    this.row1.node.innerHTML = answersSeriesHTML.repeat(CountItems.MaxCountCorrectSign);
     this.wordVoicing = new Component(this.row1.node, 'div', 'word-voicing');
     this.answersReward = new Component(this.sprintGameContent.node, 'div', 'answers-reward');
     this.reward = new Component(this.answersReward.node, 'span', 'reward');
-    this.reward.node.textContent = '+10';
+    this.reward.node.textContent = `+${GrowthScore.Minimal}`;
     this.rewardText = new Component(this.answersReward.node, 'span', 'reward-text');
     this.rewardText.node.textContent = ` очков за слово`;
 
@@ -177,7 +197,7 @@ export default class SprintPage extends Component {
     this.manageGame = async () => {
       SprintPage.scoreTotal = 0;
       SprintPage.correctAnswersSeries = 0;
-      SprintPage.scoreGrowth = 10;
+      SprintPage.scoreGrowth = GrowthScore.Minimal;
       SprintPage.indexGameMove = 0;
       SprintPage.arrayCorrectAnswers = [];
       SprintPage.arrayIncorrectAnswers = [];
@@ -216,7 +236,7 @@ export default class SprintPage extends Component {
           this.queryObj = Object.fromEntries(query);
           tempCollectionWords.push(this.getWords(this.queryObj));
         } else {
-          for (let i = 0; i <= 29; i += 1) {
+          for (let i = 0; i <= CountItems.MaxPagesIndex; i += 1) {
             const group = String(SprintPage.level);
             const page = String(i);
             this.queryObj = { group, page };
@@ -441,16 +461,19 @@ export default class SprintPage extends Component {
         SprintPage.correctAnswersSeries += 1;
 
         SprintPage.scoreTotal += SprintPage.scoreGrowth;
-        if (SprintPage.correctAnswersSeries === 4) SprintPage.scoreGrowth = 20;
-        if (SprintPage.correctAnswersSeries === 8) SprintPage.scoreGrowth = 40;
-        if (SprintPage.correctAnswersSeries === 12) SprintPage.scoreGrowth = 80;
+        if (SprintPage.correctAnswersSeries === CorrectAnswerSeries.Start)
+          SprintPage.scoreGrowth = GrowthScore.Increased;
+        if (SprintPage.correctAnswersSeries === CorrectAnswerSeries.Middle)
+          SprintPage.scoreGrowth = GrowthScore.Middle;
+        if (SprintPage.correctAnswersSeries === CorrectAnswerSeries.Super)
+          SprintPage.scoreGrowth = GrowthScore.Maximum;
       } else {
         SprintPage.audioIncorrectAnswer.play();
         SprintPage.arrayIncorrectAnswers.push(
           SprintPage.arrayOfRandomGameWordsKeys[SprintPage.indexGameMove]
         );
         SprintPage.updateServerData(currentWord, false);
-        SprintPage.scoreGrowth = 10;
+        SprintPage.scoreGrowth = GrowthScore.Minimal;
         SprintPage.correctAnswersSeries = 0;
       }
 
@@ -483,11 +506,11 @@ export default class SprintPage extends Component {
       } else {
         evaluationCriteria = 0;
       }
-      if (evaluationCriteria < 0.25) {
+      if (evaluationCriteria < Level.Low) {
         contentEvaluation.innerHTML = 'Нужно тренироваться чаще!';
-      } else if (evaluationCriteria >= 0.25 && evaluationCriteria < 0.5) {
+      } else if (evaluationCriteria >= Level.Low && evaluationCriteria < Level.Middle) {
         contentEvaluation.innerHTML = 'Вы можете лучше!';
-      } else if (evaluationCriteria >= 0.5 && evaluationCriteria < 0.75) {
+      } else if (evaluationCriteria >= Level.Middle && evaluationCriteria < Level.High) {
         contentEvaluation.innerHTML = 'Неплохой результат!';
       } else {
         contentEvaluation.innerHTML = 'Отличный результат!';
