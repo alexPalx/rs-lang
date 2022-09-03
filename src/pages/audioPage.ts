@@ -57,6 +57,17 @@ const exitGameHTML = `
     </path>
   </svg>
 `;
+const controlKeysHTML = `
+  <ul class="control-keys__list">Клавиши управления игрой:
+    <li class="control-keys__item">1, 2, 3, 4, 5 - выбрать вариант ответа</li>
+    <li class="control-keys__item">пробел - прослушать слово повторно</li>
+    <li class="control-keys__item">
+      Enter - пропустить слово (будет засчитано как неверный ответ)<br>
+      <span class="second-enter-line">или перейти к следующему слову (после выбора варианта ответа)
+      </span>
+    </li>
+  </ul>
+`;
 const drawResults = (countCorrect: number, countIncorrect: number
   ): string => `
   <h1 class="content-evaluation"></h1>
@@ -72,6 +83,23 @@ const drawResults = (countCorrect: number, countIncorrect: number
   </div>
 `;
 
+enum CountItems {
+  AnswerVariantCountInGameboard = 5,
+  MaxPagesIndex = 29,
+  WordsPerPage = 20,
+}
+enum Level {
+  Low = 0.25,
+  Middle = 0.5,
+  High = 0.75
+}
+enum TextColor {
+  Main = "lavenderblush",
+  Inherit = "inherit",
+  IncorrectAnswer = "#ff3131",
+  CorrectAnswer = "#74cd59"
+}
+
 export default class AudioPage extends Component {
   static level = 0;
   static indexGameMove = 0;
@@ -81,10 +109,11 @@ export default class AudioPage extends Component {
   static arrayOfRandomGameWordsKeys: number[] = [];
   static startGame: () => void;
   static renderDataGameboard: () => void;
-  static setValuesKeyboardKeys: (event: KeyboardEvent) => void;
+  static setValuesKeyboardKeys: (event: KeyboardEvent) => Promise<void>;
+  static getNextWord: () => void;
   static getAnswerVariants: (index: number) => void;
   static checkUserAnswer: (target: HTMLElement) => void;
-  private static manageButtons: () => void;
+  private static manageButtonSkip: () => void;
   private static audioCorrectAnswer = new Audio('../../assets/audio/correctanswer.mp3');
   private static audioIncorrectAnswer = new Audio('../../assets/audio/incorrectanswer.mp3');
   static showGameResults: () => void;
@@ -107,6 +136,7 @@ export default class AudioPage extends Component {
   public audiocallGameButtonContainer: Component;
   public buttonSkip: Component;
   public buttonNext: Component;
+  public controlKeysContainer: Component;
   public askPlayAudio: Component;
   public resultsContainer: Component;
   public arrowNext: Component;
@@ -152,7 +182,8 @@ export default class AudioPage extends Component {
     this.audiocallGameAnswersContainer = new Component(
       this.audiocallGameContainer.node, 'div', 'audiocall-game__answers-container'
     );
-    this.audiocallGameAnswersContainer.node.innerHTML = answersContainerHTML().repeat(5);
+    this.audiocallGameAnswersContainer.node.innerHTML =
+      answersContainerHTML().repeat(CountItems.AnswerVariantCountInGameboard);
 
     this.audiocallGameButtonContainer = new Component(
       this.audiocallGameContainer.node, 'div', 'audiocall-game__button-container'
@@ -163,6 +194,11 @@ export default class AudioPage extends Component {
     this.buttonNext = new Component(
       this.audiocallGameButtonContainer.node, 'button', 'button-next game-hidden');
     this.arrowNext = new Component(this.buttonNext.node, 'span', 'arrow-next', '→');
+    
+    this.controlKeysContainer = new Component(
+      this.audiocallGameContainer.node, 'div', 'control-keys__container'
+    );
+    this.controlKeysContainer.node.innerHTML = controlKeysHTML;
 
     this.askPlayAudio = new Component(
       this.audiocallGameContainer.node, 'audio', 'ask-play__audio'
@@ -198,7 +234,6 @@ export default class AudioPage extends Component {
         );
         if (!rawResponse.ok) throw new Error('Server error');
         const content: Word[] = await rawResponse.json();
-        console.log('2: this.getWords work');
         return content;
       } catch (err) {
         console.error((<Error>err).message);
@@ -215,7 +250,7 @@ export default class AudioPage extends Component {
           this.queryObj = Object.fromEntries(query);
           tempCollectionWords.push(this.getWords(this.queryObj));
         } else {
-          for (let i = 0; i <= 29; i += 1) {
+          for (let i = 0; i <= CountItems.MaxPagesIndex; i += 1) {
             const group = String(AudioPage.level);
             const page = String(i);
             this.queryObj = { group, page };
@@ -226,17 +261,8 @@ export default class AudioPage extends Component {
       }
       const arrayOfWordsKeysFromServer = Object.keys(AudioPage.collectionWordsFromServer);
 
-      console.log(
-        '3: getWordsForGame work \n arrayOfWordsKeysFromServer:',
-        arrayOfWordsKeysFromServer
-      );
-      console.log(
-        '4: AudioPage.collectionWordsFromServer:', 
-        AudioPage.collectionWordsFromServer
-      );
-
       while (
-        AudioPage.arrayOfRandomGameWordsKeys.length < 20 &&
+        AudioPage.arrayOfRandomGameWordsKeys.length < CountItems.WordsPerPage &&
         AudioPage.arrayOfRandomGameWordsKeys.length < 
         AudioPage.collectionWordsFromServer.length
       ) {
@@ -247,7 +273,6 @@ export default class AudioPage extends Component {
 
         AudioPage.arrayOfRandomGameWordsKeys.push(+keyRandom);
       }
-      console.log('5 arrayOfRandomGameWordsKeys:', AudioPage.arrayOfRandomGameWordsKeys)
     };
     // ------ 2
     this.hideLoader = (): void => {
@@ -297,11 +322,12 @@ export default class AudioPage extends Component {
         AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove]
       );
       
-      AudioPage.manageButtons();
+      this.buttonSkip.node.addEventListener('click', AudioPage.manageButtonSkip);
+      this.buttonNext.node.addEventListener('click', AudioPage.getNextWord);
 
       this.audiocallGameAnswersContainer.node.addEventListener('click', async (event) => {
         const target = event.target as HTMLElement;
-        console.log('target.closest from 4:', target.closest('.answer-variant__container'));
+
         if (target.closest('.answer-variant__container')) {
           AudioPage.checkUserAnswer(target.closest('.answer-variant__container') as HTMLElement);
           this.buttonSkip.node.classList.add('game-hidden');
@@ -313,11 +339,13 @@ export default class AudioPage extends Component {
     }
 
     // ------ 5
+    const ANSWER_VARIANTS_GROUP = document.querySelectorAll('.answer-variant__word');
+
     AudioPage.getAnswerVariants = (index: number): void => {
 
       const someArray: number[] = [];
       someArray.push(index);
-      while (someArray.length < 5) {
+      while (someArray.length < CountItems.AnswerVariantCountInGameboard) {
         const random = Math.floor(
           Math.random() * AudioPage.collectionWordsFromServer.length
         );
@@ -328,31 +356,27 @@ export default class AudioPage extends Component {
       while (someArray.length) {
         
         const key = someArray.splice(Math.floor(Math.random() * someArray.length), 1);
-        console.log('Это элементы putArray:', key);
         mixedArray.push(+key);
       }
-      console.log('Это mixedArray:', mixedArray);
 
-      const answerVariantsGroup = document.querySelectorAll('.answer-variant__word');
       const answerVariantIndexes = document.querySelectorAll('.answer-variant__index');
 
-      for (let i = 0; i < answerVariantsGroup.length; i += 1) {
-        answerVariantsGroup[i].textContent = 
+      for (let i = 0; i < ANSWER_VARIANTS_GROUP.length; i += 1) {
+        ANSWER_VARIANTS_GROUP[i].textContent = 
           AudioPage.collectionWordsFromServer[mixedArray[i]].wordTranslate;
         answerVariantIndexes[i].textContent = `${i + 1}.`;
       }
       
       AudioPage.audioCorrectAnswer.pause();
       AudioPage.audioCorrectAnswer.currentTime = 0;
-      AudioPage.audioCorrectAnswer.volume = 0.25;
+      AudioPage.audioCorrectAnswer.volume = Level.Low;
       AudioPage.audioIncorrectAnswer.pause();
       AudioPage.audioIncorrectAnswer.currentTime = 0;
-      AudioPage.audioIncorrectAnswer.volume = 0.25;
+      AudioPage.audioIncorrectAnswer.volume = Level.Low;
 
-      this.askPlayAudio.node.setAttribute(
-        "src", `${Constants.serverURL}/${AudioPage.collectionWordsFromServer[index].audio}`
-      );
-      console.log('this.askPlayAudio:', this.askPlayAudio.node);
+      (this.askPlayAudio.node as HTMLAudioElement).src = `
+        ${Constants.serverURL}/${AudioPage.collectionWordsFromServer[index].audio}
+      `;
       (this.askPlayAudio.node as HTMLAudioElement).play();
       this.askPlayIcon.node.addEventListener('click', () => 
         (this.askPlayAudio.node as HTMLAudioElement).play()
@@ -362,76 +386,77 @@ export default class AudioPage extends Component {
     // ------ 6
     const ANSWER_VARIANT_CONTAINERS = document.querySelectorAll('.answer-variant__container');
 
-    AudioPage.manageButtons = (): void => {
-      this.buttonSkip.node.addEventListener('click', () => {
-        AudioPage.indexGameMove += 1;
-        console.log('AudioPage.indexGameMove:', AudioPage.indexGameMove);
-        if (AudioPage.indexGameMove < AudioPage.arrayOfRandomGameWordsKeys.length) {
-          AudioPage.getAnswerVariants(
-            AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove]
-          );
-          this.askTitle.node.innerHTML = `
-            Слово ${AudioPage.indexGameMove + 1} из ${AudioPage.arrayOfRandomGameWordsKeys.length}
-          `;
-        } else {
-          ANSWER_VARIANT_CONTAINERS.forEach((elem) => {
-            const item = elem;
-            item.classList.add('answer-disabled');
-          });
-          this.buttonSkip.node.setAttribute("disabled", "disabled");
-          document.removeEventListener('keydown', AudioPage.setValuesKeyboardKeys);
-          AudioPage.showGameResults();
-        }
-        this.audiocallGamePlayContainer.node.classList.remove('game-hidden');
-        this.askWordWrapper.node.style.visibility = "hidden";
+    AudioPage.manageButtonSkip = (): void => {
+      ANSWER_VARIANT_CONTAINERS.forEach((elem) => {
+        const item = elem as HTMLElement;
+        item.classList.add('answer-disabled');
       });
-      this.buttonNext.node.addEventListener('click', () => {
-        AudioPage.indexGameMove += 1;
-        if (AudioPage.indexGameMove < AudioPage.arrayOfRandomGameWordsKeys.length) {
-          AudioPage.getAnswerVariants(
-            AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove]
-          );
-          this.askTitle.node.innerHTML = `
-            Слово ${AudioPage.indexGameMove + 1} из ${AudioPage.arrayOfRandomGameWordsKeys.length}
-          `;
-          ANSWER_VARIANT_CONTAINERS.forEach((elem) => {
-            const item = elem;
-            item.classList.remove('answer-disabled');
-          });
-          const answerVariantsGroup = document.querySelectorAll('.answer-variant__word');
-          answerVariantsGroup.forEach((elem) => {
-            const item = elem as HTMLElement;
-            item.style.color = "inherit";
-          });
-          const answerVariantSigns = document.querySelectorAll('.answer-variant__sign');
-          answerVariantSigns.forEach((elem) => {
-            const item = elem as HTMLElement;
-            item.style.visibility = "hidden";
-          })
-          this.buttonNext.node.classList.add('game-hidden');
-          this.buttonSkip.node.classList.remove('game-hidden');
-        } else {
-          this.buttonNext.node.setAttribute("disabled", "disabled");
-          document.removeEventListener('keydown', AudioPage.setValuesKeyboardKeys);
-          AudioPage.showGameResults();
-        }
-        this.audiocallGamePlayContainer.node.classList.remove('game-hidden');
-        this.askWordWrapper.node.style.visibility = "hidden";
+      this.buttonNext.node.classList.remove('game-hidden');
+      this.buttonSkip.node.classList.add('game-hidden');
+      
+      const index = AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove];
+      AudioPage.showCorrectAnswerBoard(AudioPage.collectionWordsFromServer[index]);
+      
+      const correctAnswer = AudioPage.collectionWordsFromServer[index].wordTranslate;
+      
+      ANSWER_VARIANTS_GROUP.forEach((elem) => {
+        const item = elem as HTMLElement;
+        if (item.textContent === correctAnswer)
+          item.style.color = TextColor.Main;
       });
+      AudioPage.audioIncorrectAnswer.play();
+      AudioPage.arrayIncorrectAnswers.push(index);
+      AudioPage.updateServerData(AudioPage.collectionWordsFromServer[index], false);
+    };
+
+    AudioPage.getNextWord = (): void => {
+      AudioPage.indexGameMove += 1;
+      if (AudioPage.indexGameMove < AudioPage.arrayOfRandomGameWordsKeys.length) {
+        AudioPage.getAnswerVariants(
+          AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove]
+        );
+        this.askTitle.node.innerHTML = `
+          Слово ${AudioPage.indexGameMove + 1} из ${AudioPage.arrayOfRandomGameWordsKeys.length}
+        `;
+        ANSWER_VARIANT_CONTAINERS.forEach((elem) => {
+          const item = elem;
+          item.classList.remove('answer-disabled');
+        });
+        ANSWER_VARIANTS_GROUP.forEach((elem) => {
+          const item = elem as HTMLElement;
+          item.style.color = TextColor.Inherit;
+        });
+        const answerVariantSigns = document.querySelectorAll('.answer-variant__sign');
+        answerVariantSigns.forEach((elem) => {
+          const item = elem as HTMLElement;
+          item.style.visibility = "hidden";
+        })
+        this.buttonNext.node.classList.add('game-hidden');
+        this.buttonSkip.node.classList.remove('game-hidden');
+      } else {
+        this.buttonNext.node.setAttribute("disabled", "disabled");
+        document.removeEventListener('keydown', AudioPage.setValuesKeyboardKeys);
+        AudioPage.showGameResults();
+      }
+      this.audiocallGamePlayContainer.node.classList.remove('game-hidden');
+      this.askWordWrapper.node.style.visibility = "hidden";
     }
     // ------ 7
 
     AudioPage.setValuesKeyboardKeys = async (event: KeyboardEvent): Promise<void> => {
       
-      if (+event.key >= 1 && +event.key <=5 
-          && !ANSWER_VARIANT_CONTAINERS[+event.key - 1].classList.contains('disabled')) {
+      if (+event.key >= 1 && +event.key <= CountItems.AnswerVariantCountInGameboard 
+          && !ANSWER_VARIANT_CONTAINERS[+event.key - 1].classList.contains('answer-disabled')) {
         AudioPage.checkUserAnswer(ANSWER_VARIANT_CONTAINERS[+event.key - 1] as HTMLElement);
         this.buttonNext.node.classList.remove('game-hidden');
         this.buttonSkip.node.classList.add('game-hidden');
       }  
-      if (event.code === 'Enter' && !(this.buttonSkip.node as HTMLButtonElement).disabled ||
-          event.code === 'Enter' && !(this.buttonNext.node as HTMLButtonElement).disabled) {
-        AudioPage.manageButtons();
+      if (event.code === 'Enter'
+          && this.buttonSkip.node.classList.contains('game-hidden')) {
+        AudioPage.getNextWord();
+      } else if (event.code === 'Enter' 
+          && this.buttonNext.node.classList.contains('game-hidden')) {
+        AudioPage.manageButtonSkip();
       }
       if (event.key === ' ') {
         event.preventDefault();
@@ -447,30 +472,26 @@ export default class AudioPage extends Component {
       });
       const currentAnswerVariant = target.lastElementChild!.textContent as string;
       const currentAnswerText = target.lastElementChild as HTMLElement;
-      console.log('8 currentAnswerVariant:', currentAnswerVariant);
+
       const index = AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove];
-      console.log('index from 8:', index);
       const correctAnswer = AudioPage.collectionWordsFromServer[index].wordTranslate;
-      console.log('correctrAnswer:', correctAnswer);
       
       if (currentAnswerVariant === correctAnswer) {
         const currentTarget = target.firstElementChild as HTMLElement;
         currentTarget.style.visibility = "visible";
-        currentAnswerText.style.color = "lavenderblush";
+        currentAnswerText.style.color = TextColor.Main;
         AudioPage.arrayCorrectAnswers.push(index);
-        console.log('AudioPage.arrayCorrectAnswers:', AudioPage.arrayCorrectAnswers);
         await AudioPage.audioCorrectAnswer.play();
         await AudioPage.updateServerData(AudioPage.collectionWordsFromServer[index], true);
       } else {
-        currentAnswerText.style.color = "#ff3131";
+        currentAnswerText.style.color = TextColor.IncorrectAnswer;
         AudioPage.arrayIncorrectAnswers.push(index);
         await AudioPage.audioIncorrectAnswer.play();
         await AudioPage.updateServerData(AudioPage.collectionWordsFromServer[index], false);
-        const correctAnswerElements = document.querySelectorAll('.answer-variant__word');
-        correctAnswerElements.forEach((elem) => {
+        ANSWER_VARIANTS_GROUP.forEach((elem) => {
           const item = elem as HTMLElement;
           if (item.innerHTML === correctAnswer) {
-            item.style.color = "#74cd59";
+            item.style.color = TextColor.CorrectAnswer;
           }
         })
       }
@@ -510,11 +531,11 @@ export default class AudioPage extends Component {
       } else {
         evaluationCriteria = 0;
       }
-      if (evaluationCriteria < 0.25) {
+      if (evaluationCriteria < Level.Low) {
         contentEvaluation.innerHTML = 'Нужно тренироваться чаще!';
-      } else if (evaluationCriteria >= 0.25 && evaluationCriteria < 0.5) {
+      } else if (evaluationCriteria >= Level.Low && evaluationCriteria < Level.Middle) {
         contentEvaluation.innerHTML = 'Вы можете лучше!';
-      } else if (evaluationCriteria >= 0.5 && evaluationCriteria < 0.75) {
+      } else if (evaluationCriteria >= Level.Middle && evaluationCriteria < Level.High) {
         contentEvaluation.innerHTML = 'Неплохой результат!';
       } else {
         contentEvaluation.innerHTML = 'Отличный результат!';
@@ -523,20 +544,60 @@ export default class AudioPage extends Component {
       const correctList = document.querySelector('.correct-list') as HTMLDivElement;
       AudioPage.arrayCorrectAnswers.forEach((item) => {
         correctList.innerHTML += `
-          <li class="word-item"><span class="word-en">${AudioPage.collectionWordsFromServer[item].word}
-            &nbsp;${AudioPage.collectionWordsFromServer[item].transcription}</span> - 
-            ${AudioPage.collectionWordsFromServer[item].wordTranslate}
+          <li class="word-item">
+            <div class="word-audio">
+              <audio class="word-audio__play"></audio>
+              <span class="word-audio__icon"
+              data-choice="${AudioPage.collectionWordsFromServer[item].audio}"
+              >${audioIconSVG}</span>
+            </div>
+            <span class="word-en">${AudioPage.collectionWordsFromServer[item].word}
+              &nbsp;${AudioPage.collectionWordsFromServer[item].transcription}</span> - 
+              ${AudioPage.collectionWordsFromServer[item].wordTranslate}
           </li>
         `;
+        const wordAudioPlay = document.querySelector('.word-audio__play') as HTMLAudioElement;
+        const wordAudioIconGroup = document.querySelectorAll('.word-audio__icon') as NodeListOf<HTMLElement>;
+        
+        wordAudioIconGroup.forEach((icon) => {
+          const elem = icon;
+          elem.addEventListener('click', (event) => {
+            const target = event.target as HTMLElement;
+            if (target.closest('.word-audio__icon')) {
+              wordAudioPlay.src = `${Constants.serverURL}/${(target.closest('.word-audio__icon') as HTMLElement).dataset.choice}`;
+              wordAudioPlay.play();
+            }
+          });
+        });
       });
       const incorrectList = document.querySelector('.incorrect-list') as HTMLDivElement;
       AudioPage.arrayIncorrectAnswers.forEach((item) => {
         incorrectList.innerHTML += `
-          <li class="word-item"><span class="word-en">${AudioPage.collectionWordsFromServer[item].word}
+          <li class="word-item">
+            <div class="word-audio">
+              <audio class="word-audio__play"></audio>
+              <span class="word-audio__icon"
+              data-choice="${AudioPage.collectionWordsFromServer[item].audio}"
+              >${audioIconSVG}</span>
+            </div>
+            <span class="word-en">${AudioPage.collectionWordsFromServer[item].word}
             &nbsp;${AudioPage.collectionWordsFromServer[item].transcription}</span> - 
             ${AudioPage.collectionWordsFromServer[item].wordTranslate}
           </li>
         `;
+        const wordAudioPlay = document.querySelector('.word-audio__play') as HTMLAudioElement;
+        const wordAudioIconGroup = document.querySelectorAll('.word-audio__icon') as NodeListOf<HTMLElement>;
+        
+        wordAudioIconGroup.forEach((icon) => {
+          const elem = icon;
+          elem.addEventListener('click', (event) => {
+            const target = event.target as HTMLElement;
+            if (target.closest('.word-audio__icon')) {
+              wordAudioPlay.src = `${Constants.serverURL}/${(target.closest('.word-audio__icon') as HTMLElement).dataset.choice}`;
+              wordAudioPlay.play();
+            }
+          });
+        });
       });
   
       AudioPage.collectionWordsFromServer = [];

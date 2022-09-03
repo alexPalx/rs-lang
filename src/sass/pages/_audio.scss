@@ -1,12 +1,12 @@
 .audiocall-game-wrapper {
     background-color: rgb(140, 127, 255);
-    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    min-height: calc(100vh - 88px);
-    margin: -20px;
+    font-family: 'PT Serif', serif;
+    min-height: calc(100vh - 78px);
+    margin: -21px;
 }
 
 .icon-loader-wrapper {
-    height: calc(100vh - 88px);
+    height: calc(100vh - 78px);
     display: flex;
 }
 .icon-loader {
@@ -39,7 +39,7 @@
 .exit-game {
     position: relative;
     right: 1.5rem;
-    top: 1.5rem;
+    top: 1rem;
     color: #d1d2f1;
     fill: currentColor;
 }
@@ -52,7 +52,7 @@
 }
 
 .audiocall-game__container {
-    min-height: calc(100vh - 88px);
+    min-height: calc(100vh - 78px);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -209,7 +209,21 @@
 
 .audiocall-game__button-container {
     padding: 1rem;
+    min-height: 7rem;
 }
+.control-keys__container {
+    padding: 1rem;
+    border: 0.1rem solid #97b3f9;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+}
+.control-keys__list {
+    line-height: 1.5;
+    list-style: unset;
+    color: #97b3f9;
+    padding-left: inherit;
+}
+
 .button-skip,
 .button-next {
     border: 0.1rem solid #d1d2f1;
@@ -254,7 +268,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 2rem 2rem 5rem 2rem;
+    padding: 2rem;
     gap: 2rem;
     background-color: rgb(140, 127, 255);
     color: #1906b7;
@@ -273,6 +287,7 @@
 .content-evaluation {
     font-size: 1.5rem;
     color: palegoldenrod;
+    margin-top: 1rem;
 }
 .content-title {
     font-size: 1.5rem;
@@ -288,10 +303,34 @@
 .word-item {
     padding: 0.3rem 0;
     color: lavenderblush;
+    display: flex;
+    flex-wrap: wrap;
+}
+.word-audio {
+    margin-right: 0.5rem;
+}
+.word-audio__icon {
+    display: inline-block;
+    width: 1rem;
+    cursor: pointer;
+}
+.word-audio__icon:hover {
+    color: #1906b7;
+    fill: currentColor;
 }
 .word-en {
     color:#1906b7;
+    font-family: 'Roboto', sans-serif;
+    display: inline-block;
+    margin-right: 0.4rem;
 }
 .game-hidden {
     display: none;
+}
+
+@media (max-width: 800px) {
+    .exit-game {
+        right: 0;
+        top: 0;
+    }
 }
