@@ -1,6 +1,5 @@
 import Constants from '../common/constants';
 import { RequestMethod } from '../interfaces/typesAPI';
-import Settings from './settings';
 import Statistics from './statistics';
 import UserAggregatedWords from './userAggregatedWords';
 import Users from './users';
@@ -13,7 +12,6 @@ export default class API {
   public static userWords = UserWords;
   public static userAggregatedWords = UserAggregatedWords;
   public static statistics = Statistics;
-  public static settings = Settings;
 
   public static async sendRequest<T>(
     url: string,

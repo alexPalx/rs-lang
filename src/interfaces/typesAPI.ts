@@ -68,12 +68,15 @@ export interface UserWordConfig {
 
 export interface StatisticsData {
   learnedWords: number;
-  optional?: {};
-}
-
-export interface SettingsData {
-  wordsPerDay: number;
-  optional: {};
+  optional: {
+    startDate: number;
+    sprintStreakPerDay: { date: number; streak: number }[];
+    audioStreakPerDay: { date: number; streak: number }[];
+    newWordsPerDay: { date: number; words: number }[];
+    learnedWordsPerDay: { date: number; words: number }[];
+    learnedWordsList: string[];
+    seenWordsList: string[];
+  };
 }
 
 export enum RequestMethod {

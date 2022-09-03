@@ -1,6 +1,7 @@
 import API from '../../api/api';
 import Component from '../../common/component';
 import Constants from '../../common/constants';
+import Statistics from '../../common/statisticsData';
 import { UserWord, Word } from '../../interfaces/typesAPI';
 import WordStatistics from './wordStatistics';
 
@@ -39,7 +40,13 @@ export default class EbookWord extends Component {
   public getWordStatistics: Component<HTMLImageElement> | undefined;
   public getWordStatisticsTitle: Component | undefined;
 
-  constructor(parentElement: HTMLElement, wrapper: Component, card: Word, group: string, actions: TypeOfCallbacks) {
+  constructor(
+    parentElement: HTMLElement,
+    wrapper: Component,
+    card: Word,
+    group: string,
+    actions: TypeOfCallbacks
+  ) {
     super(parentElement, 'div', 'word-card');
     this.cardId = card.id;
     if (window.location.search) {
@@ -100,8 +107,16 @@ export default class EbookWord extends Component {
         'title',
         'Добавить в Сложные слова'
       );
-      this.getStatisticsWrapper = new Component(this.authBlock.node, 'div', 'get-statistics-wrapper');
-      this.getWordStatistics = new Component(this.getStatisticsWrapper.node, 'img', 'get-word-statistics');
+      this.getStatisticsWrapper = new Component(
+        this.authBlock.node,
+        'div',
+        'get-statistics-wrapper'
+      );
+      this.getWordStatistics = new Component(
+        this.getStatisticsWrapper.node,
+        'img',
+        'get-word-statistics'
+      );
       this.getWordStatistics.node.src = './assets/svg/statistics.svg';
       this.getWordStatisticsTitle = new Component(
         this.getStatisticsWrapper.node,
@@ -125,7 +140,7 @@ export default class EbookWord extends Component {
             console.log(statistics);
           }
         }
-      }
+      };
       this.setHardWordWrapper.node.onclick = async () => {
         if (!this.studied) {
           this.updateWord(true);
@@ -250,6 +265,7 @@ export default class EbookWord extends Component {
         if (localWord.optional) localWord.optional.difficult = this.difficult;
       }
       if (toggleLearned) {
+        Statistics.add(userWord.wordId, 'learned');
         this.studied = !this.studied;
         this.setStudiedWordWrapper?.node.classList.toggle('studied');
         if (localWord.optional) localWord.optional.learned = this.studied;
