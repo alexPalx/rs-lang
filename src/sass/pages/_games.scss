@@ -1,7 +1,8 @@
 .games-wrapper {
     background-color: rgb(140, 127, 255);
-    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: 'PT Serif', serif;
     margin: -20px;
+    padding: 3rem 1rem 7.3rem;
 }
 
 .level-container {
@@ -13,6 +14,7 @@
     gap: 5rem;
     align-items: center;
     flex-wrap: wrap;
+    transform: translate(0, -15px);
 }
 .level-container__title {
     text-align: center;
@@ -26,6 +28,8 @@
     padding-left: 2rem;
     padding-right: 0.5rem;
     line-height: 1.4;
+    font-size: 1.05rem;
+    letter-spacing: 0.05em;
 }
 .level-container__game-conditions ul {
     list-style: square;
@@ -64,7 +68,7 @@
     transition: 0.3s;
     text-decoration: none;
     text-align: center;
-    padding: 0.5rem;
+    font-family: 'PT Serif', serif;
 }
 .level-buttons__button:hover {
     transform: scale(1.1);

@@ -280,6 +280,14 @@ export default class SprintPage extends Component {
           this.counterBeforeGame.node.innerHTML = `
             <div class="time-to-start">${timeToStart}<span class="circle-time"></span></div>
             <div class="ready">Приготовьтесь</div>
+            <div class="ready-content">
+              <img class="attention-icon" src="'../../assets/svg/attention.svg" alt="Внимание!">
+              <div class="ready-text">
+                Чтобы отвечать быстрее, используйте клавиши <span class="arrows">◄</span> 
+                <span class="arrows">►</span>
+              </div>
+            </div>
+            
           `;
           timeToStart -= 1;
         } else {
@@ -449,8 +457,10 @@ export default class SprintPage extends Component {
 
       SprintPage.audioCorrectAnswer.pause();
       SprintPage.audioCorrectAnswer.currentTime = 0;
+      SprintPage.audioCorrectAnswer.volume = Level.Middle;
       SprintPage.audioIncorrectAnswer.pause();
       SprintPage.audioIncorrectAnswer.currentTime = 0;
+      SprintPage.audioIncorrectAnswer.volume = Level.Middle;
 
       if (userAnswer === checkedAnswer) {
         SprintPage.audioCorrectAnswer.play();

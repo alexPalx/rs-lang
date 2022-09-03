@@ -56,6 +56,17 @@ const exitGameHTML = `
     </path>
   </svg>
 `;
+const controlKeysHTML = `
+  <ul class="control-keys__list">Клавиши управления игрой:
+    <li class="control-keys__item">1, 2, 3, 4, 5 - выбрать вариант ответа</li>
+    <li class="control-keys__item">пробел - прослушать слово повторно</li>
+    <li class="control-keys__item">
+      Enter - пропустить слово (будет засчитано как неверный ответ)<br>
+      <span class="second-enter-line">или перейти к следующему слову (после выбора варианта ответа)
+      </span>
+    </li>
+  </ul>
+`;
 const drawResults = (countCorrect: number, countIncorrect: number
   ): string => `
   <h1 class="content-evaluation"></h1>
@@ -124,6 +135,7 @@ export default class AudioPage extends Component {
   public audiocallGameButtonContainer: Component;
   public buttonSkip: Component;
   public buttonNext: Component;
+  public controlKeysContainer: Component;
   public askPlayAudio: Component;
   public resultsContainer: Component;
   public arrowNext: Component;
@@ -181,6 +193,11 @@ export default class AudioPage extends Component {
     this.buttonNext = new Component(
       this.audiocallGameButtonContainer.node, 'button', 'button-next game-hidden');
     this.arrowNext = new Component(this.buttonNext.node, 'span', 'arrow-next', '→');
+    
+    this.controlKeysContainer = new Component(
+      this.audiocallGameContainer.node, 'div', 'control-keys__container'
+    );
+    this.controlKeysContainer.node.innerHTML = controlKeysHTML;
 
     this.askPlayAudio = new Component(
       this.audiocallGameContainer.node, 'audio', 'ask-play__audio'
