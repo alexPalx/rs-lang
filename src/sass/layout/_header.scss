@@ -11,7 +11,10 @@
   #hamburger {
     position: relative;
     margin-right: 50px;
-    z-index: 2;
+    z-index: 11;
+    @media (max-width: 474px) {
+      margin-right: 0;
+    }
   }
 
   .hamburger .line {
@@ -52,7 +55,7 @@
     @media (max-width: 474px) {
       position: fixed;
       top: 15px;
-      right: -35px;
+      right: 15px;
       transition: all 0.3s ease-in-out;
       .line {
         background-color: #608AF4;

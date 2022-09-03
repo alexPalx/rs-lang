@@ -2,7 +2,7 @@
   height: 100vh;
   width: 0;
   position: fixed;
-  z-index: 1;
+  z-index: 10;
   top: 0;
   left: 0;
   background-color: #e0edff;
@@ -46,7 +46,6 @@
       display: flex;
       justify-content: center;
       margin: 25px 0;
-      // text-align: center;
     }
 
     img {
