@@ -21,7 +21,7 @@ export default class WordStatistics extends Component {
     this.destroy();
   }
   // Параметры переделать, когда будет готова статистика
-  drawStatistics(audioTrue = 0, audioFalse = 0): string {
+  drawStatistics(): string {
     return `
     <thead>
     <tr>
@@ -36,7 +36,7 @@ export default class WordStatistics extends Component {
       this.wordData.optional?.sprintLoses || 0
     }</td></tr>
     <tr>
-    <td>Аудиовызов</td><td>${audioTrue}</td><td>${audioFalse}</td></tr>
+    <td>Аудиовызов</td><td>${this.wordData.optional?.audioWins || 0}</td><td>${this.wordData.optional?.audioLoses || 0}</td></tr>
     </tbody>
     </tr>`;
   }

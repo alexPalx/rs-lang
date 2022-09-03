@@ -208,8 +208,6 @@ export default class SprintPage extends Component {
       'div',
       'results__container game-hidden'
     );
-    
-    const FOOTER = document.querySelector('.footer') as HTMLElement;
 
     this.manageGame = async () => {
       SprintPage.scoreTotal = 0;
@@ -218,8 +216,6 @@ export default class SprintPage extends Component {
       SprintPage.indexGameMove = 0;
       SprintPage.arrayCorrectAnswers = [];
       SprintPage.arrayIncorrectAnswers = [];
-      
-      FOOTER.classList.add('game-hidden');
 
       if (Constants.UserMetadata && !Constants.userWords) {
         Constants.userWords = await API.userWords.getWords(Constants.UserMetadata.userId);
@@ -314,7 +310,6 @@ export default class SprintPage extends Component {
           !CONTENT.contains(target) &&
           Array.from(LINK).find((element): boolean => element.contains(target))
         ) {
-          FOOTER.classList.remove('game-hidden');
           clearInterval(countdownToStart);
           SprintPage.collectionWordsFromServer = [];
           window.removeEventListener('click', clearCountdown);
@@ -367,7 +362,6 @@ export default class SprintPage extends Component {
 
       this.exitGame.node.addEventListener('click', () => {
         Router.goTo(new URL(`http://${window.location.host}${Constants.LastPage}`));
-        FOOTER.classList.remove('game-hidden');
         clearInterval(SprintPage.countdownToEnd);
         clearTimeout(actionsAfterTimeout);
         SprintPage.collectionWordsFromServer = [];
@@ -381,7 +375,6 @@ export default class SprintPage extends Component {
           !CONTENT.contains(target) &&
           Array.from(LINK).find((element): boolean => element.contains(target))
         ) {
-          FOOTER.classList.remove('game-hidden');
           document.removeEventListener('keydown', SprintPage.setValuesKeyboardKeys);
           clearInterval(SprintPage.countdownToEnd);
           clearTimeout(actionsAfterTimeout);
@@ -611,7 +604,7 @@ export default class SprintPage extends Component {
 
         const currentWord = Constants.userWords!.find((w) => w.wordId === word.id);
 
-        if (currentWord) Statistics.add(currentWord.wordId, 'seen');
+        if (Constants.UserMetadata && currentWord) Statistics.add(currentWord.wordId, 'seen');
 
         const userWord = await API.userWords.getWord(Constants.UserMetadata.userId, word.id);
         const wordStore: UserWordConfig = {
@@ -621,6 +614,8 @@ export default class SprintPage extends Component {
             sprintWins: ' ',
             sprintLoses: ' ',
             audio: ' ',
+            audioWins: ' ',
+            audioLoses: ' ',
             allGames: ' ',
             learned: false,
             difficult: false,
@@ -634,6 +629,8 @@ export default class SprintPage extends Component {
           wordStore.optional.sprintWins = userWord.optional!.sprintWins;
           wordStore.optional.sprintLoses = userWord.optional!.sprintLoses;
           wordStore.optional.audio = userWord.optional!.audio;
+          wordStore.optional.audioWins = userWord.optional!.audioWins;
+          wordStore.optional.audioLoses = userWord.optional!.audioLoses;
           wordStore.optional.allGames = userWord.optional!.allGames;
 
           const wins = String(Number(wordStore.optional.sprintWins || 0) + 1);
@@ -642,11 +639,11 @@ export default class SprintPage extends Component {
           if (isCorrectAnswer && wordStore.optional) {
             wordStore.optional.sprintWins = wins;
             currentWord!.optional!.sprintWins = wins;
-            Statistics.updadeGameStats('sprint', true);
+            if(Constants.UserMetadata) Statistics.updadeGameStats('sprint', true);
           } else if (!isCorrectAnswer && wordStore.optional) {
             wordStore.optional.sprintLoses = loses;
             currentWord!.optional!.sprintLoses = loses;
-            Statistics.updadeGameStats('sprint', false);
+            if(Constants.UserMetadata) Statistics.updadeGameStats('sprint', false);
           }
           wordStore.optional.sprint += isCorrectAnswer ? '1' : '0';
           wordStore.optional.allGames += isCorrectAnswer ? '1' : '0';
@@ -655,7 +652,7 @@ export default class SprintPage extends Component {
             wordStore.optional.difficult = false;
             if (currentWord && currentWord.optional) {
               currentWord.optional.learned = true;
-              Statistics.add(currentWord.wordId, 'learned');
+              if(Constants.UserMetadata) Statistics.add(currentWord.wordId, 'learned');
             }
           } else if (
             wordStore.optional.difficult &&
@@ -666,13 +663,13 @@ export default class SprintPage extends Component {
             currentWord!.optional!.learned = true;
             if (currentWord && currentWord.optional) {
               currentWord.optional.learned = true;
-              Statistics.add(currentWord.wordId, 'learned');
+              if(Constants.UserMetadata) Statistics.add(currentWord.wordId, 'learned');
             }
           } else {
             wordStore.optional.learned = false;
             if (currentWord && currentWord.optional) {
               currentWord.optional.learned = false;
-              Statistics.remove(currentWord.wordId, 'learned');
+              if(Constants.UserMetadata) Statistics.remove(currentWord.wordId, 'learned');
             }
           }
           await API.userWords.updateWord(Constants.UserMetadata.userId, word.id, wordStore);
