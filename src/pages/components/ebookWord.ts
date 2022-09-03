@@ -165,6 +165,7 @@ export default class EbookWord extends Component {
         if (!this.wordCard.node.classList.contains('studied-card')) {
           this.updateWord(false, true);
           this.wordCard.node.classList.toggle('studied-card');
+          this.setHardWordWrapper?.destroy();
         }
         if (group === '6') {
           this.wordCard.node.classList.add('animate__animated');
@@ -173,6 +174,7 @@ export default class EbookWord extends Component {
             this.wordCard.destroy();
           }, 900);
         }
+        
       };
 
       this.setStudiedWord = new Component(
@@ -201,6 +203,7 @@ export default class EbookWord extends Component {
           this.setStudiedWordWrapper?.node.classList.add('studied');
           this.wordCard.node.classList.add('studied-card');
           this.studiedWordTitle.node.textContent = 'Изученное слово';
+          this.setHardWordWrapper.destroy();
         }
       }
     }
