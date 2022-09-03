@@ -1,6 +1,7 @@
 import API from '../api/api';
 import Component from '../common/component';
 import Constants from '../common/constants';
+import Statistics from '../common/statisticsData';
 import { QueryParam, WordsQuery } from '../interfaces/types';
 import { UserWordConfig, Word } from '../interfaces/typesAPI';
 import Router from '../router/router';
@@ -565,6 +566,8 @@ export default class AudioPage extends Component {
             sprintWins: ' ',
             sprintLoses: ' ',
             audio: ' ',
+            audioWins: ' ',
+            audioLoses: ' ',
             allGames: ' ',
             learned: false,
             difficult: false,
@@ -577,34 +580,48 @@ export default class AudioPage extends Component {
           wordStore.optional.sprint = userWord.optional!.sprint;
           wordStore.optional.sprintWins = userWord.optional!.sprintWins;
           wordStore.optional.sprintLoses = userWord.optional!.sprintLoses;
+          wordStore.optional.audioWins = userWord.optional!.audioWins;
+          wordStore.optional.audioLoses = userWord.optional!.audioLoses;
           wordStore.optional.audio = userWord.optional!.audio;
           wordStore.optional.allGames = userWord.optional!.allGames;
 
+          const wins = String(Number(wordStore.optional.audioWins || 0) + 1);
+          const loses = String(Number(wordStore.optional.audioWins || 0) + 1);
+
           if (isCorrectAnswer && wordStore.optional) {
-            const wins = String(Number(wordStore.optional.sprintWins || 0) + 1);
-            wordStore.optional.sprintWins = wins;
-            currentWord!.optional!.sprintWins = wins;
+            wordStore.optional.audioWins = wins;
+            currentWord!.optional!.audioWins = wins;
+            if(Constants.UserMetadata) Statistics.updadeGameStats('audio', true);
           } else if (!isCorrectAnswer && wordStore.optional) {
-            const loses = String(Number(wordStore.optional.sprintLoses || 0) + 1);
-            wordStore.optional.sprintLoses = loses;
-            currentWord!.optional!.sprintLoses = loses;
+            wordStore.optional.audioLoses = loses;
+            currentWord!.optional!.audioLoses = loses;
+            if(Constants.UserMetadata) Statistics.updadeGameStats('audio', false);
           }
           wordStore.optional.sprint += isCorrectAnswer ? '1' : '0';
           wordStore.optional.allGames += isCorrectAnswer ? '1' : '0';
           if (!wordStore.optional.difficult && wordStore.optional.allGames.slice(-3) === '111') {
             wordStore.optional.learned = true;
             wordStore.optional.difficult = false;
-            currentWord!.optional!.learned = true;
+            if (currentWord && currentWord.optional) {
+              currentWord.optional.learned = true;
+              if(Constants.UserMetadata) Statistics.add(currentWord.wordId, 'learned');
+            }
           } else if (
             wordStore.optional.difficult &&
             wordStore.optional.allGames.slice(-6) === '111111'
           ) {
             wordStore.optional.learned = true;
             wordStore.optional.difficult = false;
-            currentWord!.optional!.learned = true;
+            if (currentWord && currentWord.optional) {
+              currentWord.optional.learned = true;
+              if(Constants.UserMetadata) Statistics.add(currentWord.wordId, 'learned');
+            }
           } else {
             wordStore.optional.learned = false;
-            currentWord!.optional!.learned = false;
+            if (currentWord && currentWord.optional) {
+              currentWord.optional.learned = false;
+              if(Constants.UserMetadata) Statistics.remove(currentWord.wordId, 'learned');
+            }
           }
           await API.userWords.updateWord(Constants.UserMetadata.userId, word.id, wordStore);
         } else if (wordStore.optional) {

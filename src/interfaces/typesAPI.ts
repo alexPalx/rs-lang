@@ -48,6 +48,8 @@ export interface UserWord {
     sprintWins: string;
     sprintLoses: string;
     audio: string;
+    audioWins: string;
+    audioLoses: string;
     allGames: string;
   };
   wordId: string;
@@ -61,6 +63,8 @@ export interface UserWordConfig {
     sprint?: string;
     sprintWins?: string;
     sprintLoses?: string;
+    audioWins?: string;
+    audioLoses?: string;
     audio?: string;
     allGames?: string;
   };

@@ -127,7 +127,7 @@ export default class EbookPage extends Component {
           this.cards.map((el) => el.stopPlay());
         },
       });
-      Statistics.add(card.id, 'seen');
+      if(Constants.UserMetadata) Statistics.add(card.id, 'seen');
       return item;
     });
   }
