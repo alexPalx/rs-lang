@@ -165,6 +165,7 @@ export default class EbookWord extends Component {
         if (!this.wordCard.node.classList.contains('studied-card')) {
           this.updateWord(false, true);
           this.wordCard.node.classList.toggle('studied-card');
+          (<Component>this.studiedWordTitle).node.textContent = 'Изученное слово';
           this.setHardWordWrapper?.destroy();
         }
         if (group === '6') {
