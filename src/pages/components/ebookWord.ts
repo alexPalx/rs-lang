@@ -265,7 +265,7 @@ export default class EbookWord extends Component {
         if (localWord.optional) localWord.optional.difficult = this.difficult;
       }
       if (toggleLearned) {
-        Statistics.add(userWord.wordId, 'learned');
+        if(Constants.UserMetadata) Statistics.add(userWord.wordId, 'learned');
         this.studied = !this.studied;
         this.setStudiedWordWrapper?.node.classList.toggle('studied');
         if (localWord.optional) localWord.optional.learned = this.studied;

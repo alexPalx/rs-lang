@@ -1,6 +1,7 @@
 import API from '../api/api';
 import Component from '../common/component';
 import Constants from '../common/constants';
+import Statistics from '../common/statisticsData';
 import View from '../components/view/view';
 import { LoginUserRequestData } from '../interfaces/typesAPI';
 import Router from '../router/router';
@@ -61,6 +62,7 @@ export default class AuthPage extends Component {
         Constants.UserMetadata = { token: response.token, userId: response.userId };
         this.view.ui.generateAuthBlock(true);
         Router.goTo(new URL(`http://${window.location.host}${Constants.LastPage}`));
+        Statistics.init();
       }
     };
   }
