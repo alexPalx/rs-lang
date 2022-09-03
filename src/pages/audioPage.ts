@@ -233,7 +233,6 @@ export default class AudioPage extends Component {
         );
         if (!rawResponse.ok) throw new Error('Server error');
         const content: Word[] = await rawResponse.json();
-        console.log('2: this.getWords work');
         return content;
       } catch (err) {
         console.error((<Error>err).message);
@@ -261,15 +260,6 @@ export default class AudioPage extends Component {
       }
       const arrayOfWordsKeysFromServer = Object.keys(AudioPage.collectionWordsFromServer);
 
-      console.log(
-        '3: getWordsForGame work \n arrayOfWordsKeysFromServer:',
-        arrayOfWordsKeysFromServer
-      );
-      console.log(
-        '4: AudioPage.collectionWordsFromServer:', 
-        AudioPage.collectionWordsFromServer
-      );
-
       while (
         AudioPage.arrayOfRandomGameWordsKeys.length < CountItems.WordsPerPage &&
         AudioPage.arrayOfRandomGameWordsKeys.length < 
@@ -282,7 +272,6 @@ export default class AudioPage extends Component {
 
         AudioPage.arrayOfRandomGameWordsKeys.push(+keyRandom);
       }
-      console.log('5 arrayOfRandomGameWordsKeys:', AudioPage.arrayOfRandomGameWordsKeys)
     };
     // ------ 2
     this.hideLoader = (): void => {
@@ -337,7 +326,7 @@ export default class AudioPage extends Component {
 
       this.audiocallGameAnswersContainer.node.addEventListener('click', async (event) => {
         const target = event.target as HTMLElement;
-        console.log('target.closest from 4:', target.closest('.answer-variant__container'));
+
         if (target.closest('.answer-variant__container')) {
           AudioPage.checkUserAnswer(target.closest('.answer-variant__container') as HTMLElement);
           this.buttonSkip.node.classList.add('game-hidden');
@@ -366,10 +355,8 @@ export default class AudioPage extends Component {
       while (someArray.length) {
         
         const key = someArray.splice(Math.floor(Math.random() * someArray.length), 1);
-        console.log('Это элементы putArray:', key);
         mixedArray.push(+key);
       }
-      console.log('Это mixedArray:', mixedArray);
 
       const answerVariantIndexes = document.querySelectorAll('.answer-variant__index');
 
@@ -389,7 +376,6 @@ export default class AudioPage extends Component {
       (this.askPlayAudio.node as HTMLAudioElement).src = `
         ${Constants.serverURL}/${AudioPage.collectionWordsFromServer[index].audio}
       `;
-      console.log('this.askPlayAudio:', this.askPlayAudio.node);
       (this.askPlayAudio.node as HTMLAudioElement).play();
       this.askPlayIcon.node.addEventListener('click', () => 
         (this.askPlayAudio.node as HTMLAudioElement).play()
@@ -408,7 +394,6 @@ export default class AudioPage extends Component {
       this.buttonSkip.node.classList.add('game-hidden');
       
       const index = AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove];
-      console.log('index from 6:', index);
       AudioPage.showCorrectAnswerBoard(AudioPage.collectionWordsFromServer[index]);
       
       const correctAnswer = AudioPage.collectionWordsFromServer[index].wordTranslate;
@@ -486,18 +471,15 @@ export default class AudioPage extends Component {
       });
       const currentAnswerVariant = target.lastElementChild!.textContent as string;
       const currentAnswerText = target.lastElementChild as HTMLElement;
-      console.log('8 currentAnswerVariant:', currentAnswerVariant);
+
       const index = AudioPage.arrayOfRandomGameWordsKeys[AudioPage.indexGameMove];
-      console.log('index from 8:', index);
       const correctAnswer = AudioPage.collectionWordsFromServer[index].wordTranslate;
-      console.log('correctrAnswer:', correctAnswer);
       
       if (currentAnswerVariant === correctAnswer) {
         const currentTarget = target.firstElementChild as HTMLElement;
         currentTarget.style.visibility = "visible";
         currentAnswerText.style.color = TextColor.Main;
         AudioPage.arrayCorrectAnswers.push(index);
-        console.log('AudioPage.arrayCorrectAnswers:', AudioPage.arrayCorrectAnswers);
         await AudioPage.audioCorrectAnswer.play();
         await AudioPage.updateServerData(AudioPage.collectionWordsFromServer[index], true);
       } else {
@@ -561,20 +543,60 @@ export default class AudioPage extends Component {
       const correctList = document.querySelector('.correct-list') as HTMLDivElement;
       AudioPage.arrayCorrectAnswers.forEach((item) => {
         correctList.innerHTML += `
-          <li class="word-item"><span class="word-en">${AudioPage.collectionWordsFromServer[item].word}
-            &nbsp;${AudioPage.collectionWordsFromServer[item].transcription}</span> - 
-            ${AudioPage.collectionWordsFromServer[item].wordTranslate}
+          <li class="word-item">
+            <div class="word-audio">
+              <audio class="word-audio__play"></audio>
+              <span class="word-audio__icon"
+              data-choice="${AudioPage.collectionWordsFromServer[item].audio}"
+              >${audioIconSVG}</span>
+            </div>
+            <span class="word-en">${AudioPage.collectionWordsFromServer[item].word}
+              &nbsp;${AudioPage.collectionWordsFromServer[item].transcription}</span> - 
+              ${AudioPage.collectionWordsFromServer[item].wordTranslate}
           </li>
         `;
+        const wordAudioPlay = document.querySelector('.word-audio__play') as HTMLAudioElement;
+        const wordAudioIconGroup = document.querySelectorAll('.word-audio__icon') as NodeListOf<HTMLElement>;
+        
+        wordAudioIconGroup.forEach((icon) => {
+          const elem = icon;
+          elem.addEventListener('click', (event) => {
+            const target = event.target as HTMLElement;
+            if (target.closest('.word-audio__icon')) {
+              wordAudioPlay.src = `${Constants.serverURL}/${(target.closest('.word-audio__icon') as HTMLElement).dataset.choice}`;
+              wordAudioPlay.play();
+            }
+          });
+        });
       });
       const incorrectList = document.querySelector('.incorrect-list') as HTMLDivElement;
       AudioPage.arrayIncorrectAnswers.forEach((item) => {
         incorrectList.innerHTML += `
-          <li class="word-item"><span class="word-en">${AudioPage.collectionWordsFromServer[item].word}
+          <li class="word-item">
+            <div class="word-audio">
+              <audio class="word-audio__play"></audio>
+              <span class="word-audio__icon"
+              data-choice="${AudioPage.collectionWordsFromServer[item].audio}"
+              >${audioIconSVG}</span>
+            </div>
+            <span class="word-en">${AudioPage.collectionWordsFromServer[item].word}
             &nbsp;${AudioPage.collectionWordsFromServer[item].transcription}</span> - 
             ${AudioPage.collectionWordsFromServer[item].wordTranslate}
           </li>
         `;
+        const wordAudioPlay = document.querySelector('.word-audio__play') as HTMLAudioElement;
+        const wordAudioIconGroup = document.querySelectorAll('.word-audio__icon') as NodeListOf<HTMLElement>;
+        
+        wordAudioIconGroup.forEach((icon) => {
+          const elem = icon;
+          elem.addEventListener('click', (event) => {
+            const target = event.target as HTMLElement;
+            if (target.closest('.word-audio__icon')) {
+              wordAudioPlay.src = `${Constants.serverURL}/${(target.closest('.word-audio__icon') as HTMLElement).dataset.choice}`;
+              wordAudioPlay.play();
+            }
+          });
+        });
       });
   
       AudioPage.collectionWordsFromServer = [];

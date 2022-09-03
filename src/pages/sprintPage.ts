@@ -37,6 +37,22 @@ const drawResults = (scoreFinal: number, countCorrect: number, countIncorrect: n
     </div>
   </div>
 `;
+const audioIconSVG = `
+  <svg class="audio-icon" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" 
+          xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+          viewBox="0 0 512 512" enable-background="new 0 0 512 512"
+          xml:space="preserve">
+        <path d="M426.7,256c0-71-43.4-131.8-105-157.5l-16.4,39.4C351.5,
+        157.2,384,202.8,384,256c0,53.3-32.5,98.8-78.8,118.1l16.4,39.4
+        C383.3,387.8,426.7,327,426.7,256z M341.3,256c0-35.5-21.7-65.9-52.5-78.7l-16.4,
+        39.4c15.4,6.4,26.2,21.6,26.2,39.4
+        c0,17.7-10.8,32.9-26.2,39.4l16.4,39.4C319.6,321.9,341.3,291.5,
+        341.3,256z M354.5,19.7L338,59.1C415.1,91.2,469.3,167.2,469.3,256
+        c0,88.7-54.2,164.8-131.3,196.9l16.4,39.4C447,453.7,512,362.5,512,
+        256C512,149.5,447,58.3,354.5,19.7z M0,149.3v213.3h85.3
+        L234.7,512V0L85.3,149.3H0z"/>
+  </svg>
+`;
 
 enum CountItems {
   MaxCountCorrectSign = 3,
@@ -221,7 +237,6 @@ export default class SprintPage extends Component {
         );
         if (!rawResponse.ok) throw new Error('Server error');
         const content: Word[] = await rawResponse.json();
-        console.log('2: this.getWords work');
         return content;
       } catch (err) {
         console.error((<Error>err).message);
@@ -248,11 +263,6 @@ export default class SprintPage extends Component {
       }
       const arrayOfWordsKeysFromServer = Object.keys(SprintPage.collectionWordsFromServer);
 
-      console.log(
-        '3: getWordsForGame work \n arrayOfWordsKeysFromServer \n 4: норм',
-        arrayOfWordsKeysFromServer
-      );
-
       while (
         SprintPage.arrayOfRandomGameWordsKeys.length < SprintPage.collectionWordsFromServer.length
       ) {
@@ -274,7 +284,6 @@ export default class SprintPage extends Component {
       this.counterBeforeGame.node.classList.remove('game-hidden');
 
       let timeToStart = GameTime.InitialTime;
-      console.log('5 drawInitialStartPage work', timeToStart);
 
       const countdownToStart = setInterval(() => {
         if (timeToStart <= GameTime.InitialTime && timeToStart > 0) {
@@ -297,7 +306,6 @@ export default class SprintPage extends Component {
         }
       }, 1000);
 
-      console.log('6 countdownToStart', timeToStart);
       const CONTENT = document.querySelector('.content') as HTMLDivElement;
       const LINK = document.getElementsByTagName('a');
       window.addEventListener('click', function clearCountdown(e) {
@@ -329,7 +337,6 @@ export default class SprintPage extends Component {
         } else if (timeToEnd <= 5) {
           this.timerContainer.node.style.color = TextColor.LessThan5;
         }
-        console.log('7 timeToEnd строка 218', timeToEnd);
       }, 1000);
 
       SprintPage.renderDataGameboard();
@@ -386,10 +393,6 @@ export default class SprintPage extends Component {
     // ------ 4
     SprintPage.renderDataGameboard = (): void => {
       this.sprintGameCounterScore.node.textContent = `${SprintPage.scoreTotal}`;
-      console.log(
-        '9 renderDataGameboard work, this.sprintGameCounterScore.node.textContent',
-        this.sprintGameCounterScore.node.textContent
-      );
 
       const answersSeries = document.querySelectorAll('.answers-series') as NodeListOf<HTMLElement>;
       answersSeries.forEach((item) => {
@@ -413,7 +416,6 @@ export default class SprintPage extends Component {
 
       this.reward.node.textContent = `+${SprintPage.scoreGrowth}`;
 
-      console.log('10 this.reward.node.textContent:', this.reward.node.textContent);
       this.questionWord.node.textContent =
         SprintPage.collectionWordsFromServer[
           SprintPage.arrayOfRandomGameWordsKeys[SprintPage.indexGameMove]
@@ -450,9 +452,6 @@ export default class SprintPage extends Component {
           SprintPage.arrayOfRandomGameWordsKeys[SprintPage.indexGameMove]
         ];
       const currentTranslate = this.translateWord.node.textContent;
-
-      console.log('11 проверка checkUserAnswer: currentWord', currentWord);
-      console.log('11 проверка checkUserAnswer: currentTranslate', currentTranslate);
 
       const checkedAnswer = currentWord.wordTranslate === currentTranslate;
 
@@ -530,20 +529,68 @@ export default class SprintPage extends Component {
       const correctList = document.querySelector('.correct-list') as HTMLDivElement;
       SprintPage.arrayCorrectAnswers.forEach((item) => {
         correctList.innerHTML += `
-          <li class="word-item"><span class="word-en">${SprintPage.collectionWordsFromServer[item].word}
-            &nbsp;${SprintPage.collectionWordsFromServer[item].transcription}</span> - 
-            ${SprintPage.collectionWordsFromServer[item].wordTranslate}
+          <li class="word-item">
+            <div class="word-audio">
+              <audio class="word-audio__play"></audio>
+              <span class="word-audio__icon"
+              data-choice="${SprintPage.collectionWordsFromServer[item].audio}"
+              >${audioIconSVG}</span>
+            </div>
+            <span class="word-en">${SprintPage.collectionWordsFromServer[item].word}
+              &nbsp;${SprintPage.collectionWordsFromServer[item].transcription}</span> - 
+              ${SprintPage.collectionWordsFromServer[item].wordTranslate}
           </li>
         `;
+        const wordAudioPlay = document.querySelector('.word-audio__play') as HTMLAudioElement;
+        const wordAudioIconGroup = 
+          document.querySelectorAll('.word-audio__icon') as NodeListOf<HTMLElement>;
+        
+        wordAudioIconGroup.forEach((icon) => {
+          const elem = icon;
+          elem.addEventListener('click', (event) => {
+            const target = event.target as HTMLElement;
+            if (target.closest('.word-audio__icon')) {
+              wordAudioPlay.src = `
+                ${Constants.serverURL}/${(target.closest('.word-audio__icon') as HTMLElement)
+                .dataset.choice}
+              `;
+              wordAudioPlay.play();
+            }
+          });
+        });
       });
       const incorrectList = document.querySelector('.incorrect-list') as HTMLDivElement;
       SprintPage.arrayIncorrectAnswers.forEach((item) => {
         incorrectList.innerHTML += `
-          <li class="word-item"><span class="word-en">${SprintPage.collectionWordsFromServer[item].word}
-            &nbsp;${SprintPage.collectionWordsFromServer[item].transcription}</span> - 
-            ${SprintPage.collectionWordsFromServer[item].wordTranslate}
+          <li class="word-item">
+            <div class="word-audio">
+              <audio class="word-audio__play"></audio>
+              <span class="word-audio__icon"
+              data-choice="${SprintPage.collectionWordsFromServer[item].audio}"
+              >${audioIconSVG}</span>
+            </div>
+            <span class="word-en">${SprintPage.collectionWordsFromServer[item].word}
+              &nbsp;${SprintPage.collectionWordsFromServer[item].transcription}</span> - 
+              ${SprintPage.collectionWordsFromServer[item].wordTranslate}
           </li>
         `;
+        const wordAudioPlay = document.querySelector('.word-audio__play') as HTMLAudioElement;
+        const wordAudioIconGroup =
+          document.querySelectorAll('.word-audio__icon') as NodeListOf<HTMLElement>;
+        
+        wordAudioIconGroup.forEach((icon) => {
+          const elem = icon;
+          elem.addEventListener('click', (event) => {
+            const target = event.target as HTMLElement;
+            if (target.closest('.word-audio__icon')) {
+              wordAudioPlay.src = `
+                ${Constants.serverURL}/${(target.closest('.word-audio__icon') as HTMLElement)
+                .dataset.choice}
+              `;
+              wordAudioPlay.play();
+            }
+          });
+        });
       });
 
       SprintPage.collectionWordsFromServer = [];

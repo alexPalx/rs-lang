@@ -303,10 +303,26 @@
 .word-item {
     padding: 0.3rem 0;
     color: lavenderblush;
+    display: flex;
+    flex-wrap: wrap;
+}
+.word-audio {
+    margin-right: 0.5rem;
+}
+.word-audio__icon {
+    display: inline-block;
+    width: 1rem;
+    cursor: pointer;
+}
+.word-audio__icon:hover {
+    color: #1906b7;
+    fill: currentColor;
 }
 .word-en {
     color:#1906b7;
     font-family: 'Roboto', sans-serif;
+    display: inline-block;
+    margin-right: 0.4rem;
 }
 .game-hidden {
     display: none;
