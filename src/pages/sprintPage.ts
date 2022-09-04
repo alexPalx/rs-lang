@@ -246,20 +246,60 @@ export default class SprintPage extends Component {
     // ------ 1
     this.getWordsForGame = async (): Promise<void> => {
       if (SprintPage.collectionWordsFromServer.length === 0) {
-        const tempCollectionWords: Promise<Word[]>[] = [];
-        if (params) {
-          const query = params.map((el) => Object.values(el));
-          this.queryObj = Object.fromEntries(query);
-          tempCollectionWords.push(this.getWords(this.queryObj));
-        } else {
-          for (let i = 0; i <= CountItems.MaxPagesIndex; i += 1) {
-            const group = String(SprintPage.level);
-            const page = String(i);
-            this.queryObj = { group, page };
+        
+        if (!Constants.UserMetadata) {
+          const tempCollectionWords: Promise<Word[]>[] = [];
+          if (params) {
+            const query = params.map((el) => Object.values(el));
+            this.queryObj = Object.fromEntries(query);
             tempCollectionWords.push(this.getWords(this.queryObj));
+          } else {
+            for (let i = 0; i <= CountItems.MaxPagesIndex; i += 1) {
+              const group = String(SprintPage.level);
+              const page = String(i);
+              this.queryObj = { group, page };
+              tempCollectionWords.push(this.getWords(this.queryObj));
+            }
           }
+          SprintPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
+          
+        } else if (Constants.UserMetadata) {
+          const tempCollectionWords: Promise<Word[]>[] = [];
+          if (params) {
+            const query = params.map((el) => Object.values(el));
+            this.queryObj = Object.fromEntries(query);
+           
+            const cardsData =
+              this.queryObj.group !== '6'
+                ? API.words.getWords(this.queryObj)
+                : API.userAggregatedWords.getWords(
+                    String(Constants.UserMetadata?.userId),
+                    undefined,
+                    this.queryObj.page,
+                    '3600',
+                    '{"$and":[{"userWord.optional.difficult":true}, {"userWord.optional.learned":false}]}'
+                  );
+            console.log('cardsData', cardsData);
+            cardsData.then(async (data) => {
+              console.log('data', data);
+              if (data) {
+                if (Constants.UserMetadata && !Constants.userWords) {
+                  Constants.userWords = await API.userWords.getWords(Constants.UserMetadata.userId);
+                }
+              }
+            });
+            tempCollectionWords.push(cardsData as Promise<Word[]>);
+          } else {
+            for (let i = 0; i <= CountItems.MaxPagesIndex; i += 1) {
+              const group = String(SprintPage.level);
+              const page = String(i);
+              this.queryObj = { group, page };
+              tempCollectionWords.push(this.getWords(this.queryObj));
+            }
+          }
+          SprintPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
+          console.log('SprintPage.collectionWordsFromServer', SprintPage.collectionWordsFromServer);
         }
-        SprintPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
       }
       const arrayOfWordsKeysFromServer = Object.keys(SprintPage.collectionWordsFromServer);
 
@@ -542,6 +582,7 @@ export default class SprintPage extends Component {
           </li>
         `;
         const wordAudioPlay = document.querySelector('.word-audio__play') as HTMLAudioElement;
+        
         const wordAudioIconGroup = 
           document.querySelectorAll('.word-audio__icon') as NodeListOf<HTMLElement>;
         
@@ -554,7 +595,10 @@ export default class SprintPage extends Component {
                 ${Constants.serverURL}/${(target.closest('.word-audio__icon') as HTMLElement)
                 .dataset.choice}
               `;
-              wordAudioPlay.play();
+              wordAudioPlay.pause();
+              setTimeout(() => {
+                wordAudioPlay.play();
+              }, 100);
             }
           });
         });
@@ -575,6 +619,7 @@ export default class SprintPage extends Component {
           </li>
         `;
         const wordAudioPlay = document.querySelector('.word-audio__play') as HTMLAudioElement;
+
         const wordAudioIconGroup =
           document.querySelectorAll('.word-audio__icon') as NodeListOf<HTMLElement>;
         
@@ -587,7 +632,10 @@ export default class SprintPage extends Component {
                 ${Constants.serverURL}/${(target.closest('.word-audio__icon') as HTMLElement)
                 .dataset.choice}
               `;
-              wordAudioPlay.play();
+              wordAudioPlay.pause();
+              setTimeout(() => {
+                wordAudioPlay.play();
+              }, 100);
             }
           });
         });

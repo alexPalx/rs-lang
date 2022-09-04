@@ -242,22 +242,61 @@ export default class AudioPage extends Component {
     };
     // ------ 1
     this.getWordsForGame = async (): Promise<void> => {
+
       if (AudioPage.collectionWordsFromServer.length === 0) {
-        const tempCollectionWords: Promise<Word[]>[] = [];
-        
-        if (params) {
-          const query = params.map((el) => Object.values(el));
-          this.queryObj = Object.fromEntries(query);
-          tempCollectionWords.push(this.getWords(this.queryObj));
-        } else {
-          for (let i = 0; i <= CountItems.MaxPagesIndex; i += 1) {
-            const group = String(AudioPage.level);
-            const page = String(i);
-            this.queryObj = { group, page };
+        if (!Constants.UserMetadata) {
+          const tempCollectionWords: Promise<Word[]>[] = [];
+          if (params) {
+            const query = params.map((el) => Object.values(el));
+            this.queryObj = Object.fromEntries(query);
             tempCollectionWords.push(this.getWords(this.queryObj));
+          } else {
+            for (let i = 0; i <= CountItems.MaxPagesIndex; i += 1) {
+              const group = String(AudioPage.level);
+              const page = String(i);
+              this.queryObj = { group, page };
+              tempCollectionWords.push(this.getWords(this.queryObj));
+            }
           }
+          AudioPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
+          
+        } else if (Constants.UserMetadata) {
+          const tempCollectionWords: Promise<Word[]>[] = [];
+          if (params) {
+            const query = params.map((el) => Object.values(el));
+            this.queryObj = Object.fromEntries(query);
+           
+            const cardsData =
+              this.queryObj.group !== '6'
+                ? API.words.getWords(this.queryObj)
+                : API.userAggregatedWords.getWords(
+                    String(Constants.UserMetadata?.userId),
+                    undefined,
+                    this.queryObj.page,
+                    '3600',
+                    '{"$and":[{"userWord.optional.difficult":true}, {"userWord.optional.learned":false}]}'
+                  );
+            console.log('cardsData', cardsData);
+            cardsData.then(async (data) => {
+              console.log('data', data);
+              if (data) {
+                if (Constants.UserMetadata && !Constants.userWords) {
+                  Constants.userWords = await API.userWords.getWords(Constants.UserMetadata.userId);
+                }
+              }
+            });
+            tempCollectionWords.push(cardsData as Promise<Word[]>);
+          } else {
+            for (let i = 0; i <= CountItems.MaxPagesIndex; i += 1) {
+              const group = String(AudioPage.level);
+              const page = String(i);
+              this.queryObj = { group, page };
+              tempCollectionWords.push(this.getWords(this.queryObj));
+            }
+          }
+          AudioPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
+          console.log('AudioPage.collectionWordsFromServer', AudioPage.collectionWordsFromServer);
         }
-        AudioPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
       }
       const arrayOfWordsKeysFromServer = Object.keys(AudioPage.collectionWordsFromServer);
 
@@ -564,8 +603,14 @@ export default class AudioPage extends Component {
           elem.addEventListener('click', (event) => {
             const target = event.target as HTMLElement;
             if (target.closest('.word-audio__icon')) {
-              wordAudioPlay.src = `${Constants.serverURL}/${(target.closest('.word-audio__icon') as HTMLElement).dataset.choice}`;
-              wordAudioPlay.play();
+              wordAudioPlay.src = `
+                ${Constants.serverURL}/${(target.closest('.word-audio__icon') as HTMLElement)
+                .dataset.choice}
+              `;
+              wordAudioPlay.pause();
+              setTimeout(() => {
+                wordAudioPlay.play();
+              }, 100);
             }
           });
         });
@@ -586,15 +631,22 @@ export default class AudioPage extends Component {
           </li>
         `;
         const wordAudioPlay = document.querySelector('.word-audio__play') as HTMLAudioElement;
-        const wordAudioIconGroup = document.querySelectorAll('.word-audio__icon') as NodeListOf<HTMLElement>;
+        const wordAudioIconGroup = 
+          document.querySelectorAll('.word-audio__icon') as NodeListOf<HTMLElement>;
         
         wordAudioIconGroup.forEach((icon) => {
           const elem = icon;
           elem.addEventListener('click', (event) => {
             const target = event.target as HTMLElement;
             if (target.closest('.word-audio__icon')) {
-              wordAudioPlay.src = `${Constants.serverURL}/${(target.closest('.word-audio__icon') as HTMLElement).dataset.choice}`;
-              wordAudioPlay.play();
+              wordAudioPlay.src = `
+                ${Constants.serverURL}/${(target.closest('.word-audio__icon') as HTMLElement)
+                .dataset.choice}
+              `;
+              wordAudioPlay.pause();
+              setTimeout(() => {
+                wordAudioPlay.play();
+              }, 100);
             }
           });
         });
