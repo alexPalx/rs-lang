@@ -31,14 +31,17 @@ export default class EbookPage extends Component {
   public contentWrapper: Component;
   public cardsWrapper: Component;
   public spinnerWrapper: Component;
+  public lock: Component<HTMLImageElement>;
   public spinner: Component;
   public isPlay: boolean;
+  public completedCards: number;
   cards: EbookWord[];
 
   constructor(parentElement: HTMLElement, params: QueryParam[] | null) {
     super(parentElement, 'div', 'ebook-wrapper');
     this.cards = [];
     this.isPlay = false;
+    this.completedCards = 0;
     let queryObj: WordsQuery = { group: '0', page: '0' };
     if (params) {
       const query = params.map((el) => Object.values(el));
@@ -82,13 +85,19 @@ export default class EbookPage extends Component {
     }
     this.gameDropWrapper = new Component(this.controls.node, 'div', 'dropdown');
     this.gameDropBtn = new Component(this.gameDropWrapper.node, 'button', 'dropbtn', 'Мини-Игры');
+    this.lock = new Component(this.gameDropBtn.node, 'img', 'lock');
+    this.lock.node.src = './assets/svg/lock.svg';
+    this.lock.node.classList.add('none');
+
     this.dropDownContent = new Component(this.gameDropWrapper.node, 'div', 'game-drop-content');
     this.dropDownContent.node.innerHTML = this.setGameLinks(queryObj.group, queryObj.page);
 
     this.contentWrapper = new Component(this.wrapper.node, 'div', 'content-wrapper');
     this.cardsWrapper = new Component(this.contentWrapper.node, 'div', 'none');
     this.gameDropBtn.node.onclick = () => {
-      this.dropDownContent.node.classList.toggle('show');
+      if (this.completedCards < 20) {
+        this.dropDownContent.node.classList.toggle('show');
+      }
     };
     this.spinnerWrapper = new Component(this.contentWrapper.node, 'div', 'spinner-wrapper');
     this.spinner = new Component(this.spinnerWrapper.node, 'div', 'lds-dual-ring');
@@ -126,13 +135,27 @@ export default class EbookPage extends Component {
         startPlay: () => {
           this.cards.map((el) => el.stopPlay());
         },
+        incCompleated: () => {
+          this.completedCards += 1;
+        },
+        decCompleated: () => {
+          this.completedCards -= 1;
+        },
+        getCompleatedCount: () => this.completedCards,
+        changePageCompleated: () => this.changeCompleated(),
       });
-      if(Constants.UserMetadata) Statistics.add(card.id, 'seen');
+      if (Constants.UserMetadata) Statistics.add(card.id, 'seen');
       return item;
     });
   }
   setGameLinks(group: string, page: string): string {
     return `<a href="/audio?group=${group}&page=${page}">Аудиовызов</a>
             <a href="/sprint?group=${group}&page=${page}">Спринт</a>`;
+  }
+
+  changeCompleated() {
+    this.lock.node.classList.toggle('none');
+    this.pageNow.node.classList.toggle('compleated');
+    this.cardsWrapper.node.classList.toggle('shadow-compleated');
   }
 }

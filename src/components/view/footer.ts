@@ -122,7 +122,7 @@ export default class Footer extends Component {
 
     this.dev2Linked = new Component(this.dev2List.node, 'li', 'item');
     this.dev2LinkedLink = new Component(this.dev2Linked.node, 'a', 'item-link');
-    this.dev2LinkedLink.node.href = 'https://www.linkedin.com/in/sergei-cherniak/';
+    this.dev2LinkedLink.node.href = 'https://www.linkedin.com/in/siarhei-charniak-002ba224a/';
     this.dev2LinkedLink.node.target = '_blank';
     this.dev2LinkedImg = new Component(this.dev2LinkedLink.node, 'img', 'social-img');
     this.dev2LinkedImg.node.src = './assets/svg/linkedin.svg';

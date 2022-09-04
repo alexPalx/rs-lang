@@ -118,11 +118,12 @@
       text-transform: uppercase;
       text-align: center;
       background-color: #2f87ed;
-      // border: 1px solid rgb(164, 246, 251);
-      // border-left: none;
-      // border-right: none;
       line-height: 40px;
       color: #fff;
+    }
+
+    .compleated {
+      background-color: #00A572;
     }
 
     .page-up {
@@ -142,6 +143,8 @@
   }
 
   .dropbtn {
+    display: flex;
+    align-items: center;
     background-color: #2f87ed;
     color: #fff;
     padding: 12px;
@@ -150,6 +153,15 @@
     cursor: pointer;
     border-radius: 6px;
     text-transform: uppercase;
+    max-height: 42px;
+
+    .lock {
+      margin-left: 10px;
+    }
+
+    .none {
+      display: none;
+    }
   }
 
   .dropbtn:hover,
@@ -229,6 +241,14 @@
 .content-wrapper {
   position: relative;
   height: 100%;
+
+  .shadow-compleated {
+    box-shadow: rgb(57 255 20 / 55%) 0px 54px 82px, 
+    rgb(57 255 20 / 42%) 0px -12px 30px, 
+    rgb(57 255 20 / 32%) 0px 4px 6px, 
+    rgb(57 255 20 / 27%) 0px 12px 13px, 
+    rgb(57 255 20 / 19%) 0px -3px 5px;
+  }
 }
 
 .none {
@@ -311,6 +331,7 @@
           text-align: center;
           border-radius: 5px;
           font-size: 18px;
+
           @media (max-width: 768px) {
             left: -65px;
             top: -55px;
@@ -328,7 +349,7 @@
       padding: 12px;
       border-radius: 50%;
       margin: 20px 0;
-      
+
       &.studied {
         background-color: #fff;
 
@@ -368,6 +389,7 @@
           text-align: center;
           border-radius: 5px;
           font-size: 18px;
+
           @media (max-width: 768px) {
             left: -50px;
             top: -55px;
@@ -396,9 +418,11 @@
       flex-direction: column;
       justify-content: center;
       margin-right: 12px;
+
       @media (max-width: 768px) {
         flex-direction: row;
       }
+
       .checked {
         color: orange;
         text-align: center;
@@ -408,9 +432,11 @@
     .word-main {
       padding: 10px 0;
       padding-right: 40px;
+
       @media (max-width: 768px) {
         padding: 0 20px;
       }
+
       .word-header {
         margin-bottom: 12px;
 
@@ -487,6 +513,7 @@
       .set-studied-word-wrapper,
       .get-statistics-wrapper {
         margin: 20px 40px;
+
         @media (max-width: 475px) {
           margin: 20px 10px;
         }

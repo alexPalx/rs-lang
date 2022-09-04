@@ -38,8 +38,8 @@ export default class UserStatistics {
     userId: string,
     statisticsData: StatisticsData
   ): Promise<StatisticsData | undefined> {
-    console.warn(statisticsData.optional.newWordsPerDay);
-    console.warn(JSON.stringify(statisticsData.optional.newWordsPerDay));
+    // console.warn(statisticsData.optional.newWordsPerDay);
+    // console.warn(JSON.stringify(statisticsData.optional.newWordsPerDay));
     const responseData = await API.sendRequest<StatisticsData>(
       Utils.buildLink(['users', userId, 'statistics']),
       RequestMethod.PUT,
