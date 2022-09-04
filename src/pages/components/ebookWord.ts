@@ -6,7 +6,7 @@ import { UserWord, Word } from '../../interfaces/typesAPI';
 import WordStatistics from './wordStatistics';
 
 type TypeOfCallbacks = {
-  [key: string]: () => void;
+  [key: string]: () => void | number;
 };
 
 export default class EbookWord extends Component {
@@ -142,23 +142,24 @@ export default class EbookWord extends Component {
         }
       };
       this.setHardWordWrapper.node.onclick = async () => {
-        if (!this.studied) {
-          this.updateWord(true);
-          if (group === '6') {
-            this.wordCard.node.classList.add('animate__animated');
-            this.wordCard.node.classList.add('animate__backOutDown');
-            setTimeout(() => {
-              this.wordCard.destroy();
-            }, 900);
-          }
-          if (this.wordCard.node.classList.contains('hard-card')) {
-            (<Component>this.hardWordTitle).node.textContent = 'Добавить в Сложные слова';
-            this.wordCard.node.classList.remove('hard-card');
-          } else {
-            (<Component>this.hardWordTitle).node.textContent = 'Убрать из Сложных Слов';
-
-            this.wordCard.node.classList.add('hard-card');
-          }
+        this.updateWord(true);
+        if (group === '6') {
+          this.wordCard.node.classList.add('animate__animated');
+          this.wordCard.node.classList.add('animate__backOutDown');
+          setTimeout(() => {
+            this.wordCard.destroy();
+          }, 900);
+        }
+        if (this.wordCard.node.classList.contains('hard-card')) {
+          (<Component>this.hardWordTitle).node.textContent = 'Добавить в Сложные слова';
+          this.isCardsCompleated(actions, group);
+          actions.decCompleated();
+          this.wordCard.node.classList.remove('hard-card');
+        } else {
+          (<Component>this.hardWordTitle).node.textContent = 'Убрать из Сложных Слов';
+          this.wordCard.node.classList.add('hard-card');
+          actions.incCompleated();
+          this.isCardsCompleated(actions, group);
         }
       };
       this.setStudiedWordWrapper.node.onclick = () => {
@@ -167,6 +168,10 @@ export default class EbookWord extends Component {
           this.wordCard.node.classList.toggle('studied-card');
           (<Component>this.studiedWordTitle).node.textContent = 'Изученное слово';
           this.setHardWordWrapper?.destroy();
+          if (group !== '6') {
+            actions.incCompleated();
+            this.isCardsCompleated(actions, group);
+          }
         }
         if (group === '6') {
           this.wordCard.node.classList.add('animate__animated');
@@ -175,7 +180,6 @@ export default class EbookWord extends Component {
             this.wordCard.destroy();
           }, 900);
         }
-        
       };
 
       this.setStudiedWord = new Component(
@@ -205,6 +209,12 @@ export default class EbookWord extends Component {
           this.wordCard.node.classList.add('studied-card');
           this.studiedWordTitle.node.textContent = 'Изученное слово';
           this.setHardWordWrapper.destroy();
+        }
+        if (this.difficult || this.studied) {
+          if (group !== '6') actions.incCompleated();
+          if (actions.getCompleatedCount() === 20) {
+            actions.changePageCompleated();
+          }
         }
       }
     }
@@ -269,11 +279,16 @@ export default class EbookWord extends Component {
         if (localWord.optional) localWord.optional.difficult = this.difficult;
       }
       if (toggleLearned) {
-        if(Constants.UserMetadata) Statistics.add(userWord.wordId, 'learned');
+        if (Constants.UserMetadata) Statistics.add(userWord.wordId, 'learned');
         this.studied = !this.studied;
         this.setStudiedWordWrapper?.node.classList.toggle('studied');
         if (localWord.optional) localWord.optional.learned = this.studied;
       }
+    }
+  }
+  private isCardsCompleated(actions: TypeOfCallbacks, group: string) {
+    if (actions.getCompleatedCount() === 20 && group !== '6') {
+      actions.changePageCompleated();
     }
   }
 }
