@@ -122,7 +122,7 @@ export default class StatisticsPage extends Component {
           seenLabels = seenLabels.reverse();
           seenChartData = seenChartData.reverse();
 
-          const seenChart = new Chartist.LineChart(
+          new Chartist.LineChart(
             this.seenChart.node,
             {
               labels: seenLabels,
@@ -171,7 +171,7 @@ export default class StatisticsPage extends Component {
           learnedLabels = learnedLabels.reverse();
           learnedChartData = learnedChartData.reverse();
 
-          const learnedChart = new Chartist.LineChart(
+          new Chartist.LineChart(
             this.learnedChart.node,
             {
               labels: learnedLabels,
@@ -195,12 +195,6 @@ export default class StatisticsPage extends Component {
               },
             }
           );
-
-          console.log(seenChart, learnedChart);
-          //   newWordsPerDay: ${JSON.stringify(data.optional.newWordsPerDay)}<br>
-          //   learnedWordsPerDay: ${JSON.stringify(data.optional.learnedWordsPerDay)}<br>
-          //   seenWordsPerDay: ${JSON.stringify(data.optional.seenWordsList)}<br>
-          //   learnedWordsList: ${JSON.stringify(data.optional.learnedWordsList)}`;
           this.spinnerWrapper.destroy();
         }, 300);
       }

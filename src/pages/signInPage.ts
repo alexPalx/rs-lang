@@ -29,6 +29,7 @@ export default class AuthPage extends Component {
     );
     this.inputEmailField.node.type = 'email';
     this.inputEmailField.node.placeholder = 'email@example.com';
+    this.inputEmailField.node.required = true;
 
     this.passwordBlock = new Component(this.node, 'div', 'signin-password');
     this.passwordLabel = new Component(
@@ -44,15 +45,24 @@ export default class AuthPage extends Component {
     );
     this.inputPassField.node.type = 'password';
     this.inputPassField.node.placeholder = '********';
+    this.inputPassField.node.required = true;
 
     this.signInButton = new Component<HTMLButtonElement>(
       this.node,
       'button',
-      'button singin-button',
+      'button signin-button',
       'Войти'
     );
 
     this.signInButton.node.onclick = async () => {
+      if (!this.inputEmailField.node.value) {
+        this.inputEmailField.node.focus();
+        return;
+      }
+      if (!this.inputPassField.node.value) {
+        this.inputPassField.node.focus();
+        return;
+      }
       const userInfo: LoginUserRequestData = {
         email: this.inputEmailField.node.value,
         password: this.inputPassField.node.value,

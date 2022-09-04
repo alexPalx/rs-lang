@@ -105,6 +105,11 @@ input {
   -webkit-appearance: none;
   border-radius: 0;
 }
+
 b {
   font-weight: bold;
+}
+
+*:focus {
+  outline-color: #2471ca;
 }

@@ -144,7 +144,11 @@ export default class EbookPage extends Component {
         getCompleatedCount: () => this.completedCards,
         changePageCompleated: () => this.changeCompleated(),
       });
-      if (Constants.UserMetadata) Statistics.add(card.id, 'seen');
+      if (Constants.UserMetadata) {
+        setTimeout(() => {
+          Statistics.add(card.id, 'seen');
+        }, 1000);
+      }
       return item;
     });
   }

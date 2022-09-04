@@ -31,15 +31,16 @@ export default class MainPage extends Component {
 
     this.buttonsBlock = new Component(this.content.node, 'div', 'main-buttons');
 
-    this.buttonSignUp = new Component(
-      this.buttonsBlock.node,
-      'a',
-      'main-signup-button',
-      'Регистрация'
-    );
-    this.buttonSignUp.node.href = `/${Constants.routes.signup}`;
+    this.buttonSignUp = new Component(this.buttonsBlock.node, 'a', 'button main-signup-button');
+    this.buttonSignUp.node.href = Constants.UserMetadata
+      ? `/${Constants.routes.ebook}`
+      : `/${Constants.routes.signup}`;
+    this.buttonSignUp.node.textContent = Constants.UserMetadata ? 'Учебник' : 'Регистрация';
 
-    this.buttonSignIn = new Component(this.buttonsBlock.node, 'a', 'main-signin-button', 'Войти');
-    this.buttonSignIn.node.href = `/${Constants.routes.signin}`;
+    this.buttonSignIn = new Component(this.buttonsBlock.node, 'a', 'button main-signin-button');
+    this.buttonSignIn.node.href = Constants.UserMetadata
+      ? `/${Constants.routes.games}`
+      : `/${Constants.routes.signin}`;
+    this.buttonSignIn.node.textContent = Constants.UserMetadata ? 'Игры' : 'Войти';
   }
 }
