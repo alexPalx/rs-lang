@@ -32,6 +32,7 @@ export default class AuthPage extends Component {
     );
     this.inputNameField.node.type = 'text';
     this.inputNameField.node.placeholder = 'Екатерина';
+    this.inputNameField.node.required = true;
 
     this.emailBlock = new Component(this.node, 'div', 'signup-email');
     this.emailLabel = new Component(this.emailBlock.node, 'h3', 'signup-email-label', 'Почта:');
@@ -42,6 +43,7 @@ export default class AuthPage extends Component {
     );
     this.inputEmailField.node.type = 'email';
     this.inputEmailField.node.placeholder = 'email@example.com';
+    this.inputEmailField.node.required = true;
 
     this.passwordBlock = new Component(this.node, 'div', 'signup-password');
     this.passwordLabel = new Component(
@@ -57,6 +59,7 @@ export default class AuthPage extends Component {
     );
     this.inputPassField.node.type = 'password';
     this.inputPassField.node.placeholder = '********';
+    this.inputPassField.node.required = true;
 
     this.signUpButton = new Component<HTMLButtonElement>(
       this.node,
@@ -66,6 +69,18 @@ export default class AuthPage extends Component {
     );
 
     this.signUpButton.node.onclick = async () => {
+      if (!this.inputNameField.node.value) {
+        this.inputNameField.node.focus();
+        return;
+      }
+      if (!this.inputEmailField.node.value) {
+        this.inputEmailField.node.focus();
+        return;
+      }
+      if (!this.inputPassField.node.value) {
+        this.inputPassField.node.focus();
+        return;
+      }
       const userInfo: CreateUserRequestData = {
         name: this.inputNameField.node.value,
         email: this.inputEmailField.node.value,

@@ -133,11 +133,9 @@ export default class EbookWord extends Component {
         if (Constants.userWords) {
           const userWord = Constants.userWords.find((word) => word.wordId === this.cardId);
           if (userWord) {
-            const statistics = new WordStatistics(wrapper, card.word, userWord);
-            console.log(statistics);
+            new WordStatistics(wrapper, card.word, userWord);
           } else {
-            const statistics = new WordStatistics(wrapper, card.word, <UserWord>{});
-            console.log(statistics);
+            new WordStatistics(wrapper, card.word, <UserWord>{});
           }
         }
       };

@@ -141,7 +141,7 @@ export default class Statistics {
       statisticsData.optional.learnedWordsPerDay = this.learnedWordsPerDay;
       statisticsData.optional.learnedWordsList = this.learnedWordsList;
       statisticsData.optional.seenWordsList = this.seenWordsList;
-      API.statistics.update(Constants.UserMetadata.userId, statisticsData).then(console.dir);
+      API.statistics.update(Constants.UserMetadata.userId, statisticsData);
     }
   }
 }
