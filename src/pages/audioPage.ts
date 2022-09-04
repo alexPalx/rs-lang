@@ -382,6 +382,10 @@ export default class AudioPage extends Component {
           AudioPage.checkUserAnswer(target.closest('.answer-variant__container') as HTMLElement);
           this.buttonSkip.node.classList.add('game-hidden');
           this.buttonNext.node.classList.remove('game-hidden');
+          this.buttonNext.node.setAttribute("disabled", "disabled");
+          setTimeout(() => {
+            this.buttonNext.node.removeAttribute("disabled");
+          }, 500);
         }
       });
       
@@ -500,10 +504,16 @@ export default class AudioPage extends Component {
         AudioPage.checkUserAnswer(ANSWER_VARIANT_CONTAINERS[+event.key - 1] as HTMLElement);
         this.buttonNext.node.classList.remove('game-hidden');
         this.buttonSkip.node.classList.add('game-hidden');
+        this.buttonNext.node.setAttribute("disabled", "disabled");
+          setTimeout(() => {
+            this.buttonNext.node.removeAttribute("disabled");
+          }, 500);
       }  
       if (event.code === 'Enter'
           && this.buttonSkip.node.classList.contains('game-hidden')) {
-        AudioPage.getNextWord();
+        setTimeout(() => {
+          AudioPage.getNextWord();
+        }, 500);
       } else if (event.code === 'Enter' 
           && this.buttonNext.node.classList.contains('game-hidden')) {
         AudioPage.manageButtonSkip();
