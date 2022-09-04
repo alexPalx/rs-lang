@@ -57,6 +57,8 @@ const audioIconSVG = `
 enum CountItems {
   MaxCountCorrectSign = 3,
   MaxPagesIndex = 29,
+  AggregatedWordsPerPage = '3600',
+  IndexGroupForDifficultWords = '6'
 }
 enum GrowthScore {
   Minimal = 10,
@@ -99,6 +101,7 @@ export default class SprintPage extends Component {
   static renderDataGameboard: () => void;
   static setValuesKeyboardKeys: (event: KeyboardEvent) => void;
   static showGameResults: () => void;
+  private static getResultsContent: (array: number[], element: HTMLDivElement) => void;
   static checkUserAnswer: (answer: boolean) => void;
   private static audioCorrectAnswer = new Audio('../../assets/audio/correctanswer.mp3');
   private static audioIncorrectAnswer = new Audio('../../assets/audio/incorrectanswer.mp3');
@@ -218,6 +221,7 @@ export default class SprintPage extends Component {
       SprintPage.indexGameMove = 0;
       SprintPage.arrayCorrectAnswers = [];
       SprintPage.arrayIncorrectAnswers = [];
+      SprintPage.arrayOfRandomGameWordsKeys = [];
 
       FOOTER.classList.add('game-hidden');
 
@@ -270,18 +274,16 @@ export default class SprintPage extends Component {
             this.queryObj = Object.fromEntries(query);
            
             const cardsData =
-              this.queryObj.group !== '6'
+              this.queryObj.group !== CountItems.IndexGroupForDifficultWords
                 ? API.words.getWords(this.queryObj)
                 : API.userAggregatedWords.getWords(
-                    String(Constants.UserMetadata?.userId),
-                    undefined,
-                    this.queryObj.page,
-                    '3600',
-                    '{"$and":[{"userWord.optional.difficult":true}, {"userWord.optional.learned":false}]}'
-                  );
-            console.log('cardsData', cardsData);
+                String(Constants.UserMetadata?.userId),
+                undefined,
+                this.queryObj.page,
+                CountItems.AggregatedWordsPerPage,
+                '{"$and":[{"userWord.optional.difficult":true}, {"userWord.optional.learned":false}]}'
+                );
             cardsData.then(async (data) => {
-              console.log('data', data);
               if (data) {
                 if (Constants.UserMetadata && !Constants.userWords) {
                   Constants.userWords = await API.userWords.getWords(Constants.UserMetadata.userId);
@@ -298,7 +300,6 @@ export default class SprintPage extends Component {
             }
           }
           SprintPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
-          console.log('SprintPage.collectionWordsFromServer', SprintPage.collectionWordsFromServer);
         }
       }
       const arrayOfWordsKeysFromServer = Object.keys(SprintPage.collectionWordsFromServer);
@@ -321,45 +322,57 @@ export default class SprintPage extends Component {
 
     SprintPage.drawInitialStartPage = (): void => {
       this.hideLoader();
-      this.counterBeforeGame.node.classList.remove('game-hidden');
 
-      let timeToStart = GameTime.InitialTime;
+      if (SprintPage.arrayOfRandomGameWordsKeys.length > 1) {
+        this.counterBeforeGame.node.classList.remove('game-hidden');
 
-      const countdownToStart = setInterval(() => {
-        if (timeToStart <= GameTime.InitialTime && timeToStart > 0) {
-          this.counterBeforeGame.node.innerHTML = `
-            <div class="time-to-start">${timeToStart}<span class="circle-time"></span></div>
-            <div class="ready">Приготовьтесь</div>
-            <div class="ready-content">
-              <img class="attention-icon" src="'../../assets/svg/attention.svg" alt="Внимание!">
-              <div class="ready-text">
-                Чтобы отвечать быстрее, используйте клавиши <span class="arrows">◄</span> 
-                <span class="arrows">►</span>
+        let timeToStart = GameTime.InitialTime;
+
+        const countdownToStart = setInterval(() => {
+          if (timeToStart <= GameTime.InitialTime && timeToStart > 0) {
+            this.counterBeforeGame.node.innerHTML = `
+              <div class="time-to-start">${timeToStart}<span class="circle-time"></span></div>
+              <div class="ready">Приготовьтесь</div>
+              <div class="ready-content">
+                <img class="attention-icon" src="'../../assets/svg/attention.svg" alt="Внимание!">
+                <div class="ready-text">
+                  Чтобы отвечать быстрее, используйте клавиши <span class="arrows">◄</span> 
+                  <span class="arrows">►</span>
+                </div>
               </div>
-            </div>
-            
-          `;
-          timeToStart -= 1;
-        } else {
-          clearInterval(countdownToStart);
-          SprintPage.startGame();
-        }
-      }, 1000);
+              
+            `;
+            timeToStart -= 1;
+          } else {
+            clearInterval(countdownToStart);
+            SprintPage.startGame();
+          }
+        }, 1000);
 
-      const CONTENT = document.querySelector('.content') as HTMLDivElement;
-      const LINK = document.getElementsByTagName('a');
-      window.addEventListener('click', function clearCountdown(e) {
-        const target = e.target as HTMLElement;
-        if (
-          !CONTENT.contains(target) &&
-          Array.from(LINK).find((element): boolean => element.contains(target))
-        ) {
-          FOOTER.classList.remove('game-hidden');
-          clearInterval(countdownToStart);
-          SprintPage.collectionWordsFromServer = [];
-          window.removeEventListener('click', clearCountdown);
-        }
-      });
+        const CONTENT = document.querySelector('.content') as HTMLDivElement;
+        const LINK = document.getElementsByTagName('a');
+        window.addEventListener('click', function clearCountdown(e) {
+          const target = e.target as HTMLElement;
+          if (
+            !CONTENT.contains(target) &&
+            Array.from(LINK).find((element): boolean => element.contains(target))
+          ) {
+            FOOTER.classList.remove('game-hidden');
+            clearInterval(countdownToStart);
+            SprintPage.collectionWordsFromServer = [];
+            window.removeEventListener('click', clearCountdown);
+          }
+        });
+      }
+      else {
+        this.wrapper.node.innerHTML = `
+          <div class='words-enough'>
+            Недостаточно слов для игры.<br>
+            Вернитесь на страницу учебника и добавьте слова для изучения<br>
+            Минимальное количество необходимых для данной игры слов - 2
+          </div>
+        `;
+      }
     };
     // ------ 3
     SprintPage.startGame = (): void => {
@@ -566,9 +579,20 @@ export default class SprintPage extends Component {
         contentEvaluation.innerHTML = 'Отличный результат!';
       }
 
-      const correctList = document.querySelector('.correct-list') as HTMLDivElement;
-      SprintPage.arrayCorrectAnswers.forEach((item) => {
-        correctList.innerHTML += `
+      SprintPage.getResultsContent(
+        SprintPage.arrayCorrectAnswers, document.querySelector('.correct-list')!
+      );
+      SprintPage.getResultsContent(
+        SprintPage.arrayIncorrectAnswers, document.querySelector('.incorrect-list')!
+      );
+
+      SprintPage.collectionWordsFromServer = [];
+    };
+
+    SprintPage.getResultsContent = (array: number[], element: HTMLDivElement): void => {
+      array.forEach((item) => {
+        const block = element;
+        block.innerHTML += `
           <li class="word-item">
             <div class="word-audio">
               <audio class="word-audio__play"></audio>
@@ -577,12 +601,11 @@ export default class SprintPage extends Component {
               >${audioIconSVG}</span>
             </div>
             <span class="word-en">${SprintPage.collectionWordsFromServer[item].word}
-              &nbsp;${SprintPage.collectionWordsFromServer[item].transcription}</span> - 
-              ${SprintPage.collectionWordsFromServer[item].wordTranslate}
+            &nbsp;${SprintPage.collectionWordsFromServer[item].transcription}</span> - 
+            ${SprintPage.collectionWordsFromServer[item].wordTranslate}
           </li>
         `;
         const wordAudioPlay = document.querySelector('.word-audio__play') as HTMLAudioElement;
-        
         const wordAudioIconGroup = 
           document.querySelectorAll('.word-audio__icon') as NodeListOf<HTMLElement>;
         
@@ -603,46 +626,7 @@ export default class SprintPage extends Component {
           });
         });
       });
-      const incorrectList = document.querySelector('.incorrect-list') as HTMLDivElement;
-      SprintPage.arrayIncorrectAnswers.forEach((item) => {
-        incorrectList.innerHTML += `
-          <li class="word-item">
-            <div class="word-audio">
-              <audio class="word-audio__play"></audio>
-              <span class="word-audio__icon"
-              data-choice="${SprintPage.collectionWordsFromServer[item].audio}"
-              >${audioIconSVG}</span>
-            </div>
-            <span class="word-en">${SprintPage.collectionWordsFromServer[item].word}
-              &nbsp;${SprintPage.collectionWordsFromServer[item].transcription}</span> - 
-              ${SprintPage.collectionWordsFromServer[item].wordTranslate}
-          </li>
-        `;
-        const wordAudioPlay = document.querySelector('.word-audio__play') as HTMLAudioElement;
-
-        const wordAudioIconGroup =
-          document.querySelectorAll('.word-audio__icon') as NodeListOf<HTMLElement>;
-        
-        wordAudioIconGroup.forEach((icon) => {
-          const elem = icon;
-          elem.addEventListener('click', (event) => {
-            const target = event.target as HTMLElement;
-            if (target.closest('.word-audio__icon')) {
-              wordAudioPlay.src = `
-                ${Constants.serverURL}/${(target.closest('.word-audio__icon') as HTMLElement)
-                .dataset.choice}
-              `;
-              wordAudioPlay.pause();
-              setTimeout(() => {
-                wordAudioPlay.play();
-              }, 100);
-            }
-          });
-        });
-      });
-
-      SprintPage.collectionWordsFromServer = [];
-    };
+    }
     // ------ 8
     SprintPage.updateServerData = async (word: Word, isCorrectAnswer: boolean): Promise<void> => {
       if (Constants.UserMetadata) {

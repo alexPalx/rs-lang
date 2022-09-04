@@ -87,6 +87,8 @@ enum CountItems {
   AnswerVariantCountInGameboard = 5,
   MaxPagesIndex = 29,
   WordsPerPage = 20,
+  AggregatedWordsPerPage = '3600',
+  IndexGroupForDifficultWords = '6'
 }
 enum Level {
   Low = 0.25,
@@ -117,6 +119,7 @@ export default class AudioPage extends Component {
   private static audioCorrectAnswer = new Audio('../../assets/audio/correctanswer.mp3');
   private static audioIncorrectAnswer = new Audio('../../assets/audio/incorrectanswer.mp3');
   static showGameResults: () => void;
+  private static getResultsContent: (array: number[], element: HTMLDivElement) => void;
   static updateServerData: (word: Word, result: boolean) => Promise<void>;
   private static showCorrectAnswerBoard: (word: Word) => Promise<void>;
 
@@ -267,18 +270,16 @@ export default class AudioPage extends Component {
             this.queryObj = Object.fromEntries(query);
            
             const cardsData =
-              this.queryObj.group !== '6'
+              this.queryObj.group !== CountItems.IndexGroupForDifficultWords
                 ? API.words.getWords(this.queryObj)
                 : API.userAggregatedWords.getWords(
-                    String(Constants.UserMetadata?.userId),
-                    undefined,
-                    this.queryObj.page,
-                    '3600',
-                    '{"$and":[{"userWord.optional.difficult":true}, {"userWord.optional.learned":false}]}'
-                  );
-            console.log('cardsData', cardsData);
+                String(Constants.UserMetadata?.userId),
+                undefined,
+                this.queryObj.page,
+                CountItems.AggregatedWordsPerPage,
+                '{"$and":[{"userWord.optional.difficult":true}, {"userWord.optional.learned":false}]}'
+                );
             cardsData.then(async (data) => {
-              console.log('data', data);
               if (data) {
                 if (Constants.UserMetadata && !Constants.userWords) {
                   Constants.userWords = await API.userWords.getWords(Constants.UserMetadata.userId);
@@ -295,7 +296,6 @@ export default class AudioPage extends Component {
             }
           }
           AudioPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
-          console.log('AudioPage.collectionWordsFromServer', AudioPage.collectionWordsFromServer);
         }
       }
       const arrayOfWordsKeysFromServer = Object.keys(AudioPage.collectionWordsFromServer);
@@ -323,32 +323,43 @@ export default class AudioPage extends Component {
       this.exitGame.node.innerHTML = exitGameHTML;
       
       this.hideLoader();
-      this.audiocallGameContainer.node.classList.remove('game-hidden');
+      if (AudioPage.arrayOfRandomGameWordsKeys.length > 4) {
+        this.audiocallGameContainer.node.classList.remove('game-hidden');
 
-      AudioPage.renderDataGameboard();
+        AudioPage.renderDataGameboard();
 
-      document.addEventListener('keydown', AudioPage.setValuesKeyboardKeys);
+        document.addEventListener('keydown', AudioPage.setValuesKeyboardKeys);
 
-      this.exitGame.node.addEventListener('click', () => {
-        Router.goTo(new URL(`http://${window.location.host}/${Constants.routes.games}`));
-        FOOTER.classList.remove('game-hidden');
-        AudioPage.collectionWordsFromServer = [];
-      });
-
-      const CONTENT = document.querySelector('.content') as HTMLDivElement;
-      const LINK = document.getElementsByTagName('a');
-      window.addEventListener('click', function changeValuesKeys(e) {
-        const target = e.target as HTMLElement;
-        if (
-          !CONTENT.contains(target) &&
-          Array.from(LINK).find((element): boolean => element.contains(target))
-        ) {
-          document.removeEventListener('keydown', AudioPage.setValuesKeyboardKeys);
+        this.exitGame.node.addEventListener('click', () => {
+          Router.goTo(new URL(`http://${window.location.host}/${Constants.routes.games}`));
           FOOTER.classList.remove('game-hidden');
           AudioPage.collectionWordsFromServer = [];
-          window.removeEventListener('click', changeValuesKeys);
-        }
-      });
+        });
+
+        const CONTENT = document.querySelector('.content') as HTMLDivElement;
+        const LINK = document.getElementsByTagName('a');
+        window.addEventListener('click', function changeValuesKeys(e) {
+          const target = e.target as HTMLElement;
+          if (
+            !CONTENT.contains(target) &&
+            Array.from(LINK).find((element): boolean => element.contains(target))
+          ) {
+            document.removeEventListener('keydown', AudioPage.setValuesKeyboardKeys);
+            FOOTER.classList.remove('game-hidden');
+            AudioPage.collectionWordsFromServer = [];
+            window.removeEventListener('click', changeValuesKeys);
+          }
+        });
+      }
+      else {
+        this.wrapper.node.innerHTML = `
+          <div class='words-enough'>
+            Недостаточно слов для игры.<br>
+            Вернитесь на страницу учебника и добавьте слова для изучения<br>
+            Минимальное количество необходимых для данной игры слов - 5
+          </div>
+        `;
+      }
     };
 
 // ------ 4
@@ -579,45 +590,21 @@ export default class AudioPage extends Component {
       } else {
         contentEvaluation.innerHTML = 'Отличный результат!';
       }
+      
+      AudioPage.getResultsContent(
+        AudioPage.arrayCorrectAnswers, document.querySelector('.correct-list')!
+      );
+      AudioPage.getResultsContent(
+        AudioPage.arrayIncorrectAnswers, document.querySelector('.incorrect-list')!
+      );
+  
+      AudioPage.collectionWordsFromServer = [];
+    }
 
-      const correctList = document.querySelector('.correct-list') as HTMLDivElement;
-      AudioPage.arrayCorrectAnswers.forEach((item) => {
-        correctList.innerHTML += `
-          <li class="word-item">
-            <div class="word-audio">
-              <audio class="word-audio__play"></audio>
-              <span class="word-audio__icon"
-              data-choice="${AudioPage.collectionWordsFromServer[item].audio}"
-              >${audioIconSVG}</span>
-            </div>
-            <span class="word-en">${AudioPage.collectionWordsFromServer[item].word}
-              &nbsp;${AudioPage.collectionWordsFromServer[item].transcription}</span> - 
-              ${AudioPage.collectionWordsFromServer[item].wordTranslate}
-          </li>
-        `;
-        const wordAudioPlay = document.querySelector('.word-audio__play') as HTMLAudioElement;
-        const wordAudioIconGroup = document.querySelectorAll('.word-audio__icon') as NodeListOf<HTMLElement>;
-        
-        wordAudioIconGroup.forEach((icon) => {
-          const elem = icon;
-          elem.addEventListener('click', (event) => {
-            const target = event.target as HTMLElement;
-            if (target.closest('.word-audio__icon')) {
-              wordAudioPlay.src = `
-                ${Constants.serverURL}/${(target.closest('.word-audio__icon') as HTMLElement)
-                .dataset.choice}
-              `;
-              wordAudioPlay.pause();
-              setTimeout(() => {
-                wordAudioPlay.play();
-              }, 100);
-            }
-          });
-        });
-      });
-      const incorrectList = document.querySelector('.incorrect-list') as HTMLDivElement;
-      AudioPage.arrayIncorrectAnswers.forEach((item) => {
-        incorrectList.innerHTML += `
+    AudioPage.getResultsContent = (array: number[], element: HTMLDivElement): void => {
+      array.forEach((item) => {
+        const block = element;
+        block.innerHTML += `
           <li class="word-item">
             <div class="word-audio">
               <audio class="word-audio__play"></audio>
@@ -651,10 +638,7 @@ export default class AudioPage extends Component {
           });
         });
       });
-  
-      AudioPage.collectionWordsFromServer = [];
     }
-
     // ------ 11
     AudioPage.updateServerData = async (word: Word, isCorrectAnswer: boolean): Promise<void> => {
       if (Constants.UserMetadata) {
