@@ -1,6 +1,7 @@
 import API from '../api/api';
 import Component from '../common/component';
 import Constants from '../common/constants';
+import Popup from '../components/view/popup';
 import View from '../components/view/view';
 import { CreateUserRequestData } from '../interfaces/typesAPI';
 import Router from '../router/router';
@@ -8,6 +9,7 @@ import Router from '../router/router';
 export default class AuthPage extends Component {
   private view: View;
 
+  public popup: Popup;
   public usernameBlock: Component<HTMLElement>;
   public usernameLabel: Component<HTMLElement>;
   public emailBlock: Component<HTMLElement>;
@@ -22,6 +24,9 @@ export default class AuthPage extends Component {
   constructor(parentElement: HTMLElement, view: View) {
     super(parentElement, 'div', 'signup-wrapper');
     this.view = view;
+
+    this.popup = new Popup(this.node);
+    this.popup.hide();
 
     this.usernameBlock = new Component(this.node, 'div', 'signup-name');
     this.usernameLabel = new Component(this.usernameBlock.node, 'h3', 'signup-name-label', 'Имя:');
@@ -71,14 +76,20 @@ export default class AuthPage extends Component {
     this.signUpButton.node.onclick = async () => {
       if (!this.inputNameField.node.value) {
         this.inputNameField.node.focus();
+        this.popup.show();
+        this.popup.setContent('Пожалуйста, введите ваше имя');
         return;
       }
       if (!this.inputEmailField.node.value) {
         this.inputEmailField.node.focus();
+        this.popup.show();
+        this.popup.setContent('Пожалуйста, введите вашу почту');
         return;
       }
       if (!this.inputPassField.node.value) {
         this.inputPassField.node.focus();
+        this.popup.show();
+        this.popup.setContent('Пожалуйста, введите ваш пароль');
         return;
       }
       const userInfo: CreateUserRequestData = {
@@ -91,6 +102,9 @@ export default class AuthPage extends Component {
       if (responseData) {
         this.view.ui.generateAuthBlock();
         Router.goTo(new URL(`http://${window.location.host}/${Constants.routes.signin}`));
+      } else {
+        this.popup.show();
+        this.popup.setContent('Пользователь с такой почтой уже зарегистрирован');
       }
     };
   }
