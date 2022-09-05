@@ -21,8 +21,8 @@ export default class Developer extends Component {
 
     this.githubBlock = new Component(this.node, 'div', 'dev-github-block');
     this.githubImage = new Component(this.githubBlock.node, 'img', 'dev-github-image');
-    this.githubImage.node.src = ''; // TODO: add github image
-    this.githubImage.node.alt = '';
+    this.githubImage.node.src = './assets/svg/github.svg';
+    this.githubImage.node.alt = 'github-logo';
     this.githubLink = new Component(
       this.githubBlock.node,
       'a',
