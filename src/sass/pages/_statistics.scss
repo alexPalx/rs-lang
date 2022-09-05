@@ -1,0 +1,30 @@
+.statistics-wrapper {
+    margin: 5vh auto 0 auto;
+    width: fit-content;
+}
+
+.statistics-wrapper p {
+    margin-bottom: 15px;
+    font-family: 'PT Serif';
+    font-size: 24px;
+}
+
+.ct-label.ct-vertical.ct-start,
+.ct-label.ct-horizontal.ct-end {
+    font-family: 'PT Serif';
+    font-size: 16px;
+}
+
+.ct-label.ct-vertical.ct-start {
+    align-items: flex-end;
+    justify-content: flex-end;
+    text-align: right;
+    text-anchor: end;
+    display: flex;
+}
+
+.ct-grid.ct-vertical,
+.ct-grid.ct-horizontal {
+    stroke: #000000;
+    opacity: 0.2;
+}
