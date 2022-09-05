@@ -2,12 +2,14 @@ import API from '../api/api';
 import Component from '../common/component';
 import Constants from '../common/constants';
 import Statistics from '../common/statisticsData';
+import Popup from '../components/view/popup';
 import View from '../components/view/view';
 import { LoginUserRequestData } from '../interfaces/typesAPI';
 import Router from '../router/router';
 
 export default class AuthPage extends Component {
   private view: View;
+  public popup: Popup;
   public inputEmailField: Component<HTMLInputElement>;
   public signInButton: Component<HTMLButtonElement>;
   public inputPassField: Component<HTMLInputElement>;
@@ -19,6 +21,9 @@ export default class AuthPage extends Component {
   constructor(parentElement: HTMLElement, view: View) {
     super(parentElement, 'div', 'signin-wrapper');
     this.view = view;
+
+    this.popup = new Popup(this.node);
+    this.popup.hide();
 
     this.emailBlock = new Component(this.node, 'div', 'signin-email');
     this.emailLabel = new Component(this.emailBlock.node, 'h3', 'signin-email-label', 'Почта:');
@@ -57,10 +62,14 @@ export default class AuthPage extends Component {
     this.signInButton.node.onclick = async () => {
       if (!this.inputEmailField.node.value) {
         this.inputEmailField.node.focus();
+        this.popup.show();
+        this.popup.setContent('Пожалуйста, введите вашу почту');
         return;
       }
       if (!this.inputPassField.node.value) {
         this.inputPassField.node.focus();
+        this.popup.show();
+        this.popup.setContent('Пожалуйста, введите ваш пароль');
         return;
       }
       const userInfo: LoginUserRequestData = {
@@ -73,6 +82,9 @@ export default class AuthPage extends Component {
         this.view.ui.generateAuthBlock(true);
         Router.goTo(new URL(`http://${window.location.host}${Constants.LastPage}`));
         Statistics.init();
+      } else {
+        this.popup.show();
+        this.popup.setContent('Неверная почта или пароль');
       }
     };
   }

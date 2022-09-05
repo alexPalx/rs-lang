@@ -14,11 +14,11 @@ export default class AboutPage extends Component {
 
     const devInfoList: DevInfo[] = [
       {
-        imageSrc: '*devImage*',
+        imageSrc: './assets/img/alexphoto.jpg',
         name: 'Алексей Палюхович',
         github: 'https://github.com/alexPalx',
         position: 'Разработчик',
-        completedTasks: ['Кастомный роутер', 'Регистрация', 'Авторизация', 'Страница статистики', 'Долгосрочная статистика', 'Страница о команде'],
+        completedTasks: ['Запросы к серверу', 'Авторизация', 'Кастомный роутер', 'Страница статистики', 'Страница о команде'],
       },
       {
         imageSrc: './assets/img/vitaliphoto.jpeg',
