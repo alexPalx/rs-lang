@@ -110,7 +110,7 @@ export default class Statistics {
     const lastNewWordsLength = this.seenWordsList.length;
 
     if (list === 'learned' && this.learnedWordsList.includes(wordId)) {
-      this.learnedWords -= 1;
+      this.learnedWords = 0;
       this.learnedWordsList = this.learnedWordsList.filter((el) => el !== wordId);
       if (!this.learnedWordsPerDay.find((word) => word.date === this.currentDay))
         this.learnedWordsPerDay.push({ date: this.currentDay, words: 0 });
