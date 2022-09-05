@@ -13,7 +13,7 @@ export default class MainPage extends Component {
   constructor(parentElement: HTMLElement) {
     super(parentElement, 'div', 'main-wrapper');
 
-    this.title = new Component(this.node, 'h2', 'main-title', 'RSLang');
+    this.title = new Component(this.node, 'h2', 'main-title', 'RS-Lang');
     this.content = new Component(this.node, 'div', 'main-content');
 
     this.descriptionP1 = new Component(

@@ -1,23 +1,43 @@
 .main-wrapper {
-    margin: 30vh auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-image: url('../assets/img/background.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: calc(100vh - 180px);
+    margin: -20px;
+    @media  (min-width: 1024px) {
+        background-size: 100vw 100%;
+    }
+    
 }
 
 .main-title {
+    font-family: 'Roboto', sans-serif;
     font-size: 28px;
     margin-bottom: 20px;
     text-align: center;
+    letter-spacing: 0.3em;
+    
 }
 
 .main-content {
+    font-family: 'PT Serif', serif;
     gap: 10px;
     flex-direction: column;
     display: flex;
+    padding: 20px;
 }
 
 .main-description-p1,
 .main-description-p2 {
+    font-family: 'PT Serif', serif;
     font-size: 18px;
     text-align: center;
+    margin-bottom: 20px;
 }
 
 .main-buttons {
