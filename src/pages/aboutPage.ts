@@ -18,21 +18,21 @@ export default class AboutPage extends Component {
         name: 'Алексей Палюхович',
         github: 'https://github.com/alexPalx',
         position: 'Разработчик',
-        completedTasks: ['Таск 1', 'таск 2', 'таск 3', 'таск 4'],
+        completedTasks: ['Кастомный роутер', 'Регистрация', 'Авторизация', 'Страница статистики', 'Долгосрочная статистика', 'Страница о команде'],
       },
       {
-        imageSrc: '*devImage*',
+        imageSrc: './assets/img/vitaliphoto.jpeg',
         name: 'Виталий Дреко',
         github: 'https://github.com/dokahp',
         position: 'Разработчик',
-        completedTasks: ['Таск 1', 'таск 2', 'таск 3', 'таск 4'],
+        completedTasks: ['Верстка UI', 'Электронный учебник', 'Список слов', 'Добавление cложных, изученных слов', 'Статистика по слову'],
       },
       {
-        imageSrc: '*devImage*',
+        imageSrc: './assets/img/sergeiphoto.jpeg',
         name: 'Сергей Черняк',
         github: 'https://github.com/atcherdsd',
         position: 'Разработчик',
-        completedTasks: ['Таск 1', 'таск 2', 'таск 3', 'таск 4'],
+        completedTasks: ['Мини-игра Спринт', 'Мини-игра Аудиовызов', 'Взаимодействие игр со статистикой и учебником'],
       },
     ];
 
