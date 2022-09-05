@@ -132,6 +132,10 @@ export default class EbookWord extends Component {
       this.getStatisticsWrapper.node.onclick = () => {
         if (Constants.userWords) {
           const userWord = Constants.userWords.find((word) => word.wordId === this.cardId);
+          const wordStat = document.querySelector('.word-statistics');
+          if (wordStat) {
+            wordStat.remove();
+          }
           if (userWord) {
             new WordStatistics(wrapper, card.word, userWord);
           } else {
