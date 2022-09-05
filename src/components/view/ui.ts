@@ -128,8 +128,8 @@ export default class UI {
         document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
         document.cookie = `userId=; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
         Constants.UserMetadata = null;
-        Router.goTo(new URL(window.location.href));
-        this.generateAuthBlock();
+        const currentLocation = window.location.href
+        window.location.href = currentLocation;
       };
     } else {
       this.signInButton = new Component(this.authBlock.node, 'a', 'signin', 'Войти');
