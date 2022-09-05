@@ -19,6 +19,8 @@ export default class StatisticsPage extends Component {
   public seenChart: Component<HTMLElement>;
   public seenChartTitle: Component<HTMLElement>;
   public learnedChartTitle: Component<HTMLElement>;
+  public todayStatistic: Component<HTMLElement>;
+  public allTimeChartsTitle: Component<HTMLElement>;
 
   constructor(parentElement: HTMLElement) {
     super(parentElement, 'div', 'statistics-wrapper');
@@ -28,7 +30,13 @@ export default class StatisticsPage extends Component {
     this.content = new Component(this.node, 'div', 'statistics-content');
 
     this.learnedWordsWrapper = new Component(this.content.node);
-    this.learnedWordsAllTime = new Component(this.learnedWordsWrapper.node, 'p');
+    this.learnedWordsAllTime = new Component(
+      this.learnedWordsWrapper.node,
+      'p',
+      'statistic-group-title'
+    );
+
+    this.todayStatistic = new Component(this.content.node, 'p', 'statistic-group-title');
 
     this.gamesWrapper = new Component(this.content.node, 'div', 'statistics-games-wrapper');
     this.sprintStreaks = new Component(this.gamesWrapper.node, 'p', 'statistics-sprint-streaks');
@@ -38,6 +46,8 @@ export default class StatisticsPage extends Component {
     this.seenWords = new Component(this.wordsWrapper.node, 'p');
     this.learnedWords = new Component(this.wordsWrapper.node, 'p');
 
+    this.allTimeChartsTitle = new Component(this.node, 'p', 'statistic-group-title');
+    this.allTimeChartsTitle.node.style.marginTop = '20px';
     this.seenChartTitle = new Component(this.node, 'p');
     this.seenChart = new Component(this.node, 'div', 'ct-line');
     this.learnedChartTitle = new Component(this.node, 'p');
@@ -61,6 +71,7 @@ export default class StatisticsPage extends Component {
             ? `Слов изучено: ${data.optional.learnedWordsList.length}`
             : 'Слов изучено: 0';
 
+          this.todayStatistic.node.textContent = 'Статистика за сегодня:';
           const sprintStreak =
             data.optional.sprintStreakPerDay[
               data.optional.sprintStreakPerDay.findIndex((el) => el.date === Statistics.currentDay)
@@ -82,16 +93,16 @@ export default class StatisticsPage extends Component {
               data.optional.newWordsPerDay.findIndex((el) => el.date === Statistics.currentDay)
             ]?.words;
           this.seenWords.node.textContent = newWords
-            ? `Новые слова за сегодня: ${newWords}`
-            : 'Новые слова за сегодня: 0';
+            ? `Новые слова: ${newWords}`
+            : 'Новые слова: 0';
 
           const learnedWords =
             data.optional.learnedWordsPerDay[
               data.optional.learnedWordsPerDay.findIndex((el) => el.date === Statistics.currentDay)
             ]?.words;
           this.learnedWords.node.textContent = learnedWords
-            ? `Изученные слова за сегодня: ${learnedWords}`
-            : 'Изученные слова за сегодня: 0';
+            ? `Изученные слова: ${learnedWords}`
+            : 'Изученные слова: 0';
 
           const months = [
             'января',
@@ -107,6 +118,8 @@ export default class StatisticsPage extends Component {
             'ноября',
             'декабря',
           ];
+
+          this.allTimeChartsTitle.node.textContent = 'Статистика за все время:';
 
           let seenWordsCount = 0;
           const seenLabels: string[] = [];
@@ -140,7 +153,6 @@ export default class StatisticsPage extends Component {
             },
             {
               height: '20vh',
-              width: '50vw',
               chartPadding: {
                 right: 20,
               },
@@ -188,7 +200,6 @@ export default class StatisticsPage extends Component {
             },
             {
               height: '20vh',
-              width: '50vw',
               chartPadding: {
                 right: 20,
               },
@@ -203,6 +214,7 @@ export default class StatisticsPage extends Component {
               },
             }
           );
+
           this.spinnerWrapper.destroy();
         }, 300);
       }
