@@ -19,7 +19,9 @@
       font-size: 28px;
       color: #000;
       margin-bottom: 25px;
-
+      @media (max-width: 375px) {
+        font-size: 18px;
+      }
       .word-name {
         color: #55c2da;
       }
@@ -56,6 +58,9 @@
       color: #333333;
       text-align: center;
       border-left: 2px solid #333333;
+      @media (max-width: 375px) {
+        font-size: 14px;
+      }
     }
 
     table.greyGridTable thead th:first-child {
