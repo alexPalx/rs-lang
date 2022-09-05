@@ -1,18 +1,7 @@
 import { UserMetadata, UserWord } from '../interfaces/typesAPI';
 
 export default class Constants {
-  // ┌───────── for production use only ───────────────────────────────────┐
-  // │ public static serverURL = 'https://my-learnwords.herokuapp.com'; // │
-  // └─────────────────────────────────────────────────────────────────────┘
-  // ────────── for testing ─────────────────────────────────────────────────────┐
-  public static serverURL = 'https://react-learnwords-example.herokuapp.com'; // │
-  // ────────────────────────────────────────────────────────────────────────────┘
-  // ┌───────── Test user ──────────────┐
-  // │ name: Екатерина                  │
-  // │ email: catherine-word@gmail.com  │
-  // │ password: rsLangTestUserPassword │
-  // │ id: 630258423dbc0a0015a9395b     │
-  // └──────────────────────────────────┘
+  public static serverURL = 'https://my-learnwords.herokuapp.com';
 
   private static cookieLifetime = 14400;
 
