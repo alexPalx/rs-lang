@@ -239,6 +239,14 @@ export default class EbookWord extends Component {
         this.playBtn.node.src = './assets/svg/play-icon.svg';
       }
     };
+
+    const wordsTranslateFromHTML =
+      document.querySelectorAll('.word-translate') as NodeListOf<HTMLDivElement>;
+    const filteredTranslate: string[] = Array.from(wordsTranslateFromHTML)
+      .filter((word) => !word.closest('.studied-card')!)
+      .map((item) => item.textContent as string);
+
+    localStorage.setItem('studiedForGames', JSON.stringify(filteredTranslate));
   }
   public stopPlay() {
     if (this.audio.played) {

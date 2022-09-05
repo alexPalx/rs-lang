@@ -219,6 +219,7 @@ export default class AudioPage extends Component {
       AudioPage.arrayCorrectAnswers = [];
       AudioPage.arrayIncorrectAnswers = [];
       AudioPage.arrayOfRandomGameWordsKeys = [];
+      AudioPage.collectionWordsFromServer = [];
 
       FOOTER.classList.add('game-hidden');
 
@@ -287,6 +288,14 @@ export default class AudioPage extends Component {
               }
             });
             tempCollectionWords.push(cardsData as Promise<Word[]>);
+            const tempCollection = (await Promise.all(tempCollectionWords)).flat();
+            
+            const wordsFromStorage = JSON.parse(localStorage.studiedForGames) as string[];
+            AudioPage.collectionWordsFromServer = tempCollection
+              .filter((wordServer) => wordsFromStorage.some(
+                (elem) => elem === wordServer.wordTranslate)
+              );
+
           } else {
             for (let i = 0; i <= CountItems.MaxPagesIndex; i += 1) {
               const group = String(AudioPage.level);
@@ -294,8 +303,8 @@ export default class AudioPage extends Component {
               this.queryObj = { group, page };
               tempCollectionWords.push(this.getWords(this.queryObj));
             }
+            AudioPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
           }
-          AudioPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
         }
       }
       const arrayOfWordsKeysFromServer = Object.keys(AudioPage.collectionWordsFromServer);

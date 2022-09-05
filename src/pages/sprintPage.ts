@@ -222,6 +222,7 @@ export default class SprintPage extends Component {
       SprintPage.arrayCorrectAnswers = [];
       SprintPage.arrayIncorrectAnswers = [];
       SprintPage.arrayOfRandomGameWordsKeys = [];
+      SprintPage.collectionWordsFromServer = [];
 
       FOOTER.classList.add('game-hidden');
 
@@ -290,7 +291,16 @@ export default class SprintPage extends Component {
                 }
               }
             });
+            
             tempCollectionWords.push(cardsData as Promise<Word[]>);
+            const tempCollection = (await Promise.all(tempCollectionWords)).flat();
+
+            const wordsFromStorage = JSON.parse(localStorage.studiedForGames) as string[];
+            SprintPage.collectionWordsFromServer = tempCollection
+              .filter((wordServer) => wordsFromStorage.some(
+                (elem) => elem === wordServer.wordTranslate)
+              );
+
           } else {
             for (let i = 0; i <= CountItems.MaxPagesIndex; i += 1) {
               const group = String(SprintPage.level);
@@ -298,8 +308,8 @@ export default class SprintPage extends Component {
               this.queryObj = { group, page };
               tempCollectionWords.push(this.getWords(this.queryObj));
             }
+            SprintPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
           }
-          SprintPage.collectionWordsFromServer = (await Promise.all(tempCollectionWords)).flat();
         }
       }
       const arrayOfWordsKeysFromServer = Object.keys(SprintPage.collectionWordsFromServer);
