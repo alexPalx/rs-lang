@@ -5,6 +5,12 @@
 }
 
 .statistics-wrapper p {
+    margin-bottom: 10px;
+    font-family: 'PT Serif';
+    font-size: 18px;
+}
+
+.statistics-wrapper .statistic-group-title {
     margin-bottom: 15px;
     font-family: 'PT Serif';
     font-size: 24px;
@@ -28,4 +34,32 @@
 .ct-grid.ct-horizontal {
     stroke: #000000;
     opacity: 0.2;
+}
+
+.ct-line {
+    width: 40vw;
+
+    @media(max-width: 1280px) {
+        width: 50vw;
+
+        .ct-label.ct-horizontal.ct-end {
+            font-size: 14px;
+        }
+    }
+
+    @media(max-width: 768px) {
+        width: 90vw;
+
+        .ct-label.ct-horizontal.ct-end {
+            font-size: 11px;
+        }
+    }
+
+    @media(max-width: 375px) {
+        width: 100vw;
+
+        .ct-label.ct-horizontal.ct-end {
+            font-size: 9px;
+        }
+    }
 }
