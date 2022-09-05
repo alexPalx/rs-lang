@@ -20,7 +20,7 @@ export default class WordStatistics extends Component {
   closeStatistics(): void {
     this.destroy();
   }
-  // Параметры переделать, когда будет готова статистика
+ 
   drawStatistics(): string {
     return `
     <thead>
