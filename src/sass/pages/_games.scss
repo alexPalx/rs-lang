@@ -1,0 +1,99 @@
+.games-wrapper {
+    background-color: rgb(140, 127, 255);
+    font-family: 'PT Serif', serif;
+    margin: -20px;
+    padding: 3rem 1rem 7.3rem;
+}
+
+.level-container {
+    position: relative;
+    display: flex;
+    width: 100%;
+    min-height: calc(100vh - 155px);
+    justify-content: center;
+    gap: 5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    transform: translate(0, -15px);
+}
+.level-container__title {
+    text-align: center;
+    font-size: 2rem;
+    margin: 0;
+    letter-spacing: 0.3rem;
+    text-shadow: 2px 2px 2px sandybrown;
+}
+.level-container__game-conditions {
+    margin: 1em 0;
+    padding-left: 2rem;
+    padding-right: 0.5rem;
+    line-height: 1.4;
+    font-size: 1.05rem;
+    letter-spacing: 0.05em;
+}
+.level-container__game-conditions ul {
+    list-style: square;
+}
+.level-container__game-conditions li {
+    padding: 0.25rem 0;
+}
+.sprint-container__content,
+.audiocall-container__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1em;
+    min-height: 22.5rem;
+    max-width: 22rem;
+    border-radius: 15px;
+    background-color: lavenderblush;
+}
+
+.sprint-container__buttons,
+.audiocall-container__buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.level-buttons__button {
+    height: 2.5rem;
+    width: 2.5rem;
+    margin: 0.4em;
+    color: black;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 3px solid black;
+    box-shadow: inset 0px 0px 10px rgb(0 0 0 / 50%);
+    cursor: pointer;
+    transition: 0.3s;
+    text-decoration: none;
+    text-align: center;
+    font-family: 'PT Serif', serif;
+}
+.level-buttons__button:hover {
+    transform: scale(1.1);
+}
+.level-buttons__button:active {
+    transform: scale(0.9);
+}
+.level-buttons__1 {
+    background-color: #ede5e5;
+}
+.level-buttons__2 {
+    background-color: #f1adb5;
+}
+.level-buttons__3 {
+    background-color: #ed6868;
+}
+.level-buttons__4 {
+    background-color: #f33939;
+}
+.level-buttons__5 {
+    background-color: #d32c0b;
+}
+.level-buttons__6 {
+    background-color: #a71e0d;
+}
+.game-hidden {
+    display: none;
+}

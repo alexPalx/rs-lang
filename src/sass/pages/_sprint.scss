@@ -1,0 +1,328 @@
+.sprint-game-wrapper {
+    background-color: rgb(140, 127, 255);
+    font-family: 'PT Serif', serif;
+    min-height: calc(100vh - 78px);
+    margin: -21px;
+    padding: 0 1rem;
+}
+
+.words-enough {
+    text-align: center;
+    position: relative;
+    min-height: calc(100vh - 78px);
+    transform: translateY(40%);
+    font-size: 1.5rem;
+    color:#1906b7;
+    line-height: 1.3;
+}
+.counter-before-game {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    height: calc(100vh - 78px);
+    gap: 2rem;
+    color: whitesmoke;
+}
+.time-to-start {
+    font-size: 3rem;
+    width: 4rem;
+    align-self: center;
+    position: relative;
+}
+.circle-time {
+    position: absolute;
+    top: -0.5rem;
+    display: block;
+    width: 4rem;
+    height: 4rem;
+    border: 0.1rem solid #d1d2f1;
+    border-top: 0.2rem solid #d1d2f1;
+    border-radius: 50%;
+    animation: spin 1s infinite linear;
+}
+.ready {
+    font-size: 1.5rem;
+}
+.attention-icon {
+    width: 3rem;
+}
+.ready-text {
+    font-size: 1.4rem;
+    line-height: 1.5;
+}
+.arrows {
+    display: inline-block;
+    background-color: black;
+}
+
+.icon-loader-wrapper {
+    height: 75vh;
+    display: flex;
+}
+.icon-loader {
+    width: 3.5rem;
+    height: 3.5rem;
+    border: 0.2rem solid #a97862;
+    border-top: 0.25rem solid #bd5341;
+    border-radius: 100%;
+    position: relative;
+    left: calc(50% - 1.75rem);
+    top: calc(50% - 1.75rem);
+    animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+    from{
+        transform: rotate(0deg);
+    }to{
+        transform: rotate(360deg);
+    }
+}
+
+.exit-wrapper {
+    position: absolute;
+    top: 7rem;
+    right: 2rem;
+    justify-content: flex-end;
+}
+.exit-game {
+    position: relative;
+    right: 1.5rem;
+    top: 1rem;
+    color: #d1d2f1;
+    fill: currentColor;
+}
+.exit-game:hover {
+    cursor: pointer;
+}
+.exit-game:active {
+    color: #a71e0d;
+    fill: currentColor;
+}
+
+.sprint-game__container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    max-width: 30rem;
+    min-height: 20rem;
+    border-radius: 1rem;
+    background-color: #47476682;
+    z-index: 1;
+    left: 50%;
+    transform: translate(-50%, 30%);
+    border: 0.1rem solid #d1d2f1;
+    padding: 1rem 1rem 0;
+}
+.sprint-game__counter {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    color: #FFFFFF;
+    font-size: 1.5rem;
+    align-items: center;
+}
+.timer-container {
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: transparent;
+    text-align: center;
+    font-size: 1.5rem;
+    border: 0.1rem solid wheat;
+    border-radius: 50%;
+    padding-top: 0.4rem;
+}
+.sprint-game-counter__score {
+    font-size: 2rem;
+    text-align: center;
+}
+.sprint-game__content {
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #e3c582;
+}
+
+.row1 {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: end;
+    align-items: baseline;
+    min-height: 2rem;
+}
+.answers-series {
+    color: #66b050;
+    display: block;
+    width: 1.5rem;
+    fill: currentColor;
+    margin-right: 10%;
+}
+
+.answers-reward {
+    width: 100%;
+    text-align: center;
+    border-bottom: 0.15rem solid #d1d2f1;
+    padding-bottom: 0.4rem;
+}
+.reward {
+    font-size: 1rem;
+}
+.reward-green {
+    color: #8ad575;
+}
+.reward-text {
+    font-size: 1.1rem;
+}
+
+.word-voicing {
+    margin: 0 1rem 0 4.5rem;
+    font-size: 1.5rem;
+}
+.question-word {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: lavenderblush;
+    font-size: 3rem;
+    font-family: 'Roboto', sans-serif;
+}
+.translate-word {
+    color: lavenderblush;
+    margin-bottom: 1.5rem;
+}
+
+.sprint-game__buttons {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    padding-bottom: 3.2rem;
+}
+.sprint-game__button {
+    border: none;
+    border-radius: 0.25rem;
+    color: #fff;
+    font-size: 1.25rem;
+    height: 3.1rem;
+    text-align: center;
+    width: 11rem;
+    cursor: pointer;
+    padding: 0.9rem;
+    margin: 0.5rem;
+}
+.wrong-button {
+    background-color: #f86142;
+}
+.wrong-button:hover {
+    background-color: #d44f34;
+    transition: 0.3s;
+}
+.wrong-button:active {
+    background-color: #a72e16;
+    transition: 0.3s;
+}
+.correct-button {
+    background-color: #66b050;
+}
+.correct-button:hover {
+    background-color: #4d893b;
+    transition: 0.3s;
+}
+.correct-button:active {
+    background-color: #19815b;
+    transition: 0.3s;
+}
+.wrong-button::before {
+    left: 6.5rem;
+    bottom: 0.9rem;
+    content: "←";
+    display: block;
+    font-size: 2.5rem;
+    position: absolute;
+}
+.correct-button::after {
+    left: 21rem;
+    bottom: 0.9rem;
+    content: "→";
+    display: block;
+    font-size: 2.5rem;
+    position: absolute;
+}
+
+.results__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    gap: 2rem;
+    background-color: rgb(140, 127, 255);
+    color: #1906b7;
+}
+.results-content {
+    display: flex;
+    margin-bottom: 1rem;
+    padding: 1rem 2rem;
+    gap: 1rem;
+    border: 0.1rem solid #ffffff;
+    border-radius: 1.5rem;
+}
+.results-title {
+    font-size: 2rem;
+}
+.content-evaluation {
+    font-size: 1.5rem;
+    color: palegoldenrod;
+    margin-top: 1rem;
+}
+.content-title {
+    font-size: 1.5rem;
+    text-align: center;
+    padding: 1rem 0;
+}
+.results-content__correct .content-title {
+    color:#75ff4e;
+}
+.results-content__incorrect .content-title {
+    color:#bb0505;
+}
+.word-item {
+    padding: 0.3rem 0;
+    color: lavenderblush;
+}
+.word-en {
+    color:#1906b7;
+    font-family: 'Roboto', sans-serif;
+}
+.game-hidden {
+    display: none;
+}
+
+@media (max-width: 800px) {
+    .results-title {
+        max-width: 15.5rem;
+        line-height: 1.4;
+    }
+    .results-content {
+        flex-direction: column;
+    }
+}
+@media (max-width: 760px) {
+    .correct-button::after {
+        display: none;
+    }
+    .wrong-button::before {
+        display: none;
+    }
+    .results-title {
+        max-width: 12rem;
+    }
+}
+    

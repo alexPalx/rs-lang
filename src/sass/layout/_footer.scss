@@ -1,0 +1,109 @@
+html,
+body {
+  height: 100%;
+}
+
+main {
+  min-height: calc(100% - 80px);
+  overflow: hidden;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 56px 0 56px;
+  background-color: #608AF4;
+  border-top: 2px solid #4c76e2;
+  margin-top: -100px;
+
+  .school-description {
+    display: flex;
+    flex-direction: column;
+    .description {
+      font-family: 'PT Serif', serif;
+      font-weight: 400;
+      max-width: 600px;
+      color: #fff;
+      margin: 12px 25px 25px 5px;
+    }
+
+    .rs-logo {
+      width: 80px;
+      height: 25px;
+      background-color: transparent;
+      filter: invert(98%) sepia(0%) saturate(0%) hue-rotate(332deg) brightness(101%) contrast(104%);
+    }
+    @media (max-width: 1152px) {
+      justify-content: center;
+      a {
+        text-align: center;
+      }
+      .description {
+        text-align: justify;
+      }
+    }
+  }
+
+
+  .developers {
+    .dev-heading {
+      font-family: 'PT Serif', serif;
+      font-size: 26px;
+      line-height: 34px;
+      text-align: center;
+      color: #fff;
+      padding-bottom: 25px;
+      border-bottom: 1px solid #fff;
+      margin-bottom: 25px;
+    }
+
+    .lists-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      @media (max-width: 1000px) {
+        justify-content: center;
+      }
+    }
+
+    .dev-list {
+      margin: 0 25px;
+
+      .item {
+        display: flex;
+        margin-bottom: 25px;
+        font-family: 'PT Serif', serif;
+        color: #fff;
+        justify-content: center;
+
+        .item-link {
+          display: inherit;
+          display: flex;
+          align-items: center;
+          text-decoration: none;
+
+          .social-img {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            filter: invert(98%) sepia(0%) saturate(0%) hue-rotate(332deg) brightness(101%) contrast(104%);
+          }
+
+          .social-name {
+            font-family: 'Roboto', sans-serif;
+            color: #fff;
+
+          }
+        }
+      }
+    }
+
+    .year {
+      font-family: 'Roboto', sans-serif;
+      color: #fff;
+      margin-top: 25px;
+      text-align: center;
+    }
+  }
+}

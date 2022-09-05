@@ -1,0 +1,74 @@
+.about-wrapper {
+    padding: 0 30px;
+}
+
+.about-title {
+    text-align: center;
+    padding-bottom: 50px;
+    font-size: 30px;
+}
+
+.about-list {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    display: flex;
+    margin-bottom: 100px;
+}
+
+.dev-wrapper {
+    gap: 10px;
+    flex-direction: column;
+    display: flex;
+
+    width: 250px;
+    margin-bottom: 50px;
+}
+
+.dev-image {
+    border-radius: 50%;
+    width: 250px;
+    height: 250px;
+    border: 1px solid #4c76e2;
+}
+
+.dev-name {
+    font-family: 'PT Serif', serif;
+    font-size: 24px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.dev-github-block {
+    gap: 10px;
+    display: flex;
+
+}
+
+.dev-github-image {
+    width: 18px;
+    height: 18px;
+}
+
+
+.dev-position {
+    color: #444;
+    font-family: 'PT Serif', serif;
+    font-size: 18px;
+}
+
+.dev-task-list {
+    list-style-type: decimal;
+    padding-left: 20px;
+    font-family: 'PT Serif';
+    font-size: 18px;
+    li {
+        padding-bottom: 8px;
+    }
+}
+.dev-github-link {
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    text-decoration: none;
+    color: #000;
+}

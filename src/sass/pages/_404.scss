@@ -1,0 +1,46 @@
+.wrapper-404 {
+  max-width: 600px;
+  margin: 100px auto;
+  padding: 20px;
+  text-align: center;
+  .image-404 {
+    width: 80%;
+  }
+  .heading-404 {
+    font-size: 55px;
+    color: #4a4a4a;
+    line-height: 71px;
+    text-align: center;
+    font-family: Roboto Slab;
+    font-weight: 400;
+    font-style: normal;
+    margin: 20px 0;
+  }
+  .text-404 {
+    font-size: 20px;
+    color: #4a4a4a;
+    line-height: 28px;
+    text-align: center;
+    font-family: Lato;
+    font-weight: 400;
+    font-style: normal;
+    margin-bottom: 20px;
+  }
+  .go-back-404 {
+    font-family: 'Lato', sans-serif;
+    background-color: #2f87ed;
+    color: #fff;
+    border: 0;
+    box-shadow: 0px 10px 40px -10px rgb(52 138 237 / 50%);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 60px;
+    padding: 12px 45px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition-duration: .3s;
+    @media (max-width: 375px) {
+      padding: 12px 15px;
+    }
+  }
+}
